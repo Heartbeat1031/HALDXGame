@@ -10,12 +10,12 @@ if (POLICY CMP0141)
 endif()
 
 project ("HALDXGame")
-
+# utf-8 を使用して、ソース ファイルをコンパイルします。
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 # ソースをこのプロジェクトの実行可能ファイルに追加します。
 add_executable (HALDXGame "src/main.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET HALDXGame PROPERTY CXX_STANDARD 20)
 endif()
-
 # TODO: テストを追加し、必要な場合は、ターゲットをインストールします。
