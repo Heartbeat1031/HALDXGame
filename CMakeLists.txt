@@ -1,21 +1,28 @@
-﻿# CMakeList.txt : HALDXGame の CMake プロジェクト。ソースを含めて、次を定義します:
-# プロジェクト専用ロジックはこちらです。
-cmake_minimum_required (VERSION 3.8)
+﻿# HALDXGame の CMake プロジェクト
+cmake_minimum_required(VERSION 3.8)
+project(HALDXGame)
 
-# サポートされている場合は、MSVC コンパイラのホット リロードを有効にします。
-if (POLICY CMP0141)
+# UTF-8 文字コードのサポート
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
+# C++20 標準
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# 编译器の設定
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# MSVC デバッグ情報の設定
+if(POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("HALDXGame")
-# utf-8 を使用して、ソース ファイルをコンパイルします。
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-# ソースをこのプロジェクトの実行可能ファイルに追加します。
-add_executable (HALDXGame "src/main.cpp")
+#モジュールの追加
+add_subdirectory(src/modules/GameFramework)
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  # C++20 を使用して、ソース ファイルをコンパイルします。
-  set_property(TARGET HALDXGame PROPERTY CXX_STANDARD 20)
-endif()
-# TODO: テストを追加し、必要な場合は、ターゲットをインストールします。
+# HALDXGame のソースコード
+add_executable(HALDXGame src/main.cpp)
+
+# HALDXGame のインクルードディレクトリ
+target_link_libraries(HALDXGame PRIVATE GameFramework)
