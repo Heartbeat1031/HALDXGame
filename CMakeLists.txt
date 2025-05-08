@@ -12,7 +12,7 @@ endif()
 project ("HALDXGame")
 
 # ソースをこのプロジェクトの実行可能ファイルに追加します。
-add_executable (HALDXGame "HALDXGame.cpp" "HALDXGame.h")
+add_executable (HALDXGame "src/main.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET HALDXGame PROPERTY CXX_STANDARD 20)
