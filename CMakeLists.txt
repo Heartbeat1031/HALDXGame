@@ -1,6 +1,5 @@
 ﻿# CMakeList.txt : HALDXGame の CMake プロジェクト。ソースを含めて、次を定義します:
 # プロジェクト専用ロジックはこちらです。
-#
 cmake_minimum_required (VERSION 3.8)
 
 # サポートされている場合は、MSVC コンパイラのホット リロードを有効にします。
@@ -16,6 +15,7 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 add_executable (HALDXGame "src/main.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
+  # C++20 を使用して、ソース ファイルをコンパイルします。
   set_property(TARGET HALDXGame PROPERTY CXX_STANDARD 20)
 endif()
 # TODO: テストを追加し、必要な場合は、ターゲットをインストールします。
