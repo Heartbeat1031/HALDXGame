@@ -18,8 +18,16 @@ if(POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
+# CMake のバージョンを指定
+set(BUILD_DIRECTXTK_WERROR OFF CACHE BOOL "" FORCE)
+set(USE_DIRECTX_MATH TRUE CACHE BOOL "" FORCE)
+
+# 添加假包路径以绕过 directxmathConfig.cmake 检查
+set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFIX_PATH})
+
 # third_party ディレクトリの追加
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
+add_subdirectory(third_party/DirectXTK)
 
 #モジュールの追加
 add_subdirectory(src/modules/GameFramework)
