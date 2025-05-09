@@ -1,17 +1,17 @@
 # HALDXGame
 
+### インストールと使用方法
 
-### 安装与使用
-1. 如果没有安装Git，请先安装Git。
-   - [Git官网下载](https://git-scm.com/downloads)
-   - [直接下载](https://github.com/git-for-windows/git/releases/download/v2.49.0.windows.1/Git-2.49.0-64-bit.exe)
-   - [安装教程](https://www.sejuku.net/blog/73444#index_id1)
-2. 如果没有安装CMake，请安装CMake。
-   - [CMake安装](https://cmake.org/download/)
-   - [直接下载](https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-windows-x86_64.msi)
-3. 上述步骤完成后，在合适的地方创建一个文件夹，命名可以是HALDXGame. 
-4. 然后在该文件夹下打开命令行窗口。
-   - ```cmd
-     git clone --recurse-submodules https://github.com/ohs40651/HALDXGame.git
-     ```
-5. 打开Visual Studio，点击“打开本地文件夹”，选择选择刚才创建的HALDXGame文件夹。
+1. **Git** がインストールされていない場合は、先にインストールしてください。
+   - [Git公式サイト](https://git-scm.com/downloads)
+   - [直接ダウンロード（Windows版）](https://github.com/git-for-windows/git/releases/download/v2.49.0.windows.1/Git-2.49.0-64-bit.exe)
+   - [インストール手順（日本語）](https://www.sejuku.net/blog/73444#index_id1)
+2. **CMake** がインストールされていない場合は、CMakeをインストールしてください。
+   - [CMake公式サイト](https://cmake.org/download/)
+   - [直接ダウンロード（Windows版）](https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-windows-x86_64.msi)
+3. 上記のインストールが完了したら、任意の場所にフォルダを作成してください。名前はHALDXGameなどがおすすめです。
+4. 作成したフォルダ内でコマンドプロンプトを開き、以下のコマンドを実行します：
+   ```cmd
+   git clone --recurse-submodules https://github.com/ohs40651/HALDXGame.git
+   ```
+5. Visual Studio で HALDXGame フォルダを開いた後、しばらく待つと CMake による初期構成が自動で実行されます。
