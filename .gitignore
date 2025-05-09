@@ -38,3 +38,6 @@ Testing/
 # === OS によって生成されるファイル ===
 .DS_Store
 Thumbs.db
+
+# === テスト・一時ファイル ===
+test/
