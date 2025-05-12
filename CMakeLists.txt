@@ -22,7 +22,7 @@ endif()
 set(BUILD_DIRECTXTK_WERROR OFF CACHE BOOL "" FORCE)
 set(USE_DIRECTX_MATH TRUE CACHE BOOL "" FORCE)
 
-# 添加假包路径以绕过 directxmathConfig.cmake 检查
+# directxmathConfig.cmake のチェックを回避するために、偽のパッケージパスを追加する
 set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFIX_PATH})
 
 # third_party ディレクトリの追加

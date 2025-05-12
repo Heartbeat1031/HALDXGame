@@ -14,4 +14,19 @@
    ```cmd
    git clone --recurse-submodules https://github.com/ohs40651/HALDXGame.git
    ```
-5. Visual Studio で HALDXGame フォルダを開いた後、しばらく待つと CMake による初期構成が自動で実行されます。
+5. Visual Studio で HALDXGame フォルダを開いた後、特に問題がなければしばらく待つと CMake による初期構成が自動で実行されます。
+
+### プロジェクト構成
+- HALDXGame
+  - src : 内部ソースコード
+     - modules : ソースコードモジュール
+       - GameFramework : ゲームフレームワーク
+       - Physics : 物理エンジン
+     - main.cpp : メイン関数
+  - third_party : 外部ライブラリ
+    - DirectXTK : DirectX 用のツールキット
+    - imgui : GUI ライブラリ
+    - JoltPhysics : 物理エンジン
+
+### 余談
+1. 世界一使いやすいコードエディタ、**JetBrains**社の **CLion** を強くおすすめします！学生証を使えば、1年間の使用ライセンスを申請できます。
