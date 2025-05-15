@@ -38,7 +38,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 #ifdef _DEBUG
-    std::filesystem::current_path("C:\\Users\\lclcl\\Documents\\Hal\\HALDXGame");
+    std::filesystem::current_path("C:\\Users\\reisu\\Desktop\\Team\\HALDXGame");
 #endif
     if (!XMVerifyCPUSupport())
         return 1;

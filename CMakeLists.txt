@@ -31,7 +31,7 @@ set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFI
 
 #includeパスを追加する（Windows SDK ＋ DirectXTK）
 include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
-include_directories("C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um")
+#include_directories("C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um")
 
 # third_party ディレクトリの追加
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
