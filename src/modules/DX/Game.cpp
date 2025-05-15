@@ -5,6 +5,8 @@
 #include "pch.h"
 #include "Game.h"
 
+#include <filesystem>
+
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
@@ -214,7 +216,7 @@ void Game::CreateDeviceDependentResources()
 
     //BoneAnime
     m_states = std::make_unique<CommonStates>(device);
-
+    std::filesystem::path exePath = std::filesystem::current_path();
     m_fxFactory = std::make_unique<EffectFactory>(device);
     static_cast<DirectX::EffectFactory*>(m_fxFactory.get())->SetDirectory(L"assets/models");
     m_model = Model::CreateFromSDKMESH(device, L"assets\\models\\tank.sdkmesh",

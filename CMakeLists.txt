@@ -55,7 +55,3 @@ target_link_libraries(HALDXGame PRIVATE DirectXTK)
 target_link_libraries(HALDXGame PRIVATE GameFramework)
 target_link_libraries(HALDXGame PRIVATE Physics)
 target_link_libraries(HALDXGame PRIVATE DX)
-
-
-#  リソースフォルダ「assets」をビルドディレクトリにコピーする
-file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})

@@ -2,6 +2,7 @@
 // Main.cpp
 //
 
+#include <filesystem>
 #include "pch.h"
 #include "Game.h"
 
@@ -36,7 +37,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
-
+#ifdef _DEBUG
+    std::filesystem::current_path("C:\\Users\\lclcl\\Documents\\Hal\\HALDXGame");
+#endif
     if (!XMVerifyCPUSupport())
         return 1;
 

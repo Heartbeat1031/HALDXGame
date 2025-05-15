@@ -1,6 +1,5 @@
 ﻿# 包含头文件目录
 include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
-include_directories("C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um")
 
 # 编译 DX 静态库
 add_library(DX STATIC
