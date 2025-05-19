@@ -109,8 +109,6 @@ void GameApp::DrawScene()
     HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
 }
 
-
-
 bool GameApp::InitResource()
 {
     // ******************
@@ -118,13 +116,13 @@ bool GameApp::InitResource()
     //
 
     // 初始化地板
-    Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\ground_19.obj");
+    Model* pModel = m_ModelManager.CreateFromFile("assets\\models\\ground_19.obj");
     m_Ground.SetModel(pModel);
     pModel->SetDebugObjectName("ground_19");
     
 
     // 初始化房屋模型
-    pModel = m_ModelManager.CreateFromFile("..\\Model\\house.obj");
+    pModel = m_ModelManager.CreateFromFile("assets\\models\\house.obj");
     m_House.SetModel(pModel);
     pModel->SetDebugObjectName("house");
     

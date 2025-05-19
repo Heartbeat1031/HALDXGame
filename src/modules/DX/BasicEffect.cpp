@@ -3,6 +3,7 @@
 #include <RenderStates.h>
 #include <EffectHelper.h>
 #include <DXTrace.h>
+#include <filesystem>
 #include <Vertex.h>
 #include <TextureManager.h>
 #include "LightHelper.h"
@@ -91,6 +92,7 @@ bool BasicEffect::InitAll(ID3D11Device* device)
 
     Microsoft::WRL::ComPtr<ID3DBlob> blob;
     // 创建顶点着色器
+    std::filesystem::path exePath = std::filesystem::current_path();
     pImpl->m_pEffectHelper->CreateShaderFromFile("BasicVS", L"Shaders/Basic_VS.cso", device,
         nullptr, nullptr, nullptr, blob.GetAddressOf());
     // 创建顶点布局

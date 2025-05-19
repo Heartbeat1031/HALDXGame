@@ -2,17 +2,16 @@
 cmake_minimum_required(VERSION 3.20)
 project(HALDXGame)
 
-# UTF-8 文字コードのサポート
-#add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-
-# 在 Windows 平台强制使用 UTF-8
 if (WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
 # C++20 標準
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
+add_compile_definitions(UNICODE _UNICODE)
+if (WIN7_SYSTEM_SUPPORT MATCHES ON)
+  add_compile_definitions(_WIN32_WINNT=0x601)
+endif()
 
 # 编译器の設定
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -30,12 +29,57 @@ set(USE_DIRECTX_MATH TRUE CACHE BOOL "" FORCE)
 # directxmathConfig.cmake のチェックを回避するために、偽のパッケージパスを追加する
 set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFIX_PATH})
 
-#includeパスを追加する（Windows SDK ＋ DirectXTK）
-include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
+file(GLOB HLSL_FILES Shaders/*.hlsl Shaders/*.hlsli)
+foreach(HLSL_FILE ${HLSL_FILES})
+  get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
+  get_filename_component(HLSL_FBASENAME_WE ${HLSL_FILE} NAME_WE)
+  string(CONCAT HLSL_FNAME_WE ${HLSL_FDIR} / ${HLSL_FBASENAME_WE})
+
+  string(LENGTH ${HLSL_FBASENAME_WE} LEN_FNAME_WE)
+  math(EXPR LEN_FNAME_WE "${LEN_FNAME_WE}-2")
+  string(SUBSTRING ${HLSL_FBASENAME_WE} ${LEN_FNAME_WE} 2 ENTRY_POINT)
+  string(TOLOWER ${ENTRY_POINT} SHADER_TYPE)
+
+  if ("${SHADER_TYPE}" STREQUAL "vs")
+    set(SHADER_TYPE "Vertex")
+  elseif("${SHADER_TYPE}" STREQUAL "hs")
+    set(SHADER_TYPE "Hull")
+  elseif("${SHADER_TYPE}" STREQUAL "ds")
+    set(SHADER_TYPE "Domain")
+  elseif("${SHADER_TYPE}" STREQUAL "gs")
+    set(SHADER_TYPE "Geometry")
+  elseif("${SHADER_TYPE}" STREQUAL "ps")
+    set(SHADER_TYPE "Pixel")
+  elseif("${SHADER_TYPE}" STREQUAL "cs")
+    set(SHADER_TYPE "Compute")
+  endif()
+  set_source_files_properties(${HLSL_FILE} PROPERTIES
+          VS_SHADER_OBJECT_FILE_NAME Shaders/${HLSL_FBASENAME_WE}.cso
+          VS_SHADER_TYPE ${SHADER_TYPE}
+          VS_SHADER_MODEL 5.0
+          VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
+          VS_SHADER_DISABLE_OPTIMIZATIONS $<$<CONFIG:Debug>:true>
+          VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
+endforeach()
+
+# 每次构建时都复制 assets 文件夹
+set(ASSETS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
+set(ASSETS_BINARY_DIR ${CMAKE_BINARY_DIR}/assets)
+
+add_custom_command(
+        OUTPUT ${ASSETS_BINARY_DIR}/.copied_stamp
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE_DIR} ${ASSETS_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E touch ${ASSETS_BINARY_DIR}/.copied_stamp
+        COMMENT "Copying asset files..."
+        VERBATIM
+)
+
+add_custom_target(copy_assets ALL
+        DEPENDS ${ASSETS_BINARY_DIR}/.copied_stamp
+)
 
 # third_party ディレクトリの追加
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
-add_subdirectory(third_party/DirectXTK)
 add_subdirectory(third_party/assimp)
 add_subdirectory(third_party/ImGui)
 
@@ -45,19 +89,18 @@ add_subdirectory(src/modules/Physics)
 add_subdirectory(src/modules/DX)
 
 # HALDXGame のソースコード
-add_executable(HALDXGame src/main.cpp)
+add_executable(HALDXGame src/main.cpp ${HLSL_FILES})
 # UTF-8 文字コードのサポート
 target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-
-# プリコンパイル済みヘッダーを追加する
-target_precompile_headers(HALDXGame PRIVATE src/modules/DX/pch.h)
-
-# DirectXTK のリンクを追加する
-target_link_libraries(HALDXGame PRIVATE DirectXTK)
 
 # HALDXGame のインクルードディレクトリ
 target_link_libraries(HALDXGame PRIVATE GameFramework)
 target_link_libraries(HALDXGame PRIVATE Physics)
 target_link_libraries(HALDXGame PRIVATE DX)
 
+target_include_directories(HALDXGame PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/modules/DX
+)
+source_group("Shaders" FILES ${HLSL_FILES})
+add_dependencies(HALDXGame copy_assets)
 set_target_properties(HALDXGame PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")

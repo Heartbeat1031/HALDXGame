@@ -9,62 +9,24 @@ endif()
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 aux_source_directory(. DIR_SRCS)
-file(GLOB HLSL_FILES Shaders/*.hlsl Shaders/*.hlsli)
 file(GLOB HEADER_FILES ./*.h)
 
-foreach(HLSL_FILE ${HLSL_FILES})
 
-    get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
-    get_filename_component(HLSL_FBASENAME_WE ${HLSL_FILE} NAME_WE)
-    string(CONCAT HLSL_FNAME_WE ${HLSL_FDIR} / ${HLSL_FBASENAME_WE})
-
-    string(LENGTH ${HLSL_FBASENAME_WE} LEN_FNAME_WE)
-    math(EXPR LEN_FNAME_WE "${LEN_FNAME_WE}-2")
-    string(SUBSTRING ${HLSL_FBASENAME_WE} ${LEN_FNAME_WE} 2 ENTRY_POINT)
-    string(TOLOWER ${ENTRY_POINT} SHADER_TYPE)
-
-    if ("${SHADER_TYPE}" STREQUAL "vs") 
-        set(SHADER_TYPE "Vertex")
-    elseif("${SHADER_TYPE}" STREQUAL "hs") 
-        set(SHADER_TYPE "Hull")
-    elseif("${SHADER_TYPE}" STREQUAL "ds") 
-        set(SHADER_TYPE "Domain")
-    elseif("${SHADER_TYPE}" STREQUAL "gs") 
-        set(SHADER_TYPE "Geometry")
-    elseif("${SHADER_TYPE}" STREQUAL "ps")
-        set(SHADER_TYPE "Pixel")
-    elseif("${SHADER_TYPE}" STREQUAL "cs")
-        set(SHADER_TYPE "Compute")
-    endif()
-    set_source_files_properties(${HLSL_FILE} PROPERTIES
-                                VS_SHADER_OBJECT_FILE_NAME Shaders/${HLSL_FBASENAME_WE}.cso
-                                VS_SHADER_TYPE ${SHADER_TYPE}
-                                VS_SHADER_MODEL 5.0
-                                VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
-                                VS_SHADER_DISABLE_OPTIMIZATIONS $<$<CONFIG:Debug>:true>
-                                VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
-endforeach()
-
-add_executable(19_Meshes WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
-target_link_libraries(19_Meshes d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
+add_library(DX ${DIR_SRCS} ${HEADER_FILES})
+target_link_libraries(DX d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 
 # ImGui
-target_link_libraries(19_Meshes ImGui)
+target_link_libraries(DX ImGui)
 file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Assimp
-set_target_properties(19_Meshes PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
+target_link_libraries(DX assimp)
+set_target_properties(DX PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 
 # Common
-target_link_libraries(19_Meshes Common)
+add_subdirectory(Common)
+target_link_libraries(DX Common)
 
+set_target_properties(DX PROPERTIES OUTPUT_NAME "DX")
 
-source_group("Shaders" FILES ${HLSL_FILES})
-set_target_properties(19_Meshes PROPERTIES OUTPUT_NAME "19 Meshes")
-
-set_target_properties(19_Meshes PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(19_Meshes PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(19_Meshes PROPERTIES FOLDER "Project 19-")
-
-
-
+target_include_directories(DX PUBLIC .)
