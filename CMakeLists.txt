@@ -6,7 +6,7 @@ if (WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
-# C++20 標準
+# C++17 標準
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
 if (WIN7_SYSTEM_SUPPORT MATCHES ON)
