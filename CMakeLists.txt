@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(HALDXGame)
 
 # UTF-8 文字コードのサポート
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+#add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 # 在 Windows 平台强制使用 UTF-8
 if (WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
@@ -31,11 +31,12 @@ set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFI
 
 #includeパスを追加する（Windows SDK ＋ DirectXTK）
 include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
-#include_directories("C:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/um")
 
 # third_party ディレクトリの追加
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
 add_subdirectory(third_party/DirectXTK)
+add_subdirectory(third_party/assimp)
+add_subdirectory(third_party/ImGui)
 
 #モジュールの追加
 add_subdirectory(src/modules/GameFramework)
