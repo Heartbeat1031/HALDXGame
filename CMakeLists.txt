@@ -26,9 +26,6 @@ endif()
 set(BUILD_DIRECTXTK_WERROR OFF CACHE BOOL "" FORCE)
 set(USE_DIRECTX_MATH TRUE CACHE BOOL "" FORCE)
 
-# directxmathConfig.cmake のチェックを回避するために、偽のパッケージパスを追加する
-set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFIX_PATH})
-
 file(GLOB HLSL_FILES Shaders/*.hlsl Shaders/*.hlsli)
 foreach(HLSL_FILE ${HLSL_FILES})
   get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
