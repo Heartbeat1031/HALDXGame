@@ -2,33 +2,22 @@
 include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
 
 # 编译 DX 静态库
-add_library(DX STATIC
-        DeviceResources.cpp
-        Game.cpp
-        pch.cpp
-)
+add_library(DX STATIC .)
 
-target_precompile_headers(DX PRIVATE pch.h)
-
-target_link_libraries(DX PRIVATE DirectXTK)
-
-# 编译 DXDemo 可执行程序
-add_executable(DXDemo
-        Main.cpp
-)
-
-target_link_libraries(DXDemo
-        DX
+# 添加 DirectXTK 头文件目录
+target_link_libraries(DX
+        PUBLIC
         d3d11
         dxgi
         dxguid
         uuid
 )
 
-add_definitions(-DUNICODE -D_UNICODE)
 
-if (MSVC)
-    set_target_properties(DXDemo PROPERTIES
-            LINK_FLAGS "/SUBSYSTEM:WINDOWS"
-    )
-endif()
+target_precompile_headers(DX PRIVATE pch.h)
+
+target_link_libraries(DX PUBLIC DirectXTK)
+target_include_directories(DX PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(DX PUBLIC assimp)
+target_link_libraries(DX PUBLIC ImGui)

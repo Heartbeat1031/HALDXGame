@@ -3,25 +3,26 @@
 //
 
 #pragma once
-
+#include "pch.h"
 #include "DeviceResources.h"
 #include "StepTimer.h"
 
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
-class Game final : public DX::IDeviceNotify
+class DXGame : public DX::IDeviceNotify
 {
 public:
 
-    Game() noexcept(false);
-    ~Game() = default;
+    DXGame() noexcept(false);
 
-    Game(Game&&) = default;
-    Game& operator= (Game&&) = default;
+    virtual ~DXGame() = default;
 
-    Game(Game const&) = delete;
-    Game& operator= (Game const&) = delete;
+    DXGame(DXGame&&) = default;
+    DXGame& operator= (DXGame&&) = default;
+
+    DXGame(DXGame const&) = delete;
+    DXGame& operator= (DXGame const&) = delete;
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
@@ -49,21 +50,14 @@ private:
 
     void Update(DX::StepTimer const& timer);
     void Render();
-
     void Clear();
-
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
-
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
-
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
-
     std::unique_ptr<DirectX::GraphicsMemory> m_graphicsMemory;
-
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     DirectX::SimpleMath::Vector2 m_screenPos;
@@ -73,9 +67,7 @@ private:
 
     RECT m_fullscreenRect;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_background;
-
     std::unique_ptr<DirectX::SpriteFont> m_font;
-
     DirectX::SimpleMath::Vector2 m_fontPos;
 
     using VertexType = DirectX::VertexPositionTexture;
@@ -88,9 +80,6 @@ private:
     DirectX::SimpleMath::Matrix m_view;
     DirectX::SimpleMath::Matrix m_proj;
 
-    std::unique_ptr<DirectX::GeometricPrimitive> m_shape;
-
     std::unique_ptr<DirectX::IEffectFactory> m_fxFactory;
     std::unique_ptr<DirectX::Model> m_model;
-
 };
