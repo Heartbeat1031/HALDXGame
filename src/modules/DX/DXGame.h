@@ -85,7 +85,7 @@ private:
     DirectX::SimpleMath::Matrix m_view;
     DirectX::SimpleMath::Matrix m_proj;
 
-    std::unique_ptr<DirectX::IEffectFactory> m_fxFactory;
+    //std::unique_ptr<DirectX::IEffectFactory> m_fxFactory;
     std::unique_ptr<DirectX::Model> m_model;
     //BasicEffect m_BasicEffect;                                  // 对象渲染特效管理
     GameObject m_House;

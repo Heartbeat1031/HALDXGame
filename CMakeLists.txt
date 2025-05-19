@@ -4,6 +4,7 @@ project(HALDXGame)
 
 # UTF-8 文字コードのサポート
 #add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
 # 在 Windows 平台强制使用 UTF-8
 if (WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
@@ -45,6 +46,8 @@ add_subdirectory(src/modules/DX)
 
 # HALDXGame のソースコード
 add_executable(HALDXGame src/main.cpp)
+# UTF-8 文字コードのサポート
+target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 # プリコンパイル済みヘッダーを追加する
 target_precompile_headers(HALDXGame PRIVATE src/modules/DX/pch.h)

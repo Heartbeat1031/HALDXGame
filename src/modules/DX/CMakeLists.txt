@@ -10,7 +10,7 @@ file(GLOB DX_SRC
 )
 
 add_library(DX STATIC ${DX_SRC})
-
+target_compile_options(DX PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 # 添加 DirectXTK 头文件目录
 target_link_libraries(DX
         PUBLIC

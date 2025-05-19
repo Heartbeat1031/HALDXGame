@@ -189,7 +189,7 @@ void DXGame::OnDeviceLost() {
 
     //Model Reset
     m_states.reset();
-     m_fxFactory.reset();
+     //m_fxFactory.reset();
     // m_model.reset();
 }
 
