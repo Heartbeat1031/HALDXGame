@@ -1,4 +1,5 @@
 ﻿#include <DirectXMath.h>
+#include <filesystem>
 #include <iostream>
 #include <windows.h>
 
@@ -28,7 +29,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     UNREFERENCED_PARAMETER(lpCmdLine);
     // UTF-8を使用するための設定
     SetConsoleOutputCP(65001);
-
+#ifdef _DEBUG
+    std::filesystem::path exePath = std::filesystem::current_path().parent_path().parent_path().parent_path();
+    std::filesystem::current_path(exePath);
+#endif
     if (!DirectX::XMVerifyCPUSupport()) {
         return 1;
     }

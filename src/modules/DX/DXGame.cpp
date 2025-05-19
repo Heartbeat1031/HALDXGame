@@ -6,8 +6,6 @@
 #include "DXGame.h"
 #include <filesystem>
 
-#include "RenderStates.h"
-
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
@@ -26,15 +24,7 @@ void DXGame::Initialize(HWND window, int width, int height) {
 
     m_deviceResources->CreateDeviceResources();
     auto device = m_deviceResources->GetD3DDevice();
-    m_TextureManager.Init(device);
-    m_ModelManager.Init(device);
-
-    // 务必先初始化所有渲染状态，以供下面的特效使用
-    RenderStates::InitAll(device);
-    //m_BasicEffect.InitAll(device);
-
     CreateDeviceDependentResources();
-
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
@@ -78,7 +68,7 @@ void DXGame::Render() {
     // TODO: Add your rendering code here.
 
     //Model Render
-    //m_model->Draw(context, *m_states, m_world, m_view, m_proj);
+    m_model->Draw(context, *m_states, m_world, m_view, m_proj);
     //m_House.Draw(context, m_BasicEffect);
     // Show the new frame.
     m_deviceResources->Present();
@@ -88,7 +78,6 @@ void DXGame::Render() {
 // Helper method to clear the back buffers.
 void DXGame::Clear() {
     m_deviceResources->PIXBeginEvent(L"Clear");
-
     // Clear the views.
     auto context = m_deviceResources->GetD3DDeviceContext();
     auto renderTarget = m_deviceResources->GetRenderTargetView();
@@ -159,15 +148,12 @@ void DXGame::CreateDeviceDependentResources() {
 
     //BoneAnime
     m_states = std::make_unique<CommonStates>(device);
-    //std::filesystem::path exePath = std::filesystem::current_path();
-    //m_fxFactory = std::make_unique<EffectFactory>(device);
-    // static_cast<DirectX::EffectFactory *>(m_fxFactory.get())->SetDirectory(L"assets/models");
-    // m_model = Model::CreateFromSDKMESH(device, L"assets\\models\\tank.sdkmesh",
-    //                                    *m_fxFactory,
-    //                                    ModelLoader_CounterClockwise | ModelLoader_IncludeBones);
-
-    DXModel* pModel = m_ModelManager.CreateFromFile("assets\\models\\house.obj");
-    m_House.SetModel(pModel);
+    std::filesystem::path exePath = std::filesystem::current_path();
+    m_fxFactory = std::make_unique<EffectFactory>(device);
+    static_cast<DirectX::EffectFactory *>(m_fxFactory.get())->SetDirectory(L"assets/models");
+    m_model = Model::CreateFromSDKMESH(device, L"assets\\models\\tank.sdkmesh",
+                                        *m_fxFactory,
+                                       ModelLoader_CounterClockwise | ModelLoader_IncludeBones);
 
     m_world = Matrix::Identity;
 }
@@ -189,8 +175,8 @@ void DXGame::OnDeviceLost() {
 
     //Model Reset
     m_states.reset();
-     //m_fxFactory.reset();
-    // m_model.reset();
+     m_fxFactory.reset();
+     m_model.reset();
 }
 
 void DXGame::OnDeviceRestored() {

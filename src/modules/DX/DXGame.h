@@ -6,10 +6,7 @@
 
 #include "pch.h"
 #include "DeviceResources.h"
-#include "GameObject.h"
-#include "ModelManager.h"
 #include "StepTimer.h"
-#include "TextureManager.h"
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -51,8 +48,6 @@ public:
     void GetDefaultSize( int& width, int& height ) const noexcept;
 
 private:
-    TextureManager m_TextureManager;
-    ModelManager m_ModelManager;
     void Update(DX::StepTimer const& timer);
     void Render();
     void Clear();
@@ -85,8 +80,6 @@ private:
     DirectX::SimpleMath::Matrix m_view;
     DirectX::SimpleMath::Matrix m_proj;
 
-    //std::unique_ptr<DirectX::IEffectFactory> m_fxFactory;
+    std::unique_ptr<DirectX::IEffectFactory> m_fxFactory;
     std::unique_ptr<DirectX::Model> m_model;
-    //BasicEffect m_BasicEffect;                                  // 对象渲染特效管理
-    GameObject m_House;
 };
