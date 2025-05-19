@@ -33,14 +33,14 @@ set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/cmake/fake_directxmath" ${CMAKE_PREFI
 include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
 
 # third_party ディレクトリの追加
-add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
+#add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
 add_subdirectory(third_party/DirectXTK)
 add_subdirectory(third_party/assimp)
 add_subdirectory(third_party/ImGui)
 
 #モジュールの追加
 add_subdirectory(src/modules/GameFramework)
-add_subdirectory(src/modules/Physics)
+#add_subdirectory(src/modules/Physics)
 add_subdirectory(src/modules/DX)
 
 # HALDXGame のソースコード
@@ -54,5 +54,7 @@ target_link_libraries(HALDXGame PRIVATE DirectXTK)
 
 # HALDXGame のインクルードディレクトリ
 target_link_libraries(HALDXGame PRIVATE GameFramework)
-target_link_libraries(HALDXGame PRIVATE Physics)
+#target_link_libraries(HALDXGame PRIVATE Physics)
 target_link_libraries(HALDXGame PRIVATE DX)
+
+set_target_properties(HALDXGame PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")

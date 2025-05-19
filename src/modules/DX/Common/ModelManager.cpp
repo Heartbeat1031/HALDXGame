@@ -10,7 +10,8 @@
 #include <assimp/scene.h>
 
 using namespace DirectX;
-void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view filename)
+
+void DXModel::CreateFromFile(DXModel& model, ID3D11Device* device, std::string_view filename)
 {
     using namespace Assimp;
     namespace fs = std::filesystem;
@@ -230,7 +231,7 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
     }
 }
 
-void Model::CreateFromGeometry(Model& model, ID3D11Device* device, const GeometryData& data, bool isDynamic)
+void DXModel::CreateFromGeometry(DXModel& model, ID3D11Device* device, const GeometryData& data, bool isDynamic)
 {
     // 默认材质
     model.materials = { Material{} };
@@ -293,7 +294,7 @@ void Model::CreateFromGeometry(Model& model, ID3D11Device* device, const Geometr
     }
 }
 
-void Model::SetDebugObjectName(std::string_view name)
+void DXModel::SetDebugObjectName(std::string_view name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
     std::string baseStr = name.data();
@@ -359,29 +360,29 @@ void ModelManager::Init(ID3D11Device* device)
     m_pDevice->GetImmediateContext(m_pDeviceContext.ReleaseAndGetAddressOf());
 }
 
-Model* ModelManager::CreateFromFile(std::string_view filename)
+DXModel* ModelManager::CreateFromFile(std::string_view filename)
 {
     return CreateFromFile(filename, filename);
 }
 
-Model* ModelManager::CreateFromFile(std::string_view name, std::string_view filename)
+DXModel* ModelManager::CreateFromFile(std::string_view name, std::string_view filename)
 {
     XID modelID = StringToID(name);
     auto& model = m_Models[modelID];
-    Model::CreateFromFile(model, m_pDevice.Get(), filename);
+    DXModel::CreateFromFile(model, m_pDevice.Get(), filename);
     return &model;
 }
 
-Model* ModelManager::CreateFromGeometry(std::string_view name, const GeometryData& data, bool isDynamic)
+DXModel* ModelManager::CreateFromGeometry(std::string_view name, const GeometryData& data, bool isDynamic)
 {
     XID modelID = StringToID(name);
     auto& model = m_Models[modelID];
-    Model::CreateFromGeometry(model, m_pDevice.Get(), data, isDynamic);
+    DXModel::CreateFromGeometry(model, m_pDevice.Get(), data, isDynamic);
 
     return &model;
 }
 
-const Model* ModelManager::GetModel(std::string_view name) const
+const DXModel* ModelManager::GetModel(std::string_view name) const
 {
     XID nameID = StringToID(name);
     if (auto it = m_Models.find(nameID); it != m_Models.end())
@@ -389,7 +390,7 @@ const Model* ModelManager::GetModel(std::string_view name) const
     return nullptr;
 }
 
-Model* ModelManager::GetModel(std::string_view name)
+DXModel* ModelManager::GetModel(std::string_view name)
 {
     XID nameID = StringToID(name);
     if (m_Models.count(nameID))
