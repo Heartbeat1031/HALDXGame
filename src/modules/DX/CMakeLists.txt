@@ -1,28 +1,70 @@
-﻿
-# 包含头文件目录
-include_directories(${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
+cmake_minimum_required(VERSION 3.14)
 
-# 编译 DX 静态库
-file(GLOB DX_SRC
-        "*.cpp"
-)
+set(CMAKE_CXX_STANDARD 17)
+add_compile_definitions(UNICODE _UNICODE)
+if (WIN7_SYSTEM_SUPPORT MATCHES ON)
+    add_compile_definitions(_WIN32_WINNT=0x601)
+endif()
 
-add_library(DX STATIC ${DX_SRC})
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-target_compile_options(DX PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-# 添加 DirectXTK 头文件目录
-target_link_libraries(DX
-        PUBLIC
-        d3d11
-        dxgi
-        dxguid
-        uuid
-)
+aux_source_directory(. DIR_SRCS)
+file(GLOB HLSL_FILES Shaders/*.hlsl Shaders/*.hlsli)
+file(GLOB HEADER_FILES ./*.h)
 
-target_precompile_headers(DX PRIVATE pch.h)
+foreach(HLSL_FILE ${HLSL_FILES})
 
-target_link_libraries(DX PUBLIC DirectXTK)
-target_include_directories(DX PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
+    get_filename_component(HLSL_FBASENAME_WE ${HLSL_FILE} NAME_WE)
+    string(CONCAT HLSL_FNAME_WE ${HLSL_FDIR} / ${HLSL_FBASENAME_WE})
 
-target_link_libraries(DX PUBLIC assimp)
-target_link_libraries(DX PUBLIC ImGui)
+    string(LENGTH ${HLSL_FBASENAME_WE} LEN_FNAME_WE)
+    math(EXPR LEN_FNAME_WE "${LEN_FNAME_WE}-2")
+    string(SUBSTRING ${HLSL_FBASENAME_WE} ${LEN_FNAME_WE} 2 ENTRY_POINT)
+    string(TOLOWER ${ENTRY_POINT} SHADER_TYPE)
+
+    if ("${SHADER_TYPE}" STREQUAL "vs") 
+        set(SHADER_TYPE "Vertex")
+    elseif("${SHADER_TYPE}" STREQUAL "hs") 
+        set(SHADER_TYPE "Hull")
+    elseif("${SHADER_TYPE}" STREQUAL "ds") 
+        set(SHADER_TYPE "Domain")
+    elseif("${SHADER_TYPE}" STREQUAL "gs") 
+        set(SHADER_TYPE "Geometry")
+    elseif("${SHADER_TYPE}" STREQUAL "ps")
+        set(SHADER_TYPE "Pixel")
+    elseif("${SHADER_TYPE}" STREQUAL "cs")
+        set(SHADER_TYPE "Compute")
+    endif()
+    set_source_files_properties(${HLSL_FILE} PROPERTIES
+                                VS_SHADER_OBJECT_FILE_NAME Shaders/${HLSL_FBASENAME_WE}.cso
+                                VS_SHADER_TYPE ${SHADER_TYPE}
+                                VS_SHADER_MODEL 5.0
+                                VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
+                                VS_SHADER_DISABLE_OPTIMIZATIONS $<$<CONFIG:Debug>:true>
+                                VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
+endforeach()
+
+add_executable(19_Meshes WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
+target_link_libraries(19_Meshes d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
+
+# ImGui
+target_link_libraries(19_Meshes ImGui)
+file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+# Assimp
+set_target_properties(19_Meshes PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
+
+# Common
+target_link_libraries(19_Meshes Common)
+
+
+source_group("Shaders" FILES ${HLSL_FILES})
+set_target_properties(19_Meshes PROPERTIES OUTPUT_NAME "19 Meshes")
+
+set_target_properties(19_Meshes PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(19_Meshes PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(19_Meshes PROPERTIES FOLDER "Project 19-")
+
+
+
