@@ -3,19 +3,19 @@ add_library(Physics STATIC
 )
 
 target_include_directories(Physics PUBLIC
-        ${CMAKE_SOURCE_DIR}/third_party/JoltPhysics/Jolt
+        ${CMAKE_SOURCE_DIR}/third_party/JoltPhysics
 )
 
 target_link_libraries(Physics PUBLIC Jolt)
 
 add_executable(PhysicsDemo
-        main.cpp
+        Main.cpp
 )
 
+# 添加 include 路径（Jolt 的头文件）
 target_include_directories(PhysicsDemo PRIVATE
         ${CMAKE_SOURCE_DIR}/third_party/JoltPhysics/Jolt
 )
 
-target_link_libraries(PhysicsDemo PRIVATE Physics Jolt)
-
-set_target_properties(PhysicsDemo PROPERTIES INTERPROCEDURAL_OPTIMIZATION FALSE)
+# 链接 Jolt 库（已经由 add_subdirectory 定义）
+target_link_libraries(PhysicsDemo PRIVATE Jolt)

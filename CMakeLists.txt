@@ -76,14 +76,15 @@ add_custom_target(copy_assets ALL
 )
 
 # third_party ディレクトリの追加
+set(USE_STATIC_MSVC_RUNTIME_LIBRARY OFF CACHE BOOL "Use dynamic CRT for JoltPhysics" FORCE)
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
-add_subdirectory(third_party/assimp)
-add_subdirectory(third_party/ImGui)
+add_subdirectory(third_party/assimp assimp)
+add_subdirectory(third_party/ImGui ImGui)
 
 #モジュールの追加
 add_subdirectory(src/modules/GameFramework)
 add_subdirectory(src/modules/Physics)
-add_subdirectory(src/modules/DX)
+add_subdirectory(src/modules/DX DX)
 
 # HALDXGame のソースコード
 add_executable(HALDXGame src/main.cpp ${HLSL_FILES})
