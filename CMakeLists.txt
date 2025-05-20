@@ -93,6 +93,7 @@ file(GLOB_RECURSE GAMEPLAY_CPP_FILES src/gameplay/*.cpp)
 file(GLOB_RECURSE GAMEPLAY_HEADER_FILES src/gameplay/*.h)
 source_group("base" FILES ${BASE_CPP_FILES} ${BASE_HEADER_FILES})
 source_group("gameplay" FILES ${GAMEPLAY_CPP_FILES} ${GAMEPLAY_HEADER_FILES})
+source_group("shaders" FILES ${HLSL_FILES})
 
 # HALDXGame のソースコード
 add_executable(HALDXGame
@@ -110,9 +111,12 @@ target_link_libraries(HALDXGame PRIVATE GameFramework)
 target_link_libraries(HALDXGame PRIVATE Physics)
 target_link_libraries(HALDXGame PRIVATE DX)
 
-target_include_directories(HALDXGame PRIVATE
-        ${CMAKE_SOURCE_DIR}/src/modules/DX
-)
-source_group("shaders" FILES ${HLSL_FILES})
+file(GLOB_RECURSE ALL_INCLUDE_DIRS LIST_DIRECTORIES true "${PROJECT_SOURCE_DIR}/src/*")
+foreach(dir ${ALL_INCLUDE_DIRS})
+  if(IS_DIRECTORY ${dir})
+    target_include_directories(HALDXGame PRIVATE ${dir})
+  endif()
+endforeach()
+
 add_dependencies(HALDXGame copy_assets)
 set_target_properties(HALDXGame PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
