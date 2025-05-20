@@ -26,7 +26,7 @@ endif()
 set(BUILD_DIRECTXTK_WERROR OFF CACHE BOOL "" FORCE)
 set(USE_DIRECTX_MATH TRUE CACHE BOOL "" FORCE)
 
-file(GLOB HLSL_FILES Shaders/*.hlsl Shaders/*.hlsli)
+file(GLOB HLSL_FILES shaders/*.hlsl shaders/*.hlsli)
 foreach(HLSL_FILE ${HLSL_FILES})
   get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
   get_filename_component(HLSL_FBASENAME_WE ${HLSL_FILE} NAME_WE)
@@ -51,7 +51,7 @@ foreach(HLSL_FILE ${HLSL_FILES})
     set(SHADER_TYPE "Compute")
   endif()
   set_source_files_properties(${HLSL_FILE} PROPERTIES
-          VS_SHADER_OBJECT_FILE_NAME Shaders/${HLSL_FBASENAME_WE}.cso
+          VS_SHADER_OBJECT_FILE_NAME shaders/${HLSL_FBASENAME_WE}.cso
           VS_SHADER_TYPE ${SHADER_TYPE}
           VS_SHADER_MODEL 5.0
           VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
@@ -99,6 +99,6 @@ target_link_libraries(HALDXGame PRIVATE DX)
 target_include_directories(HALDXGame PRIVATE
         ${CMAKE_SOURCE_DIR}/src/modules/DX
 )
-source_group("Shaders" FILES ${HLSL_FILES})
+source_group("shaders" FILES ${HLSL_FILES})
 add_dependencies(HALDXGame copy_assets)
 set_target_properties(HALDXGame PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")

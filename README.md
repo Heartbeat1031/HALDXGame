@@ -17,16 +17,17 @@
 5. Visual Studio で HALDXGame フォルダを開いた後、特に問題がなければしばらく待つと CMake による初期構成が自動で実行されます。
 
 ### プロジェクト構成
-- HALDXGame
-  - src : 内部ソースコード
-     - modules : ソースコードモジュール
-       - GameFramework : ゲームフレームワーク
-       - Physics : 物理エンジン
-     - main.cpp : メイン関数
-  - third_party : 外部ライブラリ
-    - DirectXTK : DirectX 用のツールキット
-    - imgui : GUI ライブラリ
-    - JoltPhysics : 物理エンジン
+- assets : アセット
+- shaders : シェーダー
+- src : 内部ソースコード
+  - main.cpp : メイン関数
+  - modules : ソースコードモジュール
+    - GameFramework : ゲームフレームワーク
+    - Physics : 物理エンジン
+- third_party : 外部ライブラリ
+  - imgui : GUI ライブラリ
+  - JoltPhysics : 物理エンジン
+  - assimp: 3D モデル読み込みライブラリ
 
 ### エラーが出た場合は
 1.プロジェクトのルートディレクトリで以下の更新コマンドを実行してください。通常の更新ではサードパーティのプロジェクトが更新されないためです。
