@@ -68,50 +68,23 @@ bool GameApp::Init() {
 
     // ******************
     // 初始化游戏对象
-    //
+    //交付给子类
 
-    // 初始化地板
-    AddModel("assets\\models\\ground_19.obj");
-    ModelObject &house = GetModelObject(AddModel("assets\\models\\house.obj"));
-    // 获取房屋包围盒
-    XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
-    BoundingBox houseBox = house.GetModel()->boundingbox;
-    houseBox.Transform(houseBox, S);
-    // 让房屋底部紧贴地面
-    Transform &houseTransform = house.GetTransform();
-    houseTransform.SetScale(0.015f, 0.015f, 0.015f);
-    houseTransform.SetPosition(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 1.0f), 0.0f);
     return true;
 }
 
-void GameApp::UpdateScene(float dt) {
-    // 获取子类
-    auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(m_pCamera);
+void GameApp::PreUpdate(float dt) {
+}
 
-    // ******************
-    // 第三人称摄像机的操作
-    //
+void GameApp::Update(float dt) {
+}
 
-    ImGuiIO &io = ImGui::GetIO();
-    // 绕物体旋转
-    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
-        cam3rd->RotateX(io.MouseDelta.y * 0.01f);
-        cam3rd->RotateY(io.MouseDelta.x * 0.01f);
-    }
-    cam3rd->Approach(-io.MouseWheel * 1.0f);
-
-    if (ImGui::Begin("Meshes")) {
-        ImGui::Text("Third Person Mode");
-        ImGui::Text("Hold the right mouse button and drag the view");
-    }
-    ImGui::End();
-    ImGui::Render();
-
+void GameApp::PostUpdate(float dt) {
     m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
     m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 }
 
-void GameApp::DrawScene() {
+void GameApp::Draw() {
     // 创建后备缓冲区的渲染目标视图
     if (m_FrameCount < m_BackBufferCount) {
         ComPtr<ID3D11Texture2D> pBackBuffer;

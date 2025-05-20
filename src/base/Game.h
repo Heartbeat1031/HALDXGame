@@ -10,5 +10,5 @@ public:
     ~Game() override;
 
     bool Init() override;
-    void UpdateScene(float dt) override;
+    void Update(float dt) override;
 };

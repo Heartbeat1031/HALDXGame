@@ -20,18 +20,19 @@ private:
     ModelManager m_ModelManager;
     BasicEffect m_BasicEffect;                                               // 对象渲染特效管理
     std::unique_ptr<Depth2D> m_pDepthTexture;                 // 深度缓冲区
-    std::shared_ptr<ThirdPersonCamera> m_pCamera;			// 摄像机
     SoAStorage<ModelObject> m_ModelObjectStorage;	   // 模型对象存储
-    bool InitResource();
 
+protected:
+    std::shared_ptr<ThirdPersonCamera> m_pCamera;			// 摄像机
+    bool Init() override;
+    void OnResize() override;
+    void PreUpdate(float dt) override;
+    void Update(float dt) override;
+    void PostUpdate(float dt) override;
+    void Draw() override;
 public:
     GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~GameApp() override;
-
-    bool Init() override;
-    void OnResize() override;
-    void UpdateScene(float dt) override;
-    void DrawScene() override;
 
     SoAHandle GameApp::AddModel(std::string_view filename);
     ModelObject &GetModelObject(SoAHandle handle);

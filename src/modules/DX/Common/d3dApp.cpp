@@ -90,8 +90,10 @@ int D3DApp::Run()
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 ImGui::NewFrame();
-                UpdateScene(m_Timer.DeltaTime());
-                DrawScene();
+                PreUpdate(m_Timer.DeltaTime());
+                Update(m_Timer.DeltaTime());
+                PostUpdate(m_Timer.DeltaTime());
+                Draw();
                 m_FrameCount++;
             } else {
                 Sleep(100);

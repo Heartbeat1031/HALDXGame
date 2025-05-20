@@ -32,8 +32,10 @@ public:
     // 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
     virtual bool Init();                      // 该父类方法需要初始化窗口、Direct2D和Direct3D部分
     virtual void OnResize();                  // 该父类方法需要在窗口大小变动的时候调用
-    virtual void UpdateScene(float dt) = 0;   // 子类需要实现该方法，完成每一帧的更新
-    virtual void DrawScene() = 0;             // 子类需要实现该方法，完成每一帧的绘制
+    virtual void PreUpdate(float dt) = 0; // 子类需要实现该方法，完成每一帧的更新
+    virtual void Update(float dt) = 0;   // 子类需要实现该方法，完成每一帧的更新
+    virtual void PostUpdate(float dt) = 0; // 子类需要实现该方法，完成每一帧的更新
+    virtual void Draw() = 0;             // 子类需要实现该方法，完成每一帧的绘制
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam); // 窗口的消息回调函数
     
 protected:
