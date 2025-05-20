@@ -33,6 +33,7 @@ bool GameApp::Init()
     return true;
 }
 
+//
 void GameApp::OnResize()
 {
     D3DApp::OnResize();
