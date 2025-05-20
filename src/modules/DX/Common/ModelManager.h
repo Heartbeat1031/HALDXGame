@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef MODEL_MANAGER_H
-#define MODEL_MANAGER_H
-
 #include "WinMin.h"
 #include "Geometry.h"
 #include "Material.h"
@@ -57,6 +54,3 @@ private:
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
     std::unordered_map<size_t, Model> m_Models;
 };
-
-
-#endif // MODELMANAGER_H
