@@ -14,6 +14,24 @@ bool Game::Init() {
         return false;
     }
 
+    // 加载字体
+    ImGuiIO& io = ImGui::GetIO();
+    ImFontConfig config;
+    config.OversampleH = 1;
+    config.OversampleV = 1;
+    config.PixelSnapH = true;
+    // 主字体：加载简体中文字体
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+    // 合并日文
+    config.MergeMode = true;
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ja.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesJapanese());
+    // 合并韩文
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ko.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesKorean());
+    // 合并拉丁字母
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-latin.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesDefault());
+
+
+    // 加载模式测试
     // 初始化地板
     AddModel("assets\\models\\ground_19.obj");
     ModelObject &house = GetModelObject(AddModel("assets\\models\\house.obj"));
@@ -41,9 +59,10 @@ void Game::Update(float dt) {
     }
     m_pCamera->Approach(-io.MouseWheel * 1.0f);
 
-    if (ImGui::Begin("Meshes")) {
-        ImGui::Text("Third Person Mode");
-        ImGui::Text("Hold the right mouse button and drag the view");
+    if (ImGui::Begin("メッシュ")) {
+        ImGui::Text("三人称モード");
+        ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
+        ImGui::Text("日本語と中国语と한국인をテストします");
     }
     ImGui::End();
     ImGui::Render();
