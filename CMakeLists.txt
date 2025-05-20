@@ -100,8 +100,6 @@ add_executable(HALDXGame
         ${HLSL_FILES}
         ${BASE_CPP_FILES}
         ${GAMEPLAY_CPP_FILES}
-        src/base/Game.cpp
-        src/base/Game.h
 )
 # UTF-8 文字コードのサポート
 target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
