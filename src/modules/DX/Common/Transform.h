@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
-
 #include <DirectXMath.h>
 
 class Transform
@@ -263,7 +260,5 @@ private:
     DirectX::XMFLOAT4 m_Rotation = { 0.0f, 0.0f, 0.0f, 1.0f };		// 旋转四元数
     DirectX::XMFLOAT3 m_Position = {};								// 位置
 };
-
-#endif
 
 

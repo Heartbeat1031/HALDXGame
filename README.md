@@ -12,7 +12,7 @@
 3. 上記のインストールが完了したら、任意の場所にフォルダを作成してください。名前はHALDXGameなどがおすすめです。
 4. 作成したフォルダ内でコマンドプロンプトを開き、以下のコマンドを実行します：
    ```cmd
-   git clone --recurse-submodules https://github.com/ohs40651/HALDXGame.git
+   git clone --recurse-submodules https://github.com/Heartbeat1031/HALDXGame.git
    ```
 5. Visual Studio で HALDXGame フォルダを開いた後、特に問題がなければしばらく待つと CMake による初期構成が自動で実行されます。
 

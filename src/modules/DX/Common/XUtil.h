@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef XUTIL_H
-#define XUTIL_H
-
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
@@ -103,6 +100,3 @@ namespace XMath
         return (1.0f - t) * a + t * b;
     }
 }
-
-
-#endif
