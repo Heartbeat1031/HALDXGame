@@ -20,11 +20,12 @@ bool Game::Init() {
     config.OversampleH = 1;
     config.OversampleV = 1;
     config.PixelSnapH = true;
-    // 主字体：加载简体中文字体
-    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    // 合并日文
-    config.MergeMode = true;
+    // 主字体：加载日文
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ja.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesJapanese());
+    // 合并中文字体
+    config.MergeMode = true;
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hant.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
     // 合并韩文
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ko.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesKorean());
     // 合并拉丁字母
@@ -62,7 +63,7 @@ void Game::Update(float dt) {
     if (ImGui::Begin("メッシュ")) {
         ImGui::Text("三人称モード");
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
-        ImGui::Text("日本語と中国语と한국인をテストします");
+        ImGui::Text("日本語と简体と繁體中文と한국인をテストします");
     }
     ImGui::End();
     ImGui::Render();
