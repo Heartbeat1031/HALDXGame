@@ -87,8 +87,22 @@ add_subdirectory(src/modules/GameFramework)
 add_subdirectory(src/modules/Physics)
 add_subdirectory(src/modules/DX DX)
 
+file(GLOB_RECURSE BASE_CPP_FILES src/base/*.cpp)
+file(GLOB_RECURSE BASE_HEADER_FILES src/base/*.h)
+file(GLOB_RECURSE GAMEPLAY_CPP_FILES src/gameplay/*.cpp)
+file(GLOB_RECURSE GAMEPLAY_HEADER_FILES src/gameplay/*.h)
+source_group("base" FILES ${BASE_CPP_FILES} ${BASE_HEADER_FILES})
+source_group("gameplay" FILES ${GAMEPLAY_CPP_FILES} ${GAMEPLAY_HEADER_FILES})
+
 # HALDXGame のソースコード
-add_executable(HALDXGame src/main.cpp ${HLSL_FILES})
+add_executable(HALDXGame
+        src/main.cpp
+        ${HLSL_FILES}
+        ${BASE_CPP_FILES}
+        ${GAMEPLAY_CPP_FILES}
+        src/base/Game.cpp
+        src/base/Game.h
+)
 # UTF-8 文字コードのサポート
 target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 

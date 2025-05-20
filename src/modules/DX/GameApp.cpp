@@ -8,12 +8,12 @@ GameApp::GameApp(HINSTANCE hInstance, const std::wstring &windowName, int initWi
     : D3DApp(hInstance, windowName, initWidth, initHeight) {
 }
 
-GameApp::~GameApp() {
-}
+GameApp::~GameApp() = default;
 
 bool GameApp::Init() {
-    if (!D3DApp::Init())
+    if (!D3DApp::Init()) {
         return false;
+    }
 
     m_TextureManager.Init(m_pd3dDevice.Get());
     m_ModelManager.Init(m_pd3dDevice.Get());
@@ -24,13 +24,7 @@ bool GameApp::Init() {
     if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
-    if (!InitResource())
-        return false;
 
-    return true;
-}
-
-bool GameApp::InitResource() {
     // ******************
     // 初始化摄像机
     //
