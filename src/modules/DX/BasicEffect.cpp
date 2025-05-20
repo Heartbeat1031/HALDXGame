@@ -21,7 +21,7 @@ class BasicEffect::Impl
 {
 public:
     // 必须显式指定
-    Impl() {}
+    Impl() = default;
     ~Impl() = default;
 
 public:
@@ -46,7 +46,7 @@ public:
 namespace
 {
     // BasicEffect单例
-    static BasicEffect* g_pInstance = nullptr;
+    BasicEffect* g_pInstance = nullptr;
 }
 
 BasicEffect::BasicEffect()
@@ -57,9 +57,7 @@ BasicEffect::BasicEffect()
     pImpl = std::make_unique<BasicEffect::Impl>();
 }
 
-BasicEffect::~BasicEffect()
-{
-}
+BasicEffect::~BasicEffect() = default;
 
 BasicEffect::BasicEffect(BasicEffect&& moveFrom) noexcept
 {

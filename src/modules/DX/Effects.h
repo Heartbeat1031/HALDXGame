@@ -3,8 +3,7 @@
 // Simple effect management framework.
 //***************************************************************************************
 
-#ifndef EFFECTS_H
-#define EFFECTS_H
+#pragma once
 
 #include <IEffect.h>
 #include <Material.h>
@@ -16,7 +15,7 @@ class BasicEffect : public IEffect, public IEffectTransform,
 {
 public:
     BasicEffect();
-    virtual ~BasicEffect() override;
+    ~BasicEffect() override;
 
     BasicEffect(BasicEffect&& moveFrom) noexcept;
     BasicEffect& operator=(BasicEffect&& moveFrom) noexcept;
@@ -30,7 +29,6 @@ public:
     //
     // IEffectTransform
     //
-
     void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
     void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
     void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
@@ -56,7 +54,7 @@ public:
     void SetRenderDefault();
     
     // 各种类型灯光允许的最大数目
-    static const int maxLights = 5;
+    static constexpr int maxLights = 5;
 
     void SetDirLight(uint32_t pos, const DirectionalLight& dirLight);
     void SetPointLight(uint32_t pos, const PointLight& pointLight);
@@ -71,10 +69,3 @@ private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
 };
-
-
-
-
-
-
-#endif
