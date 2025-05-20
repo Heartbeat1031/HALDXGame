@@ -11,7 +11,6 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 aux_source_directory(. DIR_SRCS)
 file(GLOB HEADER_FILES ./*.h)
 
-
 add_library(DX ${DIR_SRCS} ${HEADER_FILES})
 target_link_libraries(DX d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 
@@ -26,6 +25,9 @@ set_target_properties(DX PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRA
 # Common
 add_subdirectory(Common)
 target_link_libraries(DX Common)
+
+# GameKit
+target_link_libraries(DX GameKit)
 
 set_target_properties(DX PROPERTIES OUTPUT_NAME "DX")
 

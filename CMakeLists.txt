@@ -82,6 +82,7 @@ add_subdirectory(third_party/assimp assimp)
 add_subdirectory(third_party/ImGui ImGui)
 
 #モジュールの追加
+add_subdirectory(src/modules/GameKit)
 add_subdirectory(src/modules/GameFramework)
 add_subdirectory(src/modules/Physics)
 add_subdirectory(src/modules/DX DX)
@@ -92,6 +93,7 @@ add_executable(HALDXGame src/main.cpp ${HLSL_FILES})
 target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 # HALDXGame のインクルードディレクトリ
+target_link_libraries(HALDXGame PRIVATE GameKit)
 target_link_libraries(HALDXGame PRIVATE GameFramework)
 target_link_libraries(HALDXGame PRIVATE Physics)
 target_link_libraries(HALDXGame PRIVATE DX)

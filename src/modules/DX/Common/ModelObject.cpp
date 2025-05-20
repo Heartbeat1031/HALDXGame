@@ -1,5 +1,5 @@
 #include "XUtil.h"
-#include "GameObject.h"
+#include "ModelObject.h"
 #include "DXTrace.h"
 #include "ModelManager.h"
 
@@ -11,17 +11,17 @@ struct InstancedData
     XMMATRIX worldInvTranspose;
 };
 
-Transform& GameObject::GetTransform()
+Transform& ModelObject::GetTransform()
 {
     return m_Transform;
 }
 
-const Transform& GameObject::GetTransform() const
+const Transform& ModelObject::GetTransform() const
 {
     return m_Transform;
 }
 
-void GameObject::FrustumCulling(const BoundingFrustum& frustumInWorld)
+void ModelObject::FrustumCulling(const BoundingFrustum& frustumInWorld)
 {
     size_t sz = m_pModel->meshdatas.size();
     m_InFrustum = false;
@@ -36,7 +36,7 @@ void GameObject::FrustumCulling(const BoundingFrustum& frustumInWorld)
     }
 }
 
-void GameObject::CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld)
+void ModelObject::CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld)
 {
     size_t sz = m_pModel->meshdatas.size();
     m_InFrustum = false;
@@ -51,7 +51,7 @@ void GameObject::CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld)
     }
 }
 
-void GameObject::CubeCulling(const DirectX::BoundingBox& aabbInWorld)
+void ModelObject::CubeCulling(const DirectX::BoundingBox& aabbInWorld)
 {
     size_t sz = m_pModel->meshdatas.size();
     m_InFrustum = false;
@@ -65,29 +65,29 @@ void GameObject::CubeCulling(const DirectX::BoundingBox& aabbInWorld)
     }
 }
 
-void GameObject::SetModel(const Model* pModel)
+void ModelObject::SetModel(const Model* pModel)
 {
     m_pModel = pModel;
 }
 
-const Model* GameObject::GetModel() const
+const Model* ModelObject::GetModel() const
 {
     return m_pModel;
 }
 
-BoundingBox GameObject::GetLocalBoundingBox() const
+BoundingBox ModelObject::GetLocalBoundingBox() const
 {
     return m_pModel ? m_pModel->boundingbox : DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
 }
 
-BoundingBox GameObject::GetLocalBoundingBox(size_t idx) const
+BoundingBox ModelObject::GetLocalBoundingBox(size_t idx) const
 {
     if (!m_pModel || m_pModel->meshdatas.size() >= idx)
         return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
     return m_pModel->meshdatas[idx].m_BoundingBox;
 }
 
-BoundingBox GameObject::GetBoundingBox() const
+BoundingBox ModelObject::GetBoundingBox() const
 {
     if (!m_pModel)
         return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
@@ -96,7 +96,7 @@ BoundingBox GameObject::GetBoundingBox() const
     return box;
 }
 
-BoundingBox GameObject::GetBoundingBox(size_t idx) const
+BoundingBox ModelObject::GetBoundingBox(size_t idx) const
 {
     if (!m_pModel || m_pModel->meshdatas.size() >= idx)
         return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
@@ -105,7 +105,7 @@ BoundingBox GameObject::GetBoundingBox(size_t idx) const
     return box;
 }
 
-BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
+BoundingOrientedBox ModelObject::GetBoundingOrientedBox() const
 {
     if (!m_pModel)
         return DirectX::BoundingOrientedBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3(), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -114,7 +114,7 @@ BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
     obb.Transform(obb, m_Transform.GetLocalToWorldMatrixXM());
     return obb;
 }
-BoundingOrientedBox GameObject::GetBoundingOrientedBox(size_t idx) const
+BoundingOrientedBox ModelObject::GetBoundingOrientedBox(size_t idx) const
 {
     if (!m_pModel || m_pModel->meshdatas.size() >= idx)
         return DirectX::BoundingOrientedBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3(), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -124,7 +124,7 @@ BoundingOrientedBox GameObject::GetBoundingOrientedBox(size_t idx) const
     return obb;
 }
 
-void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
+void ModelObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
 {
     if (!m_InFrustum || !deviceContext)
         return;

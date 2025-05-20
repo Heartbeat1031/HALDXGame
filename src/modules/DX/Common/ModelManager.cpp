@@ -365,6 +365,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
     return CreateFromFile(filename, filename);
 }
 
+// 多用图创建模型 比如路径下的模型 创建多个子模型等等
 Model* ModelManager::CreateFromFile(std::string_view name, std::string_view filename)
 {
     XID modelID = StringToID(name);

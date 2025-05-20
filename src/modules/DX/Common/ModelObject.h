@@ -13,21 +13,21 @@
 
 struct Model;
 
-class GameObject
+class ModelObject
 {
 public:
     template <class T>
     using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 
-    GameObject() = default;
-    ~GameObject() = default;
+    ModelObject() = default;
+    ~ModelObject() = default;
 
-    GameObject(const GameObject&) = default;
-    GameObject& operator=(const GameObject&) = default;
+    ModelObject(const ModelObject&) = default;
+    ModelObject& operator=(const ModelObject&) = default;
 
-    GameObject(GameObject&&) = default;
-    GameObject& operator=(GameObject&&) = default;
+    ModelObject(ModelObject&&) = default;
+    ModelObject& operator=(ModelObject&&) = default;
 
     // 获取物体变换
     Transform& GetTransform();
