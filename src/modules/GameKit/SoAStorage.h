@@ -22,6 +22,17 @@ class SoAStorage {
     std::vector<bool> actives;
     std::vector<SoAHandle> freeIndices;
 
+    // 获取某个字段下的 unique_ptr<T>&
+    template<typename T>
+    std::unique_ptr<T> &getAt(SoAHandle index) {
+        return std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[index];
+    }
+
+    // 设置某个索引下的所有字段
+    void setTupleAt(SoAHandle index, std::unique_ptr<ComponentTypes> &&... components) {
+        ((std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[index] = std::move(components)), ...);
+    }
+
 public:
     // 添加节点并返回句柄，必须传入指针（或 std::make_unique）
     SoAHandle Add(std::unique_ptr<ComponentTypes> &&... components) {
@@ -71,15 +82,21 @@ public:
         return *std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[handle];
     }
 
-private:
-    // 获取某个字段下的 unique_ptr<T>&
-    template<typename T>
-    std::unique_ptr<T> &getAt(SoAHandle index) {
-        return std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[index];
+    // 清空所有数据但保留已分配的内存容量
+    void Clear() {
+        for (SoAHandle i = 0; i < actives.size(); ++i) {
+            (std::get<std::vector<std::unique_ptr<ComponentTypes>>>(dataColumns)[i].reset(), ...);
+        }
+        actives.clear();
+        freeIndices.clear();
     }
 
-    // 设置某个索引下的所有字段
-    void setTupleAt(SoAHandle index, std::unique_ptr<ComponentTypes> &&... components) {
-        ((std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[index] = std::move(components)), ...);
+    // 清空所有数据并释放内存
+    void Reset() {
+        (std::get<std::vector<std::unique_ptr<ComponentTypes>>>(dataColumns).clear(), ...);
+        actives.clear();
+        actives.shrink_to_fit();
+        freeIndices.clear();
+        freeIndices.shrink_to_fit();
     }
 };
