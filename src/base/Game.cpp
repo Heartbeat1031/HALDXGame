@@ -32,7 +32,7 @@ bool Game::Init() {
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-latin.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesDefault());
 
 
-    // 加载模式测试
+    // 加载模型测试
     // 初始化地板
     AddModel("assets\\models\\ground_19.obj");
     ModelObject &house = GetModelObject(AddModel("assets\\models\\house.obj"));
