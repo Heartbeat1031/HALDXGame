@@ -14,16 +14,12 @@ bool GameApp::Init() {
     if (!D3DApp::Init()) {
         return false;
     }
-
     m_TextureManager.Init(m_pd3dDevice.Get());
     m_ModelManager.Init(m_pd3dDevice.Get());
-
     // 务必先初始化所有渲染状态，以供下面的特效使用
     RenderStates::InitAll(m_pd3dDevice.Get());
-
     if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
         return false;
-
 
     // ******************
     // 初始化摄像机

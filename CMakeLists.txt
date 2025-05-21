@@ -63,16 +63,9 @@ endforeach()
 set(ASSETS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
 set(ASSETS_BINARY_DIR ${CMAKE_BINARY_DIR}/assets)
 
-add_custom_command(
-        OUTPUT ${ASSETS_BINARY_DIR}/.copied_stamp
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE_DIR} ${ASSETS_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E touch ${ASSETS_BINARY_DIR}/.copied_stamp
-        COMMENT "Copying asset files..."
-        VERBATIM
-)
-
 add_custom_target(copy_assets ALL
-        DEPENDS ${ASSETS_BINARY_DIR}/.copied_stamp
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_SOURCE_DIR} ${ASSETS_BINARY_DIR}
+        COMMENT "asset ファイルを build ディレクトリにコピーする"
 )
 
 # third_party ディレクトリの追加
