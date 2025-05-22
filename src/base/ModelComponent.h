@@ -14,7 +14,7 @@ private:
 public:
     using Component::Component;
     void Init() override;
-    void Update() override;
+    void Update(float dt) override;
     void Uninit() override;
     SoAHandle handle = -1;
 

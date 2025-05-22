@@ -24,8 +24,8 @@ void ModelComponent::Init() {
     Component::Init();
 }
 
-void ModelComponent::Update() {
-    Component::Update();
+void ModelComponent::Update(float dt) {
+    Component::Update(dt);
     CheckTransform();
 }
 

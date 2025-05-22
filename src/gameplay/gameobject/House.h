@@ -10,4 +10,5 @@ public:
     House();
     ~House() override;
     void Init() override;
+    void Update(float dt) override;
 };

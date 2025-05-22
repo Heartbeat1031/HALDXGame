@@ -93,7 +93,7 @@ public:
 
     virtual void Init() {}
     virtual void Uninit() {}
-    virtual void Update() {}
+    virtual void Update(float dt) {}
 
     template <typename T>
     T* AddComponent()
@@ -159,12 +159,12 @@ public:
         m_Component.clear();
     }
 
-    void UpdateBase()
+    void UpdateBase(float dt)
     {
         for (Component* component : m_Component)
         {
-            component->Update();
+            component->Update(dt);
         }
-        Update();
+        Update(dt);
     }
 };

@@ -35,7 +35,7 @@ bool Game::Init() {
 
 void Game::Update(float dt) {
     GameApp::Update(dt);
-    m_Scene->UpdateBase();
+    m_Scene->UpdateBase(dt);
 }
 
 template<typename T>

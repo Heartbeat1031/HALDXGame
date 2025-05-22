@@ -41,10 +41,10 @@ public:
         Uninit();
     }
 
-    void UpdateBase() {
+    void UpdateBase(float dt) {
         for (auto &objectList: m_GameObject) {
             for (GameObject *object: objectList) {
-                object->UpdateBase();
+                object->UpdateBase(dt);
             }
             objectList.remove_if([](GameObject *object) {
                 return object->Destroy();
