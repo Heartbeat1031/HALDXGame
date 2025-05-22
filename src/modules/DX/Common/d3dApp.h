@@ -1,8 +1,4 @@
-
 #pragma once
-
-#ifndef D3DAPP_H
-#define D3DAPP_H
 
 #include <wrl/client.h>
 #include <string>
@@ -23,61 +19,59 @@ public:
     D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     virtual ~D3DApp();
 
-    HINSTANCE AppInst()const;       // 获取应用实例的句柄
-    HWND      MainWnd()const;       // 获取主窗口句柄
-    float     AspectRatio()const;   // 获取屏幕宽高比
+    HINSTANCE AppInst()const;       // アプリケーションインスタンスのハンドルを取得
+    HWND      MainWnd()const;       // メインウィンドウのハンドルを取得
+    float     AspectRatio()const;   // 画面のアスペクト比を取得
 
-    int Run();                      // 运行程序，执行消息事件的循环
+    int Run();                      // アプリケーションを実行し、メッセージループを処理する
 
-    // 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
-    virtual bool Init();                      // 该父类方法需要初始化窗口、Direct2D和Direct3D部分
-    virtual void OnResize();                  // 该父类方法需要在窗口大小变动的时候调用
-    virtual void PreUpdate(float dt) = 0; // 子类需要实现该方法，完成每一帧的更新
-    virtual void Update(float dt) = 0;   // 子类需要实现该方法，完成每一帧的更新
-    virtual void PostUpdate(float dt) = 0; // 子类需要实现该方法，完成每一帧的更新
-    virtual void Draw() = 0;             // 子类需要实现该方法，完成每一帧的绘制
-    virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam); // 窗口的消息回调函数
-    
+    // フレームワークの基本メソッド。派生クラスでオーバーライドする必要がある
+    virtual bool Init();                      // ウィンドウ、Direct2D、Direct3D の初期化を行う
+    virtual void OnResize();                  // ウィンドウサイズ変更時に呼び出される
+    virtual void PreUpdate(float dt) = 0;     // フレームごとの更新前処理（純粋仮想）
+    virtual void Update(float dt) = 0;        // フレームごとの更新処理（純粋仮想）
+    virtual void PostUpdate(float dt) = 0;    // フレームごとの更新後処理（純粋仮想）
+    virtual void Draw() = 0;                  // フレームごとの描画処理（純粋仮想）
+    virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam); // ウィンドウメッセージのコールバック関数
+
 protected:
-    bool InitMainWindow();      // 窗口初始化
-    bool InitDirect3D();        // Direct3D初始化
-    bool InitImGui();           // ImGui初始化
+    bool InitMainWindow();      // ウィンドウの初期化
+    bool InitDirect3D();        // Direct3D の初期化
+    bool InitImGui();           // ImGui の初期化
 
-    void CalculateFrameStats(); // 计算每秒帧数并在窗口显示
+    void CalculateFrameStats(); // フレームレートを計算し、ウィンドウに表示
     ID3D11RenderTargetView* GetBackBufferRTV() { return m_pRenderTargetViews[m_FrameCount % m_BackBufferCount].Get(); }
 
 protected:
-    // 使用模板别名(C++11)简化类型名
+    // テンプレートエイリアスで型名を簡略化（C++11）
     template <class T>
     using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-    HINSTANCE m_hAppInst;        // 应用实例句柄
-    HWND      m_hMainWnd;        // 主窗口句柄
-    bool      m_AppPaused;       // 应用是否暂停
-    bool      m_Minimized;       // 应用是否最小化
-    bool      m_Maximized;       // 应用是否最大化
-    bool      m_Resizing;        // 窗口大小是否变化
+    HINSTANCE m_hAppInst;        // アプリケーションインスタンスハンドル
+    HWND      m_hMainWnd;        // メインウィンドウハンドル
+    bool      m_AppPaused;       // アプリケーションが一時停止中か
+    bool      m_Minimized;       // 最小化されているか
+    bool      m_Maximized;       // 最大化されているか
+    bool      m_Resizing;        // サイズ変更中か
 
-    bool m_IsDxgiFlipModel = false; // 是否使用DXGI翻转模型
-    UINT m_BackBufferCount = 0;		// 后备缓冲区数目
-    UINT m_FrameCount = 0;          // 当前帧
-    ComPtr<ID3D11RenderTargetView> m_pRenderTargetViews[2];     // 所有后备缓冲区对应的渲染目标视图
+    bool m_IsDxgiFlipModel = false; // DXGI フリップモデルを使用するかどうか
+    UINT m_BackBufferCount = 0;     // バックバッファの数
+    UINT m_FrameCount = 0;          // 現在のフレーム数
+    ComPtr<ID3D11RenderTargetView> m_pRenderTargetViews[2]; // 各バックバッファ用のレンダーターゲットビュー
 
-    CpuTimer m_Timer;            // 计时器
+    CpuTimer m_Timer;            // CPU用タイマー
 
     // Direct3D 11
-    ComPtr<ID3D11Device> m_pd3dDevice;                          // D3D11设备
-    ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;	        // D3D11设备上下文
-    ComPtr<IDXGISwapChain> m_pSwapChain;                        // D3D11交换链
+    ComPtr<ID3D11Device> m_pd3dDevice;                          // D3D11 デバイス
+    ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;         // D3D11 デバイスコンテキスト
+    ComPtr<IDXGISwapChain> m_pSwapChain;                        // D3D11 スワップチェーン
     // Direct3D 11.1
-    ComPtr<ID3D11Device1> m_pd3dDevice1;			    		// D3D11.1设备
-    ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;		// D3D11.1设备上下文
-    ComPtr<IDXGISwapChain1> m_pSwapChain1;						// D3D11.1交换链
+    ComPtr<ID3D11Device1> m_pd3dDevice1;                        // D3D11.1 デバイス
+    ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;       // D3D11.1 デバイスコンテキスト
+    ComPtr<IDXGISwapChain1> m_pSwapChain1;                      // D3D11.1 スワップチェーン
 
-    // 派生类应该在构造函数设置好这些自定义的初始参数
-    std::wstring m_MainWndCaption;                              // 主窗口标题
-    int m_ClientWidth;                                          // 视口宽度
-    int m_ClientHeight;                                         // 视口高度
+    // 派生クラスがコンストラクタで設定するパラメータ
+    std::wstring m_MainWndCaption;                             // メインウィンドウのタイトル
+    int m_ClientWidth;                                         // クライアント領域の幅
+    int m_ClientHeight;                                        // クライアント領域の高さ
 };
-
-#endif // D3DAPP_H

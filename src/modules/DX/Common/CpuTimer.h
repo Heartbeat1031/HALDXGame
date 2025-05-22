@@ -1,27 +1,24 @@
 //***************************************************************************************
 // CpuTimer.h by Frank Luna (C) 2011 All Rights Reserved.
 // Modify name from GameTimer.cpp
-// CPU计时器
+// CPU計測タイマー
 //***************************************************************************************
 
 #pragma once
-
-#ifndef CPU_TIMER_H
-#define CPU_TIMER_H
 
 class CpuTimer
 {
 public:
     CpuTimer();
- 
-    float TotalTime()const;     // 返回从Reset()调用之后经过的时间，但不包括暂停期间的
-    float DeltaTime()const;		// 返回帧间隔时间
 
-    void Reset();               // 计时开始前或者需要重置时调用
-    void Start();               // 在开始计时或取消暂停的时候调用
-    void Stop();                // 在需要暂停的时候调用
-    void Tick();                // 在每一帧开始的时候调用
-    bool IsStopped() const;     // 计时器是否暂停/结束
+    float TotalTime()const;     // Reset() 呼び出し後の経過時間（停止中の時間は含まない）を返す
+    float DeltaTime()const;     // フレーム間の経過時間を返す
+
+    void Reset();               // 計測を開始する前、またはリセットが必要なときに呼び出す
+    void Start();               // 計測を開始または一時停止を解除するときに呼び出す
+    void Stop();                // 一時停止が必要なときに呼び出す
+    void Tick();                // 毎フレームの冒頭で呼び出す
+    bool IsStopped() const;     // タイマーが一時停止中または終了しているかを確認する
 
 private:
     double m_SecondsPerCount = 0.0;
@@ -35,5 +32,3 @@ private:
 
     bool m_Stopped = false;
 };
-
-#endif // GAMETIMER_H
