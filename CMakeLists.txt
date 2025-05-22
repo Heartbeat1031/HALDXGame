@@ -69,6 +69,7 @@ add_custom_target(copy_assets ALL
 )
 
 # third_party ディレクトリの追加
+add_subdirectory(third_party/DirectXTK DirectXTK)
 set(USE_STATIC_MSVC_RUNTIME_LIBRARY OFF CACHE BOOL "Use dynamic CRT for JoltPhysics" FORCE)
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
 add_subdirectory(third_party/assimp assimp)
@@ -76,7 +77,6 @@ add_subdirectory(third_party/ImGui ImGui)
 
 #モジュールの追加
 add_subdirectory(src/modules/GameKit)
-add_subdirectory(src/modules/GameFramework)
 add_subdirectory(src/modules/Physics)
 add_subdirectory(src/modules/DX DX)
 
@@ -99,10 +99,14 @@ add_executable(HALDXGame
 target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 # HALDXGame のインクルードディレクトリ
+target_link_libraries(HALDXGame PRIVATE DirectXTK)
 target_link_libraries(HALDXGame PRIVATE GameKit)
-target_link_libraries(HALDXGame PRIVATE GameFramework)
 target_link_libraries(HALDXGame PRIVATE Physics)
 target_link_libraries(HALDXGame PRIVATE DX)
+
+target_include_directories(HALDXGame PRIVATE
+        ${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc
+)
 
 file(GLOB_RECURSE ALL_INCLUDE_DIRS LIST_DIRECTORIES true "${PROJECT_SOURCE_DIR}/src/*")
 foreach(dir ${ALL_INCLUDE_DIRS})

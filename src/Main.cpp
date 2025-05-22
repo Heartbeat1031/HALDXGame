@@ -1,6 +1,8 @@
 ﻿#include "GameApp.h"
 #include "Game.h"
+#include  "Global.h"
 
+Game* halgame;
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
                    _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -12,10 +14,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 #if defined(DEBUG) | defined(_DEBUG)
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-    Game theApp(hInstance, L"Meshes", 1280, 720);
-
-    if( !theApp.Init() )
+    halgame = new Game(hInstance, L"Meshes", 1280, 720);
+    if( !halgame->Init() ) {
         return 0;
+    }
 
-    return theApp.Run();
+    return halgame->Run();
 }

@@ -23,7 +23,6 @@ private:
     SoAStorage<ModelObject> m_ModelObjectStorage;	   // 模型对象存储
 
 protected:
-    std::shared_ptr<ThirdPersonCamera> m_pCamera;			// 摄像机
     bool Init() override;
     void OnResize() override;
     void PreUpdate(float dt) override;
@@ -33,6 +32,7 @@ protected:
 public:
     GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~GameApp() override;
+    std::shared_ptr<ThirdPersonCamera> m_pCamera;			// 摄像机
 
     SoAHandle GameApp::AddModel(std::string_view filename);
     ModelObject &GetModelObject(SoAHandle handle);
