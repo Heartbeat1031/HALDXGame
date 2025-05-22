@@ -15,7 +15,7 @@ bool Game::Init() {
         return false;
     }
 
-    // 初始化ImGui
+    // ImGuiを初期化
     ImGuiIO& io = ImGui::GetIO();
     ImFontConfig config;
     config.OversampleH = 1;
