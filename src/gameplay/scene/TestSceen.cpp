@@ -11,7 +11,6 @@ void TestSceen::Init()
 {
     // 初始化地板
     halgame->AddModel("assets\\models\\ground_19.obj");
-
     AddGameObject<House>(1);
 }
 
