@@ -12,16 +12,6 @@ void TestSceen::Init()
     // 初始化地板
     halgame->AddModel("assets\\models\\ground_19.obj");
 
-    // ModelObject &house = halgame->GetModelObject(halgame->AddModel("assets\\models\\house.obj"));
-    // // 获取房屋包围盒
-    // DirectX::XMMATRIX S = DirectX::XMMatrixScaling(0.015f, 0.015f, 0.015f);
-    // DirectX::BoundingBox houseBox = house.GetModel()->boundingbox;
-    // houseBox.Transform(houseBox, S);
-    // // 让房屋底部紧贴地面
-    // Transform &houseTransform = house.GetTransform();
-    // houseTransform.SetScale(0.015f, 0.015f, 0.015f);
-    // float y = -(houseBox.Center.y - houseBox.Extents.y + 1.0f);
-    // houseTransform.SetPosition(0.0f, y, 0.0f);
     AddGameObject<House>(1);
 }
 
