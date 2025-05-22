@@ -15,26 +15,26 @@ using SoAHandle = std::uint32_t;
 
 template<typename... ComponentTypes>
 class SoAStorage {
-    // 每个组件使用 unique_ptr 存储，确保自动释放
+    // 各コンポーネントは unique_ptr で管理し、自動的に解放されるようにします。
     using ComponentStorage = std::tuple<std::vector<std::unique_ptr<ComponentTypes> >...>;
 
     ComponentStorage dataColumns;
     std::vector<bool> actives;
     std::vector<SoAHandle> freeIndices;
 
-    // 获取某个字段下的 unique_ptr<T>&
+    // 特定のメンバ変数の unique_ptr<T>& を取得する
     template<typename T>
     std::unique_ptr<T> &getAt(SoAHandle index) {
         return std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[index];
     }
 
-    // 设置某个索引下的所有字段
+    // 特定のインデックスに対応するすべてのフィールドを設定する
     void setTupleAt(SoAHandle index, std::unique_ptr<ComponentTypes> &&... components) {
         ((std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[index] = std::move(components)), ...);
     }
 
 public:
-    // 添加节点并返回句柄，必须传入指针（或 std::make_unique）
+    // ノードを追加してハンドルを返します。引数にはポインタ（または std::make_unique）で渡す必要があります。
     SoAHandle Add(std::unique_ptr<ComponentTypes> &&... components) {
         SoAHandle index;
 
@@ -53,7 +53,7 @@ public:
         return index;
     }
 
-    // 删除节点，自动释放所有 unique_ptr 管理的对象
+    // 指定ノードを削除し、それに関連付けられた unique_ptr による全オブジェクトを自動的に解放します。
     void Remove(SoAHandle handle) {
         assert(handle < actives.size());
         actives[handle] = false;
@@ -61,7 +61,7 @@ public:
         freeIndices.push_back(handle);
     }
 
-    // 遍历所有活跃节点，传入每个字段的裸引用
+    // アクティブなすべてのノードを対象に、各フィールド（T& 型）への生の参照をコールバック関数に渡します。
     void ForEachActive(const std::function<void(SoAHandle, ComponentTypes &...)> &fn) {
         for (SoAHandle i = 0; i < actives.size(); ++i) {
             if (!actives[i]) continue;
@@ -69,31 +69,31 @@ public:
         }
     }
 
-    // 获取某个字段的引用（解引用 unique_ptr）
+    // unique_ptr をデリファレンスして、特定のフィールドの参照（T&）を取得する
     template<typename T>
     T &Get(SoAHandle handle) {
         assert(handle < actives.size() && actives[handle]);
         return *std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[handle];
     }
 
-    // 获取某个字段的 const 引用
+    // フィールドの const 参照を取得
     template<typename T>
     const T &GetConst(SoAHandle handle) const {
         return *std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[handle];
     }
 
-    // 清空所有数据但保留已分配的内存容量
+    // 全データを削除しますが、確保済みのメモリ容量（capacity）はそのまま保持されます。
     void Clear() {
         for (SoAHandle i = 0; i < actives.size(); ++i) {
-            (std::get<std::vector<std::unique_ptr<ComponentTypes>>>(dataColumns)[i].reset(), ...);
+            (std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[i].reset(), ...);
         }
         actives.clear();
         freeIndices.clear();
     }
 
-    // 清空所有数据并释放内存
+    // 保持している全データを削除し、確保していたメモリも解放します。
     void Reset() {
-        (std::get<std::vector<std::unique_ptr<ComponentTypes>>>(dataColumns).clear(), ...);
+        (std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns).clear(), ...);
         actives.clear();
         actives.shrink_to_fit();
         freeIndices.clear();

@@ -14,15 +14,18 @@ bool GameApp::Init() {
     if (!D3DApp::Init()) {
         return false;
     }
+
     m_TextureManager.Init(m_pd3dDevice.Get());
     m_ModelManager.Init(m_pd3dDevice.Get());
-    // 务必先初始化所有渲染状态，以供下面的特效使用
+
+    // 必ず最初にすべてのレンダリングステートを初期化し、以下のエフェクトで使用できるようにする
     RenderStates::InitAll(m_pd3dDevice.Get());
+
     if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
     // ******************
-    // 初始化摄像机
+    // カメラの初期化
     //
 
     auto camera = std::make_shared<ThirdPersonCamera>();
@@ -41,17 +44,18 @@ bool GameApp::Init() {
     m_BasicEffect.SetEyePos(camera->GetPosition());
 
     // ******************
-    // 初始化不会变化的值
+    // 変更されない値の初期化
     //
 
-    // 环境光
+    // 環境光（ディレクショナルライト）
     DirectionalLight dirLight{};
     dirLight.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     dirLight.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
     m_BasicEffect.SetDirLight(0, dirLight);
-    // 灯光
+
+    // ポイントライト（点光源）
     PointLight pointLight{};
     pointLight.position = XMFLOAT3(0.0f, 20.0f, 0.0f);
     pointLight.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -61,27 +65,29 @@ bool GameApp::Init() {
     pointLight.range = 30.0f;
     m_BasicEffect.SetPointLight(0, pointLight);
 
-
     // ******************
-    // 初始化游戏对象
-    //交付给子类
+    // ゲームオブジェクトの初期化（サブクラスに委ねる）
+    //
 
     return true;
 }
 
 void GameApp::PreUpdate(float dt) {
+    // フレーム更新前の処理（必要に応じて実装）
 }
 
 void GameApp::Update(float dt) {
+    // 毎フレームの更新処理（必要に応じて実装）
 }
 
 void GameApp::PostUpdate(float dt) {
+    // フレーム更新後にビュー行列とカメラ位置を更新
     m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
     m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 }
 
 void GameApp::Draw() {
-    // 创建后备缓冲区的渲染目标视图
+    // バックバッファのレンダーターゲットビューを作成
     if (m_FrameCount < m_BackBufferCount) {
         ComPtr<ID3D11Texture2D> pBackBuffer;
         m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
@@ -90,6 +96,7 @@ void GameApp::Draw() {
                                              m_pRenderTargetViews[m_FrameCount].ReleaseAndGetAddressOf());
     }
 
+    // 画面のクリア
     float black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     m_pd3dImmediateContext->ClearRenderTargetView(GetBackBufferRTV(), black);
     m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(),
@@ -99,25 +106,29 @@ void GameApp::Draw() {
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
+    // 描画設定の適用
     m_BasicEffect.SetRenderDefault();
-    // Model模型渲染队列
+
+    // モデル描画キュー
     m_ModelObjectStorage.ForEachActive([this](SoAHandle id, ModelObject &modelObject) {
         modelObject.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     });
 
-    // 渲染ImGui
+    // ImGuiの描画
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+    // フレームの表示
     HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
 }
 
-//每当窗口被重新调整大小的时候，都需要调用这个OnResize函数。
+// ウィンドウサイズが変更された際に呼び出される関数
 void GameApp::OnResize() {
     D3DApp::OnResize();
 
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
     m_pDepthTexture->SetDebugObjectName("DepthTexture");
 
-    // 摄像机变更显示
+    // カメラの視野更新
     if (m_pCamera != nullptr) {
         m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
         m_pCamera->SetViewPort(0.0f, 0.0f, (float) m_ClientWidth, (float) m_ClientHeight);
@@ -126,7 +137,8 @@ void GameApp::OnResize() {
 }
 
 ////////////////////////////新しいコード/////////////////////////////////////
-// 添加模型
+
+// モデルを追加
 SoAHandle GameApp::AddModel(std::string_view filename) {
     Model *model = m_ModelManager.GetModel(filename);
     if (model == nullptr) {
@@ -137,12 +149,12 @@ SoAHandle GameApp::AddModel(std::string_view filename) {
     return m_ModelObjectStorage.Add(std::move(pModelObject));
 }
 
-// 获取模型对象
+// モデルオブジェクトの取得
 ModelObject &GameApp::GetModelObject(SoAHandle handle) {
     return m_ModelObjectStorage.Get<ModelObject>(handle);
 }
 
-// 删除模型
+// モデルの削除
 bool GameApp::RemoveModel(SoAHandle handle) {
     m_ModelObjectStorage.Remove(handle);
     return true;

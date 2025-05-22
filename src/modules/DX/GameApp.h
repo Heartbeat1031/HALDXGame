@@ -16,26 +16,27 @@
 class GameApp : public D3DApp
 {
 private:
-    TextureManager m_TextureManager;
-    ModelManager m_ModelManager;
-    BasicEffect m_BasicEffect;                                               // 对象渲染特效管理
-    std::unique_ptr<Depth2D> m_pDepthTexture;                 // 深度缓冲区
-    SoAStorage<ModelObject> m_ModelObjectStorage;	   // 模型对象存储
+    TextureManager m_TextureManager;                     // テクスチャマネージャー
+    ModelManager m_ModelManager;                         // モデルマネージャー
+    BasicEffect m_BasicEffect;                           // オブジェクト描画用エフェクト管理
+    std::unique_ptr<Depth2D> m_pDepthTexture;            // デプスバッファ
+    SoAStorage<ModelObject> m_ModelObjectStorage;        // モデルオブジェクトのストレージ
 
 protected:
-    bool Init() override;
-    void OnResize() override;
-    void PreUpdate(float dt) override;
-    void Update(float dt) override;
-    void PostUpdate(float dt) override;
-    void Draw() override;
+    bool Init() override;                                // 初期化処理
+    void OnResize() override;                            // リサイズ時の処理
+    void PreUpdate(float dt) override;                   // 更新前処理
+    void Update(float dt) override;                      // 更新処理
+    void PostUpdate(float dt) override;                  // 更新後処理
+    void Draw() override;                                // 描画処理
+
 public:
     GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~GameApp() override;
-    std::shared_ptr<ThirdPersonCamera> m_pCamera;			// 摄像机
 
-    SoAHandle GameApp::AddModel(std::string_view filename);
-    ModelObject &GetModelObject(SoAHandle handle);
-    bool RemoveModel(SoAHandle handle);
+    std::shared_ptr<ThirdPersonCamera> m_pCamera;        // サードパーソンカメラ
 
+    SoAHandle AddModel(std::string_view filename);       // モデルの追加
+    ModelObject& GetModelObject(SoAHandle handle);       // モデルオブジェクトの取得
+    bool RemoveModel(SoAHandle handle);                  // モデルの削除
 };

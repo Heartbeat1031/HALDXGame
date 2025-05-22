@@ -5,7 +5,7 @@
 #pragma once
 #include "Scene.h"
 
-
+// サンプルのテストシーン
 class TestSceen : public Scene{
 public:
     void Init() override;

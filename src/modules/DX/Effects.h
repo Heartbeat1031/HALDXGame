@@ -1,5 +1,5 @@
 //***************************************************************************************
-// 简易特效管理框架
+// シンプルなエフェクト管理フレームワーク
 // Simple effect management framework.
 //***************************************************************************************
 
@@ -20,52 +20,49 @@ public:
     BasicEffect(BasicEffect&& moveFrom) noexcept;
     BasicEffect& operator=(BasicEffect&& moveFrom) noexcept;
 
-    // 获取单例
+    // シングルトンの取得
     static BasicEffect& Get();
 
-    // 初始化所需资源
+    // 必要なリソースの初期化
     bool InitAll(ID3D11Device* device);
 
     //
-    // IEffectTransform
+    // IEffectTransform インターフェースの実装
     //
     void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
     void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
     void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
     //
-    // IEffectMaterial
+    // IEffectMaterial インターフェースの実装
     //
-
     void SetMaterial(const Material& material) override;
 
     //
-    // IEffectMeshData
+    // IEffectMeshData インターフェースの実装
     //
-
     MeshDataInput GetInputData(const MeshData& meshData) override;
 
-
     //
-    // BasicEffect
+    // BasicEffect 独自の機能
     //
 
-    // 默认状态来绘制
+    // デフォルトの描画状態を設定
     void SetRenderDefault();
-    
-    // 各种类型灯光允许的最大数目
+
+    // 各ライトタイプの最大数
     static constexpr int maxLights = 5;
 
-    void SetDirLight(uint32_t pos, const DirectionalLight& dirLight);
-    void SetPointLight(uint32_t pos, const PointLight& pointLight);
-    void SetSpotLight(uint32_t pos, const SpotLight& spotLight);
+    void SetDirLight(uint32_t pos, const DirectionalLight& dirLight);    // 平行光源の設定
+    void SetPointLight(uint32_t pos, const PointLight& pointLight);      // 点光源の設定
+    void SetSpotLight(uint32_t pos, const SpotLight& spotLight);         // スポットライトの設定
 
-    void SetEyePos(const DirectX::XMFLOAT3& eyePos);
+    void SetEyePos(const DirectX::XMFLOAT3& eyePos);                     // カメラ（視点）位置の設定
 
-    // 应用常量缓冲区和纹理资源的变更
+    // 定数バッファおよびテクスチャリソースの変更を適用
     void Apply(ID3D11DeviceContext* deviceContext) override;
 
 private:
     class Impl;
-    std::unique_ptr<Impl> pImpl;
+    std::unique_ptr<Impl> pImpl; // 実装の隠蔽（Pimplイディオム）
 };

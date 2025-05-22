@@ -6,7 +6,6 @@
 #include <string_view>
 #include "Component.h"
 #include "Game.h"
-#include "ModelObject.h"
 #include "SoAStorage.h"
 
 class ModelComponent : public Component {

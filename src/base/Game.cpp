@@ -15,25 +15,21 @@ bool Game::Init() {
         return false;
     }
 
-    // 加载字体
+    // 初始化ImGui
     ImGuiIO& io = ImGui::GetIO();
     ImFontConfig config;
     config.OversampleH = 1;
     config.OversampleV = 1;
     config.PixelSnapH = true;
-    // 主字体：加载日文
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ja.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesJapanese());
-    // 合并中文字体
     config.MergeMode = true;
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hant.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
-    // 合并韩文
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ko.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesKorean());
-    // 合并拉丁字母
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-latin.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesDefault());
 
 
-    // 加载场景
+    // テストシーンを読み込む
     SetScene<TestSceen>();
     return true;
 }

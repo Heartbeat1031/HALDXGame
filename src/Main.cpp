@@ -6,11 +6,11 @@ Game* halgame;
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
                    _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
-    // 这些参数不使用
+    // これらのパラメータは使用しません。
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
     UNREFERENCED_PARAMETER(nShowCmd);
-    // 允许在Debug版本进行运行时内存分配和泄漏检测
+    // Debug ビルドでの実行時メモリ割り当てとリーク検出を許可する
 #if defined(DEBUG) | defined(_DEBUG)
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif

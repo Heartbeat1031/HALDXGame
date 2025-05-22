@@ -12,15 +12,13 @@ using namespace DirectX;
 
 # pragma warning(disable: 26812)
 
-
 //
-// BasicEffect::Impl 需要先于BasicEffect的定义
+// BasicEffect::Impl は BasicEffect の定義よりも先に必要
 //
-
 class BasicEffect::Impl
 {
 public:
-    // 必须显式指定
+    // 明示的に指定が必要
     Impl() = default;
     ~Impl() = default;
 
@@ -42,10 +40,9 @@ public:
 //
 // BasicEffect
 //
-
 namespace
 {
-    // BasicEffect单例
+    // BasicEffect シングルトンインスタンス
     BasicEffect* g_pInstance = nullptr;
 }
 
@@ -77,7 +74,6 @@ BasicEffect& BasicEffect::Get()
     return *g_pInstance;
 }
 
-
 bool BasicEffect::InitAll(ID3D11Device* device)
 {
     if (!device)
@@ -89,27 +85,29 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     pImpl->m_pEffectHelper = std::make_unique<EffectHelper>();
 
     Microsoft::WRL::ComPtr<ID3DBlob> blob;
-    // 创建顶点着色器
+
+    // 頂点シェーダーの作成
     std::filesystem::path exePath = std::filesystem::current_path();
     pImpl->m_pEffectHelper->CreateShaderFromFile("BasicVS", L"shaders/Basic_VS.cso", device,
         nullptr, nullptr, nullptr, blob.GetAddressOf());
-    // 创建顶点布局
+
+    // 頂点レイアウトの作成
     HR(device->CreateInputLayout(VertexPosNormalTex::GetInputLayout(), ARRAYSIZE(VertexPosNormalTex::GetInputLayout()),
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
-    // 创建像素着色器
+    // ピクセルシェーダーの作成
     pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"shaders/Basic_PS.cso", device);
 
-    
-    // 创建通道
+    // エフェクトパスの作成
     EffectPassDesc passDesc;
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "BasicPS";
     HR(pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc));
 
+    // サンプラーステートの設定
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 
-    // 设置调试对象名
+    // デバッグ用オブジェクト名の設定
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
     SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "BasicEffect.VertexPosNormalTexLayout");
 #endif
@@ -171,26 +169,31 @@ MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
 
 void BasicEffect::SetDirLight(uint32_t pos, const DirectionalLight& dirLight)
 {
+    // 指定位置にディレクショナルライトを設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_DirLight")->SetRaw(&dirLight, (sizeof dirLight) * pos, sizeof dirLight);
 }
 
 void BasicEffect::SetPointLight(uint32_t pos, const PointLight& pointLight)
 {
+    // 指定位置にポイントライトを設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_PointLight")->SetRaw(&pointLight, (sizeof pointLight) * pos, sizeof pointLight);
 }
 
 void BasicEffect::SetSpotLight(uint32_t pos, const SpotLight& spotLight)
 {
+    // 指定位置にスポットライトを設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_SpotLight")->SetRaw(&spotLight, (sizeof spotLight) * pos, sizeof spotLight);
 }
 
 void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
+    // 視点位置（カメラ）をシェーダーに渡す
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, reinterpret_cast<const float*>(&eyePos));
 }
 
 void BasicEffect::SetRenderDefault()
 {
+    // デフォルトの描画パスを選択
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Basic");
     pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
     pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -198,6 +201,7 @@ void BasicEffect::SetRenderDefault()
 
 void BasicEffect::Apply(ID3D11DeviceContext* deviceContext)
 {
+    // 各種行列の読み込みとトランスポーズ
     XMMATRIX W = XMLoadFloat4x4(&pImpl->m_World);
     XMMATRIX V = XMLoadFloat4x4(&pImpl->m_View);
     XMMATRIX P = XMLoadFloat4x4(&pImpl->m_Proj);
@@ -209,12 +213,12 @@ void BasicEffect::Apply(ID3D11DeviceContext* deviceContext)
     VP = XMMatrixTranspose(VP);
     WInvT = XMMatrixTranspose(WInvT);
 
+    // 定数バッファへの行列設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldInvTranspose")->SetFloatMatrix(4, 4, (FLOAT*)&WInvT);
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&VP);
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_World")->SetFloatMatrix(4, 4, (FLOAT*)&W);
 
+    // パスの適用
     if (pImpl->m_pCurrEffectPass)
         pImpl->m_pCurrEffectPass->Apply(deviceContext);
 }
-
-

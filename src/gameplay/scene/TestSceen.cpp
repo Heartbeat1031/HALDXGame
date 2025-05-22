@@ -9,18 +9,19 @@
 
 void TestSceen::Init()
 {
-    // 初始化地板
+    // ground モジュール　
     halgame->AddModel("assets\\models\\ground_19.obj");
+    // house ゲームオブジェクト
     AddGameObject<House>(1);
 }
 
 void TestSceen::Update()
 {
     // ******************
-    // 第三人称摄像机的操作
+    // 三人称カメラの操作
     //
     ImGuiIO &io = ImGui::GetIO();
-    // 绕物体旋转
+    // オブジェクトの周りを回転する
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
         halgame->m_pCamera->RotateX(io.MouseDelta.y * 0.01f);
         halgame->m_pCamera->RotateY(io.MouseDelta.x * 0.01f);
