@@ -42,7 +42,7 @@ public:
         m_Rotation = Vector3(pitch, yaw, 0.0f);
     }
 
-    // 获取世界坐标
+    // ワールド座標を取得する
     Vector3 GetWorldPosition() const {
         Vector3 worldPos = m_Position;
         for (GameObject* parent = m_Parent; parent != nullptr; parent = parent->m_Parent)
@@ -53,7 +53,7 @@ public:
         return worldPos;
     }
 
-    // 获取前方
+    // 前方ベクトルを取得する
     Vector3 GetForward() const {
         Matrix rot = Matrix::CreateFromYawPitchRoll(m_Rotation.y, m_Rotation.x, m_Rotation.z);
 
@@ -94,8 +94,6 @@ public:
     virtual void Init() {}
     virtual void Uninit() {}
     virtual void Update() {}
-    virtual void Draw() {}
-    virtual void PreDraw() {}
 
     template <typename T>
     T* AddComponent()
