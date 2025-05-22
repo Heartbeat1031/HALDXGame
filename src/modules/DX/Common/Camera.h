@@ -1,6 +1,5 @@
 //***************************************************************************************
-// 提供第一人称(自由视角)和第三人称摄像机
-// Provide 1st person(free view) and 3rd person cameras.
+// 一人称（自由視点）および三人称カメラを提供するクラス
 //***************************************************************************************
 
 #pragma once
@@ -18,23 +17,23 @@ public:
     virtual ~Camera() = 0;
 
     //
-    // 获取摄像机位置
+    // カメラの位置を取得する
     //
 
     DirectX::XMVECTOR GetPositionXM() const;
     DirectX::XMFLOAT3 GetPosition() const;
 
     //
-    // 获取摄像机旋转
+    // カメラの回転を取得する
     //
 
-    // 获取绕X轴旋转的欧拉角弧度
+    // X軸回りのオイラー角（ラジアン）を取得
     float GetRotationX() const;
-    // 获取绕Y轴旋转的欧拉角弧度
+    // Y軸回りのオイラー角（ラジアン）を取得
     float GetRotationY() const;
 
     //
-    // 获取摄像机的坐标轴向量
+    // カメラの軸ベクトルを取得する
     //
 
     DirectX::XMVECTOR GetRightAxisXM() const;
@@ -45,7 +44,7 @@ public:
     DirectX::XMFLOAT3 GetLookAxis() const;
 
     //
-    // 获取矩阵
+    // 各種行列を取得する
     //
 
     DirectX::XMMATRIX GetLocalToWorldMatrixXM() const;
@@ -53,7 +52,7 @@ public:
     DirectX::XMMATRIX GetProjMatrixXM(bool reversedZ = false) const;
     DirectX::XMMATRIX GetViewProjMatrixXM(bool reversedZ = false) const;
 
-    // 获取视口
+    // ビューポートを取得
     D3D11_VIEWPORT GetViewPort() const;
 
     float GetNearZ() const;
@@ -61,25 +60,25 @@ public:
     float GetFovY() const;
     float GetAspectRatio() const;
 
-    // 设置视锥体
+    // 視錐台を設定する
     void SetFrustum(float fovY, float aspect, float nearZ, float farZ);
 
-    // 设置视口
+    // ビューポートを設定する
     void SetViewPort(const D3D11_VIEWPORT& viewPort);
     void SetViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f);
-    
+
 protected:
 
-    // 摄像机的变换
+    // カメラの変換（位置、回転）
     Transform m_Transform = {};
-    
-    // 视锥体属性
+
+    // 視錐台のパラメータ
     float m_NearZ = 0.0f;
     float m_FarZ = 0.0f;
     float m_Aspect = 0.0f;
     float m_FovY = 0.0f;
 
-    // 当前视口
+    // 現在のビューポート
     D3D11_VIEWPORT m_ViewPort = {};
 
 };
@@ -90,27 +89,25 @@ public:
     FirstPersonCamera() = default;
     ~FirstPersonCamera() override;
 
-    // 设置摄像机位置
+    // カメラの位置を設定する
     void SetPosition(float x, float y, float z);
     void SetPosition(const DirectX::XMFLOAT3& pos);
-    // 设置摄像机的朝向
+    // カメラの方向を設定する
     void LookAt(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& target,const DirectX::XMFLOAT3& up);
     void LookTo(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& to, const DirectX::XMFLOAT3& up);
-    // 平移
+    // 横移動（平行移動）
     void Strafe(float d);
-    // 直行(平面移动)
+    // 前進（XZ平面での移動）
     void Walk(float d);
-    // 前进(朝前向移动)
+    // 前方移動（Z軸方向への移動）
     void MoveForward(float d);
-    // 移动
+    // 任意方向への移動
     void Translate(const DirectX::XMFLOAT3& dir, float magnitude);
-    // 上下观察
-    // 正rad值向上观察
-    // 负rad值向下观察
+    // 上下方向の視線移動
+    // 正のrad値で上向き、負のrad値で下向き
     void Pitch(float rad);
-    // 左右观察
-    // 正rad值向右观察
-    // 负rad值向左观察
+    // 左右方向の視線移動
+    // 正のrad値で右回転、負のrad値で左回転
     void RotateY(float rad);
 };
 
@@ -120,30 +117,32 @@ public:
     ThirdPersonCamera() = default;
     ~ThirdPersonCamera() override;
 
-    // 获取当前跟踪物体的位置
+    // 現在追跡中の対象の位置を取得する
     DirectX::XMFLOAT3 GetTargetPosition() const;
-    // 获取与物体的距离
+    // 対象との距離を取得する
     float GetDistance() const;
-    // 绕物体垂直旋转(注意绕x轴旋转欧拉角弧度限制在[0, pi/3])
+    // 対象を中心に垂直方向に回転する（X軸回転のオイラー角は[0, π/3]に制限）
     void RotateX(float rad);
-    // 绕物体水平旋转
+    // 対象を中心に水平方向に回転する
     void RotateY(float rad);
-    // 拉近物体
+    // 対象に近づく
     void Approach(float dist);
-    // 设置初始绕X轴的弧度(注意绕x轴旋转欧拉角弧度限制在[0, pi/3])
+    // 初期のX軸回転角度を設定（[0, π/3]に制限）
     void SetRotationX(float rad);
-    // 设置初始绕Y轴的弧度
+    // 初期のY軸回転角度を設定
     void SetRotationY(float rad);
-    // 设置并绑定待跟踪物体的位置
+    // 追跡対象の位置を設定し、バインドする
     void SetTarget(const DirectX::XMFLOAT3& target);
-    // 设置初始距离
+    // 初期の距離を設定
     void SetDistance(float dist);
-    // 设置最小最大允许距离
+    // 最小・最大の許容距離を設定
     void SetDistanceMinMax(float minDist, float maxDist);
 
 private:
+    // 対象の位置
     DirectX::XMFLOAT3 m_Target = {};
+    // 現在の距離
     float m_Distance = 0.0f;
-    // 最小允许距离，最大允许距离
+    // 最小・最大の許容距離
     float m_MinDist = 0.0f, m_MaxDist = 0.0f;
 };
