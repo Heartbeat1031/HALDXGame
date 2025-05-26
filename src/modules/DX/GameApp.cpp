@@ -137,7 +137,6 @@ void GameApp::OnResize() {
 }
 
 ////////////////////////////新しいコード/////////////////////////////////////
-
 // モデルを追加
 SoAHandle GameApp::AddModel(std::string_view filename) {
     Model *model = m_ModelManager.GetModel(filename);

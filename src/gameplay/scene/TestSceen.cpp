@@ -10,19 +10,21 @@
 void TestSceen::Init()
 {
     // ground モジュール　
-    SoAHandle groundHandle =halgame->AddModel("assets\\models\\ground_19.obj");
-    ModelObject &ground = halgame->GetModelObject(groundHandle);
-    Transform &groundTransform = ground.GetTransform();
-    groundTransform.SetPosition(0.0f, -1.0f, 0.0f);
-    groundTransform.SetRotation(0.0f, 0.0f, 0.0f);
-    groundTransform.SetScale(1.0f, 1.0f, 1.0f);
+     SoAHandle groundHandle =halgame->AddModel("assets\\models\\ground_19.obj");
+    // ModelObject &ground = halgame->GetModelObject(groundHandle);
+    // Transform &groundTransform = ground.GetTransform();
+    // groundTransform.SetPosition(0.0f, -1.0f, 0.0f);
+    // groundTransform.SetRotation(0.0f, 0.0f, 0.0f);
+    // groundTransform.SetScale(1.0f, 1.0f, 1.0f);
 
-    SoAHandle hand = halgame->AddModel("assets\\models\\Praying.fbx");
+    SoAHandle hand = halgame->AddModel("assets\\models\\GothicMiku\\Gothic Miku (Apearance Ver.)5.pmx");
     ModelObject &praying = halgame->GetModelObject(hand);
     Transform &transform = praying.GetTransform();
     transform.SetPosition(0.0f, 0.0f, 0.0f);
     transform.SetRotation(0.0f, 0.0f, 0.0f);
-    transform.SetScale(10.0f, 10.0f, 10.0f);
+    //transform.SetScale(1.0f, 1.0f, 1.0f);
+    transform.SetScale(0.5f, 0.5f, 0.5f);
+    //transform.SetScale(0.01f, 0.01f, 0.01f);
     // house ゲームオブジェクト
     //AddGameObject<House>(1);
 }
