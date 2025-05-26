@@ -10,9 +10,21 @@
 void TestSceen::Init()
 {
     // ground モジュール　
-    halgame->AddModel("assets\\models\\ground_19.obj");
+    SoAHandle groundHandle =halgame->AddModel("assets\\models\\ground_19.obj");
+    ModelObject &ground = halgame->GetModelObject(groundHandle);
+    Transform &groundTransform = ground.GetTransform();
+    groundTransform.SetPosition(0.0f, -1.0f, 0.0f);
+    groundTransform.SetRotation(0.0f, 0.0f, 0.0f);
+    groundTransform.SetScale(1.0f, 1.0f, 1.0f);
+
+    SoAHandle hand = halgame->AddModel("assets\\models\\Praying.fbx");
+    ModelObject &praying = halgame->GetModelObject(hand);
+    Transform &transform = praying.GetTransform();
+    transform.SetPosition(0.0f, 0.0f, 0.0f);
+    transform.SetRotation(0.0f, 0.0f, 0.0f);
+    transform.SetScale(10.0f, 10.0f, 10.0f);
     // house ゲームオブジェクト
-    AddGameObject<House>(1);
+    //AddGameObject<House>(1);
 }
 
 void TestSceen::Update()
