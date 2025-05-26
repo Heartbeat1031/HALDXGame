@@ -7,10 +7,9 @@
 #include "ModelObject.h"
 #include "gameobject/House.h"
 
-void TestSceen::Init()
-{
+void TestSceen::Init() {
     // ground モジュール　
-     SoAHandle groundHandle =halgame->AddModel("assets\\models\\ground_19.obj");
+    SoAHandle groundHandle = halgame->AddModel("assets\\models\\ground_19.obj");
     // ModelObject &ground = halgame->GetModelObject(groundHandle);
     // Transform &groundTransform = ground.GetTransform();
     // groundTransform.SetPosition(0.0f, -1.0f, 0.0f);
@@ -29,8 +28,7 @@ void TestSceen::Init()
     //AddGameObject<House>(1);
 }
 
-void TestSceen::Update()
-{
+void TestSceen::Update() {
     // ******************
     // 三人称カメラの操作
     //
