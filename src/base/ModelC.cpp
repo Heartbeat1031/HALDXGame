@@ -2,37 +2,37 @@
 // Created by lclcl on 25-5-22.
 //
 
-#include "ModelComponent.h"
+#include "ModelC.h"
 
 #include "GameObject.h"
 #include "Global.h"
 #include "SimpleMath.h"
-#include "TransformComponent.h"
+#include "TransformC.h"
 
-void ModelComponent::CheckTransform() const {
+void ModelC::CheckTransform() const {
     if (handle == -1) {
         return;
     }
     ModelObject &modelObject = halgame->GetModelObject(handle);
     Transform &modelTransform = modelObject.GetTransform();
-    TransformComponent &transformComponent = m_gameobject->GetComponent<TransformComponent>();
+    TransformC &transformComponent = m_gameobject->GetComponent<TransformC>();
     modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
 }
 
-void ModelComponent::Init() {
+void ModelC::Init() {
     Component::Init();
 }
 
-void ModelComponent::Update(float dt) {
+void ModelC::Update(float dt) {
     Component::Update(dt);
     CheckTransform();
 }
 
-void ModelComponent::Uninit() {
+void ModelC::Uninit() {
     Component::Uninit();
     halgame->RemoveModel(handle);
 }
 
-void ModelComponent::Load(std::string_view filename) {
+void ModelC::Load(std::string_view filename) {
     handle = halgame->AddModel(filename);
 }

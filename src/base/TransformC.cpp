@@ -2,14 +2,14 @@
 // Created by lclcl on 25-5-29.
 //
 
-#include "TransformComponent.h"
+#include "TransformC.h"
 
 #include "Global.h"
 #include "Scene.h"
 
 using namespace DirectX::SimpleMath;
 
-TransformComponent::TransformComponent(GameObject *parent)
+TransformC::TransformC(GameObject *parent)
     : Component(parent),
       m_localPosition(Vector3::Zero),
       m_localRotation(Quaternion::Identity),
@@ -20,14 +20,14 @@ TransformComponent::TransformComponent(GameObject *parent)
       m_parent(nullptr) {
 }
 
-void TransformComponent::Uninit() {
+void TransformC::Uninit() {
     Component::Uninit();
     if (m_parent) {
         m_parent->RemoveChild(this); // 从父节点中移除自己
         m_parent = nullptr; // 解除父子关系
     }
     // 清理子节点
-    for (TransformComponent *child : m_Childs) {
+    for (TransformC *child : m_Childs) {
         child->SetParent(nullptr); // 解除父子关系
         UID childgameuid = child->m_gameobject->GetUID();
         halgame->GetScene()->RemoveGameObject(childgameuid);
@@ -35,12 +35,12 @@ void TransformComponent::Uninit() {
     m_Childs.clear(); // 清空子节点列表
 }
 
-void TransformComponent::SetLocalPosition(const Vector3 &position) {
+void TransformC::SetLocalPosition(const Vector3 &position) {
     m_localPosition = position;
     m_dirty = true;
 }
 
-void TransformComponent::SetLocalRotation(const Quaternion &rotation) {
+void TransformC::SetLocalRotation(const Quaternion &rotation) {
     m_localRotation = rotation;
     m_dirty = true;
     // 更新欧拉角缓存（以 Yaw-Pitch-Roll 解法）
@@ -67,41 +67,41 @@ void TransformComponent::SetLocalRotation(const Quaternion &rotation) {
     m_localEuler = Vector3(pitch, yaw, roll);
 }
 
-void TransformComponent::SetLocalRotationEuler(const Vector3& eulerRadians) {
+void TransformC::SetLocalRotationEuler(const Vector3& eulerRadians) {
     m_localEuler = eulerRadians;
     m_localRotation = Quaternion::CreateFromYawPitchRoll(eulerRadians.y, eulerRadians.x, eulerRadians.z);
     m_dirty = true;
 }
 
 
-void TransformComponent::SetLocalScale(const Vector3 &scale) {
+void TransformC::SetLocalScale(const Vector3 &scale) {
     m_localScale = scale;
     m_dirty = true;
 }
 
-Vector3 TransformComponent::GetLocalPosition() const {
+Vector3 TransformC::GetLocalPosition() const {
     return m_localPosition;
 }
 
-Quaternion TransformComponent::GetLocalRotation() const {
+Quaternion TransformC::GetLocalRotation() const {
     return m_localRotation;
 }
 
-Vector3 TransformComponent::GetLocalRotationEuler() const {
+Vector3 TransformC::GetLocalRotationEuler() const {
     return m_localEuler;
 }
 
-Vector3 TransformComponent::GetLocalScale() const {
+Vector3 TransformC::GetLocalScale() const {
     return m_localScale;
 }
 
-void TransformComponent::RecalculateLocalMatrix() {
+void TransformC::RecalculateLocalMatrix() {
     m_localMatrix = Matrix::CreateScale(m_localScale) *
                     Matrix::CreateFromQuaternion(m_localRotation) *
                     Matrix::CreateTranslation(m_localPosition);
 }
 
-void TransformComponent::UpdateTransform() {
+void TransformC::UpdateTransform() {
     if (m_dirty) {
         RecalculateLocalMatrix();
         if (m_parent) {
@@ -110,7 +110,7 @@ void TransformComponent::UpdateTransform() {
             m_worldMatrix = m_localMatrix;
         }
 
-        for (TransformComponent * transformChild : m_Childs) {
+        for (TransformC * transformChild : m_Childs) {
             transformChild->m_dirty = true;
             transformChild->UpdateTransform();
         }
@@ -119,17 +119,17 @@ void TransformComponent::UpdateTransform() {
     }
 }
 
-Matrix TransformComponent::GetWorldMatrix() {
+Matrix TransformC::GetWorldMatrix() {
     UpdateTransform();
     return m_worldMatrix;
 }
 
-Vector3 TransformComponent::GetWorldPosition() {
+Vector3 TransformC::GetWorldPosition() {
     UpdateTransform();
     return m_worldMatrix.Translation();
 }
 
-Quaternion TransformComponent::GetWorldRotation() {
+Quaternion TransformC::GetWorldRotation() {
     UpdateTransform();
     Vector3 scale;
     Quaternion rotation;
@@ -138,7 +138,7 @@ Quaternion TransformComponent::GetWorldRotation() {
     return rotation;
 }
 
-Vector3 TransformComponent::GetWorldRotationEuler() {
+Vector3 TransformC::GetWorldRotationEuler() {
     UpdateTransform();
     Vector3 scale;
     Quaternion rotation;
@@ -169,7 +169,7 @@ Vector3 TransformComponent::GetWorldRotationEuler() {
     return Vector3(pitch, yaw, roll);
 }
 
-Vector3 TransformComponent::GetWorldScale() {
+Vector3 TransformC::GetWorldScale() {
     UpdateTransform();
     Vector3 scale;
     Quaternion rotation;
@@ -178,17 +178,17 @@ Vector3 TransformComponent::GetWorldScale() {
     return scale;
 }
 
-void TransformComponent::SetParent(TransformComponent *newParent) {
+void TransformC::SetParent(TransformC *newParent) {
     m_parent = newParent;
     m_dirty = true;
 }
 
-void TransformComponent::AddChild(TransformComponent *child) {
+void TransformC::AddChild(TransformC *child) {
     child->SetParent(this);
     m_Childs.push_back(child);
 }
 
-void TransformComponent::RemoveChild(TransformComponent *child) {
+void TransformC::RemoveChild(TransformC *child) {
     m_Childs.erase(
         std::remove(m_Childs.begin(), m_Childs.end(), child),
         m_Childs.end()

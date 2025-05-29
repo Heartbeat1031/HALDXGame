@@ -3,8 +3,8 @@
 //
 
 #include "House.h"
-#include "ModelComponent.h"
-#include "TransformComponent.h"
+#include "ModelC.h"
+#include "TransformC.h"
 
 House::House() {
 }
@@ -13,21 +13,20 @@ House::~House() {
 }
 
 void House::Init() {
-    auto &transform = AddComponent<TransformComponent>();
-    transform.SetLocalPosition({0.0f, 0.0f, 0.0f});
-    transform.SetLocalRotation({0.0f, 0.0f, 0.0f, 1.0f});
-    transform.SetLocalScale(Vector3(0.015f, 0.015f, 0.015f));
-    auto &model = AddComponent<ModelComponent>();
+    GameObject::Init();
+    GetComponent<TransformC>().SetLocalScale(Vector3(0.015f, 0.015f, 0.015f));
+    auto &model = AddComponent<ModelC>();
     model.Load("assets\\models\\house.obj");
 
 }
 
 void House::Uninit() {
+    GameObject::Uninit();
 }
 
 
 void House::Update(float dt) {
-
+    GameObject::Update(dt);
     // オブジェクト移動のサンプル
     ImGuiIO &io = ImGui::GetIO();
     Vector3 v3;
@@ -44,7 +43,7 @@ void House::Update(float dt) {
         v3 += {1, 0, 0};
     }
 
-    auto &transform = GetComponent<TransformComponent>();
+    auto &transform = GetComponent<TransformC>();
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
         transform.SetLocalRotationEuler(transform.GetLocalRotationEuler() +
             Vector3(

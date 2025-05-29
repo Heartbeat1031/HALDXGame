@@ -8,7 +8,7 @@
 #include "Game.h"
 #include "SoAStorage.h"
 
-class ModelComponent : public Component {
+class ModelC : public Component {
 private:
     void CheckTransform() const;
 public:

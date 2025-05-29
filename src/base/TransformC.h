@@ -5,10 +5,9 @@
 
 #include <SimpleMath.h>
 #include <vector>
-#include <memory>
 #include "Component.h"
 
-class TransformComponent : public Component {
+class TransformC : public Component {
 
 private:
     DirectX::SimpleMath::Vector3 m_localPosition;
@@ -21,15 +20,15 @@ private:
     DirectX::SimpleMath::Matrix m_worldMatrix;
     bool m_dirty;
 
-    TransformComponent* m_parent;
-    std::vector<TransformComponent*> m_Childs;
+    TransformC* m_parent;
+    std::vector<TransformC*> m_Childs;
 
     void UpdateTransform();
     void RecalculateLocalMatrix();
 
 public:
-    TransformComponent(GameObject* parent);
-    ~TransformComponent() override = default;
+    TransformC(GameObject* parent);
+    ~TransformC() override = default;
     void Uninit() override;
     // 设置局部属性
     void SetLocalPosition(const DirectX::SimpleMath::Vector3& position);
@@ -51,8 +50,8 @@ public:
     DirectX::SimpleMath::Vector3 GetWorldScale();
 
     // 父子节点管理
-    void SetParent(TransformComponent* newParent);
-    TransformComponent* GetParent() const { return m_parent; }
-    void AddChild(TransformComponent* child);
-    void RemoveChild(TransformComponent* child);
+    void SetParent(TransformC* newParent);
+    TransformC* GetParent() const { return m_parent; }
+    void AddChild(TransformC* child);
+    void RemoveChild(TransformC* child);
 };

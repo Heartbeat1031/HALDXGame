@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Global.h"
 #include "Scene.h"
+#include "TransformC.h"
 
 GameObject::GameObject() {
 }
@@ -20,6 +21,9 @@ UID GameObject::GetUID() const {
 }
 
 void GameObject::InitBase() {
+    // デフォルトでTransformComponentを追加
+    AddComponent<TransformC>();
+    // ユーザー定義の初期化
     Init();
 }
 
