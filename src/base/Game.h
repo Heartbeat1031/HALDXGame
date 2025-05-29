@@ -3,11 +3,10 @@
 //
 #pragma once
 #include "GameApp.h"
-#include "Scene.h"
-
+class Scene;
 class Game : public GameApp {
 private:
-    static Scene* m_Scene;
+    Scene* m_Scene = nullptr;
 public:
     Game(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~Game() override;
@@ -16,5 +15,6 @@ public:
     void Update(float dt) override;
 
     template <typename T>
-    static void SetScene();
+    void SetScene();
+    Scene* GetScene() const { return m_Scene; }
 };

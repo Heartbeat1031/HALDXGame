@@ -25,7 +25,8 @@ void TestSceen::Init() {
     transform.SetScale(0.5f, 0.5f, 0.5f);
     //transform.SetScale(0.01f, 0.01f, 0.01f);
     // house ゲームオブジェクト
-    AddGameObject<House>();
+    House house = AddGameObject<House>();
+    House house1 = GetGameObject<House>(house.GetUID());
 }
 
 void TestSceen::Update() {

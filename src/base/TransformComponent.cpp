@@ -58,10 +58,10 @@ void TransformComponent::UpdateTransform() {
         } else {
             m_worldMatrix = m_localMatrix;
         }
-        for (auto &child: m_children) {
-            child->m_dirty = true;
-            child->UpdateTransform();
-        }
+        // for (auto &child: m_children) {
+        //     child->m_dirty = true;
+        //     child->UpdateTransform();
+        // }
         m_dirty = false;
     }
 }
@@ -101,12 +101,12 @@ void TransformComponent::SetParent(TransformComponent *newParent) {
 
 void TransformComponent::AddChild(std::shared_ptr<TransformComponent> child) {
     child->SetParent(this);
-    m_children.push_back(child);
+    //m_children.push_back(child);
 }
 
 void TransformComponent::RemoveChild(TransformComponent *child) {
-    m_children.erase(std::remove_if(m_children.begin(), m_children.end(),
-                                    [child](const std::shared_ptr<TransformComponent> &c) {
-                                        return c.get() == child;
-                                    }), m_children.end());
+    // m_children.erase(std::remove_if(m_children.begin(), m_children.end(),
+    //                                 [child](const std::shared_ptr<TransformComponent> &c) {
+    //                                     return c.get() == child;
+    //                                 }), m_children.end());
 }

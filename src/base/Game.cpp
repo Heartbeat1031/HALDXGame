@@ -4,7 +4,7 @@
 
 #include "Game.h"
 #include "TestSceen.h"
-Scene* Game::m_Scene = nullptr;
+
 Game::Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight): GameApp(hInstance, windowName, initWidth, initHeight) {
 }
 
@@ -40,7 +40,7 @@ void Game::Update(float dt) {
 
 template<typename T>
 void Game::SetScene() {
-    if (m_Scene)
+    if (m_Scene != nullptr)
     {
         m_Scene->UninitBase();
         delete m_Scene;

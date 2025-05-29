@@ -12,7 +12,9 @@ House::~House() {
 }
 
 void House::Init() {
-    AddComponent<ModelComponent>()->Load("assets\\models\\house.obj");
+    AddComponent<ModelComponent>().Load("assets\\models\\house.obj");
+    ModelComponent &model = GetComponent<ModelComponent>();
+    int a = 1;
     // SetScale(Vector3(0.015f, 0.015f, 0.015f));
     // SetPosition(Vector3(0, -1, 0));
 

@@ -20,7 +20,7 @@ private:
     bool m_dirty;
 
     TransformComponent* m_parent;
-    std::vector<std::shared_ptr<TransformComponent>> m_children;
+    SoAStorage<UID> m_Childs;
 
     void UpdateTransform();
     void RecalculateLocalMatrix();

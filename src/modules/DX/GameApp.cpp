@@ -150,7 +150,7 @@ UID GameApp::AddModel(std::string_view filename) {
 
 // モデルオブジェクトの取得
 ModelObject &GameApp::GetModelObject(UID handle) {
-    return m_ModelObjectStorage.Get<ModelObject>(handle);
+    return m_ModelObjectStorage.Get(handle);
 }
 
 // モデルの削除
