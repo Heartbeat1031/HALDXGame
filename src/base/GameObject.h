@@ -50,7 +50,7 @@ template<typename T>
 T &GameObject::AddComponent() {
     auto it = m_ComponentMap.find(std::type_index(typeid(T)));
     if (it != m_ComponentMap.end()) {
-        assert(false && "Duplicate component added to GameObject");
+        assert(false && "ゲームオブジェクトに重複コンポーネントが追加されました");
         return GetComponent<T>();
     }
     Scene *scene = halgame->GetScene();
@@ -63,7 +63,7 @@ template<typename T>
 T &GameObject::GetComponent() {
     auto it = m_ComponentMap.find(std::type_index(typeid(T)));
     if (it == m_ComponentMap.end()) {
-        throw std::runtime_error("Component not found in GameObject");
+        throw std::runtime_error("ゲームオブジェクトにコンポーネントが見つかりません");
     }
     return halgame->GetScene()->GetComponent<T>(it->second);
 }
