@@ -103,6 +103,7 @@ void TransformC::RecalculateLocalMatrix() {
 
 void TransformC::UpdateTransform() {
     if (m_dirty) {
+        m_dirty = false;
         RecalculateLocalMatrix();
         if (m_parent) {
             m_worldMatrix = m_localMatrix * m_parent->GetWorldMatrix();
@@ -114,8 +115,6 @@ void TransformC::UpdateTransform() {
             transformChild->m_dirty = true;
             transformChild->UpdateTransform();
         }
-
-        m_dirty = false;
     }
 }
 
@@ -178,13 +177,39 @@ Vector3 TransformC::GetWorldScale() {
     return scale;
 }
 
-void TransformC::SetParent(TransformC *newParent) {
-    m_parent = newParent;
+void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
+    if (keepWorld) {
+        // 获取当前世界变换
+        Matrix oldWorld = GetWorldMatrix();
+        // 设置新父节点
+        m_parent = newParent;
+
+        // 重新计算本地矩阵 = 父的逆 * 世界
+        Matrix parentWorldInv = Matrix::Identity;
+        if (m_parent)
+            parentWorldInv = m_parent->GetWorldMatrix().Invert();
+
+        m_localMatrix = oldWorld * parentWorldInv;
+
+        // 分解矩阵为 position/rotation/scale
+        Vector3 scale;
+        Quaternion rotation;
+        Vector3 translation;
+        m_localMatrix.Decompose(scale, rotation, translation);
+        m_localScale = scale;
+        m_localRotation = rotation;
+        m_localPosition = translation;
+        // 更新欧拉角缓存
+        SetLocalRotation(rotation);
+    } else {
+        // 不保留世界坐标，直接设置父节点
+        m_parent = newParent;
+    }
     m_dirty = true;
 }
 
-void TransformC::AddChild(TransformC *child) {
-    child->SetParent(this);
+void TransformC::AddChild(TransformC *child, bool keepWorld) {
+    child->SetParent(this, keepWorld);
     m_Childs.push_back(child);
 }
 

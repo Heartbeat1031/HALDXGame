@@ -50,8 +50,8 @@ public:
     DirectX::SimpleMath::Vector3 GetWorldScale();
 
     // 父子节点管理
-    void SetParent(TransformC* newParent);
+    void SetParent(TransformC* newParent, bool keepWorld = true);
     TransformC* GetParent() const { return m_parent; }
-    void AddChild(TransformC* child);
+    void AddChild(TransformC* child, bool keepWorld = true);
     void RemoveChild(TransformC* child);
 };

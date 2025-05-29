@@ -6,6 +6,8 @@
 #include "Global.h"
 #include "ModelObject.h"
 #include "House.h"
+#include "Miku.h"
+#include "TransformC.h"
 
 void TestSceen::Init() {
     // ground モジュール　
@@ -14,17 +16,14 @@ void TestSceen::Init() {
     Transform &groundTransform = ground.GetTransform();
     groundTransform.SetPosition(0, 0, 0);
 
-    UID hand = halgame->AddModel("assets\\models\\GothicMiku\\Gothic Miku (Apearance Ver.)5.pmx");
-    ModelObject &praying = halgame->GetModelObject(hand);
-    Transform &transform = praying.GetTransform();
-    transform.SetPosition(5.0f, 0.0f, 0.0f);
-    transform.SetRotation(0.0f, 0.0f, 0.0f);
-    //transform.SetScale(1.0f, 1.0f, 1.0f);
-    transform.SetScale(0.5f, 0.5f, 0.5f);
-    //transform.SetScale(0.01f, 0.01f, 0.01f);
     // house ゲームオブジェクト
-    House house = AddGameObject<House>();
-    House house1 = GetGameObject<House>(house.GetUID());
+    House &house = AddGameObject<House>();
+    Miku &miku = AddGameObject<Miku>();
+    TransformC &houseTC = house.GetComponent<TransformC>();
+    TransformC &mikuTC = miku.GetComponent<TransformC>();
+    mikuTC.SetLocalPosition(Vector3(5, 0, 0));
+     houseTC.AddChild(&mikuTC);
+
 }
 
 void TestSceen::Update() {

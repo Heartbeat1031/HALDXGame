@@ -15,15 +15,12 @@ House::~House() {
 void House::Init() {
     GameObject::Init();
     GetComponent<TransformC>().SetLocalScale(Vector3(0.015f, 0.015f, 0.015f));
-    auto &model = AddComponent<ModelC>();
-    model.Load("assets\\models\\house.obj");
-
+    AddComponent<ModelC>().Load("assets\\models\\house.obj");
 }
 
 void House::Uninit() {
     GameObject::Uninit();
 }
-
 
 void House::Update(float dt) {
     GameObject::Update(dt);
@@ -46,11 +43,15 @@ void House::Update(float dt) {
     auto &transform = GetComponent<TransformC>();
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
         transform.SetLocalRotationEuler(transform.GetLocalRotationEuler() +
-            Vector3(
-            io.MouseDelta.y * -1.0f,
-            io.MouseDelta.x * -1.0f,
-            0.0f
-            ) * dt);
+                                        Vector3(
+                                            io.MouseDelta.y * -1.0f,
+                                            io.MouseDelta.x * -1.0f,
+                                            0.0f
+                                        ) * dt);
     }
-    transform.SetLocalPosition(transform.GetLocalPosition() + v3 * 2  * dt);
+    transform.SetLocalPosition(transform.GetLocalPosition() + v3 * 2 * dt);
+
+    if (ImGui::IsKeyPressed(ImGuiKey_R)) {
+        halgame->GetScene()->RemoveGameObject(GetUID());
+    }
 }
