@@ -36,7 +36,7 @@ public:
 
     std::shared_ptr<ThirdPersonCamera> m_pCamera;        // サードパーソンカメラ
 
-    SoAHandle AddModel(std::string_view filename);       // モデルの追加
-    ModelObject& GetModelObject(SoAHandle handle);       // モデルオブジェクトの取得
-    bool RemoveModel(SoAHandle handle);                  // モデルの削除
+    UID AddModel(std::string_view filename);       // モデルの追加
+    ModelObject& GetModelObject(UID handle);       // モデルオブジェクトの取得
+    bool RemoveModel(UID handle);                  // モデルの削除
 };

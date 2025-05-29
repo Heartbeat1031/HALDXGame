@@ -110,7 +110,7 @@ void GameApp::Draw() {
     m_BasicEffect.SetRenderDefault();
 
     // モデル描画キュー
-    m_ModelObjectStorage.ForEachActive([this](SoAHandle id, ModelObject &modelObject) {
+    m_ModelObjectStorage.ForEachActive([this](UID id, ModelObject &modelObject) {
         modelObject.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     });
 
@@ -138,7 +138,7 @@ void GameApp::OnResize() {
 
 ////////////////////////////新しいコード/////////////////////////////////////
 // モデルを追加
-SoAHandle GameApp::AddModel(std::string_view filename) {
+UID GameApp::AddModel(std::string_view filename) {
     Model *model = m_ModelManager.GetModel(filename);
     if (model == nullptr) {
         model = m_ModelManager.CreateFromFile(filename);
@@ -149,12 +149,12 @@ SoAHandle GameApp::AddModel(std::string_view filename) {
 }
 
 // モデルオブジェクトの取得
-ModelObject &GameApp::GetModelObject(SoAHandle handle) {
+ModelObject &GameApp::GetModelObject(UID handle) {
     return m_ModelObjectStorage.Get<ModelObject>(handle);
 }
 
 // モデルの削除
-bool GameApp::RemoveModel(SoAHandle handle) {
+bool GameApp::RemoveModel(UID handle) {
     m_ModelObjectStorage.Remove(handle);
     return true;
 }

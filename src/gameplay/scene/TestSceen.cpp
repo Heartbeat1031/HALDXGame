@@ -9,14 +9,14 @@
 
 void TestSceen::Init() {
     // ground モジュール　
-    SoAHandle groundHandle = halgame->AddModel("assets\\models\\ground_19.obj");
+    UID groundHandle = halgame->AddModel("assets\\models\\ground_19.obj");
     // ModelObject &ground = halgame->GetModelObject(groundHandle);
     // Transform &groundTransform = ground.GetTransform();
     // groundTransform.SetPosition(0.0f, -1.0f, 0.0f);
     // groundTransform.SetRotation(0.0f, 0.0f, 0.0f);
     // groundTransform.SetScale(1.0f, 1.0f, 1.0f);
 
-    SoAHandle hand = halgame->AddModel("assets\\models\\GothicMiku\\Gothic Miku (Apearance Ver.)5.pmx");
+    UID hand = halgame->AddModel("assets\\models\\GothicMiku\\Gothic Miku (Apearance Ver.)5.pmx");
     ModelObject &praying = halgame->GetModelObject(hand);
     Transform &transform = praying.GetTransform();
     transform.SetPosition(5.0f, 0.0f, 0.0f);

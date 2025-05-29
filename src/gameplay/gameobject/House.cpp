@@ -12,15 +12,17 @@ House::~House() {
 }
 
 void House::Init() {
-    GameObject::Init();
     AddComponent<ModelComponent>()->Load("assets\\models\\house.obj");
-    SetScale(Vector3(0.015f, 0.015f, 0.015f));
-    SetPosition(Vector3(0, -1, 0));
+    // SetScale(Vector3(0.015f, 0.015f, 0.015f));
+    // SetPosition(Vector3(0, -1, 0));
 
 }
 
+void House::Uninit() {
+}
+
+
 void House::Update(float dt) {
-    GameObject::Update(dt);
 
     // オブジェクト移動のサンプル
     Vector3 v3;
@@ -36,6 +38,5 @@ void House::Update(float dt) {
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
         v3 += {1, 0, 0};
     }
-    SetPosition(GetPosition() + v3 * 2  * dt);
+    //SetPosition(GetPosition() + v3 * 2  * dt);
 }
-

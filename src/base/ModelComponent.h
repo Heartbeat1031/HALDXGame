@@ -16,7 +16,7 @@ public:
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;
-    SoAHandle handle = -1;
+    UID handle = -1;
 
     void Load(std::string_view filename);
 };

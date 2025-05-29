@@ -11,7 +11,7 @@
 #include <memory>
 #include <type_traits>
 
-using SoAHandle = std::uint32_t;
+using UID = std::uint32_t;
 
 template<typename... ComponentTypes>
 class SoAStorage {
@@ -20,23 +20,23 @@ class SoAStorage {
 
     ComponentStorage dataColumns;
     std::vector<bool> actives;
-    std::vector<SoAHandle> freeIndices;
+    std::vector<UID> freeIndices;
 
     // 特定のメンバ変数の unique_ptr<T>& を取得する
     template<typename T>
-    std::unique_ptr<T> &getAt(SoAHandle index) {
+    std::unique_ptr<T> &getAt(UID index) {
         return std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[index];
     }
 
     // 特定のインデックスに対応するすべてのフィールドを設定する
-    void setTupleAt(SoAHandle index, std::unique_ptr<ComponentTypes> &&... components) {
+    void setTupleAt(UID index, std::unique_ptr<ComponentTypes> &&... components) {
         ((std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[index] = std::move(components)), ...);
     }
 
 public:
     // ノードを追加してハンドルを返します。引数にはポインタ（または std::make_unique）で渡す必要があります。
-    SoAHandle Add(std::unique_ptr<ComponentTypes> &&... components) {
-        SoAHandle index;
+    UID Add(std::unique_ptr<ComponentTypes> &&... components) {
+        UID index;
 
         if (!freeIndices.empty()) {
             index = freeIndices.back();
@@ -44,7 +44,7 @@ public:
             setTupleAt(index, std::move(components)...);
             actives[index] = true;
         } else {
-            index = static_cast<SoAHandle>(std::get<0>(dataColumns).size());
+            index = static_cast<UID>(std::get<0>(dataColumns).size());
             (std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns).emplace_back(std::move(components)),
                 ...);
             actives.push_back(true);
@@ -54,7 +54,7 @@ public:
     }
 
     // 指定ノードを削除し、それに関連付けられた unique_ptr による全オブジェクトを自動的に解放します。
-    void Remove(SoAHandle handle) {
+    void Remove(UID handle) {
         assert(handle < actives.size());
         actives[handle] = false;
         (std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[handle].reset(), ...);
@@ -62,8 +62,8 @@ public:
     }
 
     // アクティブなすべてのノードを対象に、各フィールド（T& 型）への生の参照をコールバック関数に渡します。
-    void ForEachActive(const std::function<void(SoAHandle, ComponentTypes &...)> &fn) {
-        for (SoAHandle i = 0; i < actives.size(); ++i) {
+    void ForEachActive(const std::function<void(UID, ComponentTypes &...)> &fn) {
+        for (UID i = 0; i < actives.size(); ++i) {
             if (!actives[i]) continue;
             fn(i, *getAt<ComponentTypes>(i)...);
         }
@@ -71,20 +71,20 @@ public:
 
     // unique_ptr をデリファレンスして、特定のフィールドの参照（T&）を取得する
     template<typename T>
-    T &Get(SoAHandle handle) {
+    T &Get(UID handle) {
         assert(handle < actives.size() && actives[handle]);
         return *std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[handle];
     }
 
     // フィールドの const 参照を取得
     template<typename T>
-    const T &GetConst(SoAHandle handle) const {
+    const T &GetConst(UID handle) const {
         return *std::get<std::vector<std::unique_ptr<T> > >(dataColumns)[handle];
     }
 
     // 全データを削除しますが、確保済みのメモリ容量（capacity）はそのまま保持されます。
     void Clear() {
-        for (SoAHandle i = 0; i < actives.size(); ++i) {
+        for (UID i = 0; i < actives.size(); ++i) {
             (std::get<std::vector<std::unique_ptr<ComponentTypes> > >(dataColumns)[i].reset(), ...);
         }
         actives.clear();

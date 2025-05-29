@@ -11,12 +11,12 @@ void ModelComponent::CheckTransform() {
     }
     ModelObject &modelObject = halgame->GetModelObject(handle);
     Transform &houseTransform = modelObject.GetTransform();
-    Vector3 position = m_Parent->GetPosition();
-    Vector3 rotation = m_Parent->GetRotation();
-    Vector3 scale = m_Parent->GetScale();
-    houseTransform.SetPosition(position);
-    houseTransform.SetRotation(rotation);
-    houseTransform.SetScale(scale);
+    // Vector3 position = m_Parent->GetPosition();
+    // Vector3 rotation = m_Parent->GetRotation();
+    // Vector3 scale = m_Parent->GetScale();
+    // houseTransform.SetPosition(position);
+    // houseTransform.SetRotation(rotation);
+    // houseTransform.SetScale(scale);
 }
 
 void ModelComponent::Init() {
