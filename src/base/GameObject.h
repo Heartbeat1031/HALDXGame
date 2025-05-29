@@ -14,7 +14,6 @@ protected:
     Vector3 m_Rotation = Vector3(0.0f, 0.0f, 0.0f);
     Vector3 m_Scale = Vector3(1.0f, 1.0f, 1.0f);
     std::list<Component*> m_Component;
-
     std::list<GameObject*> m_ChildGameObject;
 
 public:

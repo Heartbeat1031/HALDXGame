@@ -80,6 +80,9 @@ add_subdirectory(src/modules/GameKit)
 add_subdirectory(src/modules/Physics)
 add_subdirectory(src/modules/DX DX)
 
+#テストモジュールの追加
+add_subdirectory(src/modules/RubikCube)
+
 file(GLOB_RECURSE BASE_CPP_FILES src/base/*.cpp)
 file(GLOB_RECURSE BASE_HEADER_FILES src/base/*.h)
 file(GLOB_RECURSE GAMEPLAY_CPP_FILES src/gameplay/*.cpp)
