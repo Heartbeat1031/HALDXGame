@@ -13,6 +13,8 @@ class TransformComponent : public Component {
 private:
     DirectX::SimpleMath::Vector3 m_localPosition;
     DirectX::SimpleMath::Quaternion m_localRotation;
+    // 用于存储欧拉角
+    DirectX::SimpleMath::Vector3 m_localEuler;
     DirectX::SimpleMath::Vector3 m_localScale;
 
     DirectX::SimpleMath::Matrix m_localMatrix;
@@ -20,7 +22,7 @@ private:
     bool m_dirty;
 
     TransformComponent* m_parent;
-    SoAStorage<UID> m_Childs;
+    std::vector<TransformComponent*> m_Childs;
 
     void UpdateTransform();
     void RecalculateLocalMatrix();
@@ -28,25 +30,29 @@ private:
 public:
     TransformComponent(GameObject* parent);
     ~TransformComponent() override = default;
-
+    void Uninit() override;
     // 设置局部属性
     void SetLocalPosition(const DirectX::SimpleMath::Vector3& position);
     void SetLocalRotation(const DirectX::SimpleMath::Quaternion& rotation);
+    void SetLocalRotationEuler(const DirectX::SimpleMath::Vector3& eulerRadians);
     void SetLocalScale(const DirectX::SimpleMath::Vector3& scale);
 
     // 获取局部属性
     DirectX::SimpleMath::Vector3 GetLocalPosition() const;
     DirectX::SimpleMath::Quaternion GetLocalRotation() const;
+    DirectX::SimpleMath::Vector3 GetLocalRotationEuler() const;
     DirectX::SimpleMath::Vector3 GetLocalScale() const;
 
     // 获取全局属性
     DirectX::SimpleMath::Matrix GetWorldMatrix();
     DirectX::SimpleMath::Vector3 GetWorldPosition();
     DirectX::SimpleMath::Quaternion GetWorldRotation();
+    DirectX::SimpleMath::Vector3 GetWorldRotationEuler();
     DirectX::SimpleMath::Vector3 GetWorldScale();
 
     // 父子节点管理
     void SetParent(TransformComponent* newParent);
-    void AddChild(std::shared_ptr<TransformComponent> child);
+    TransformComponent* GetParent() const { return m_parent; }
+    void AddChild(TransformComponent* child);
     void RemoveChild(TransformComponent* child);
 };

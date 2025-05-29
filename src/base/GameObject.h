@@ -17,11 +17,11 @@ private:
     std::unordered_map<std::type_index, UID> m_ComponentMap;
 
 protected:
-    virtual void Init() = 0;
+    virtual void Init(){};
 
-    virtual void Uninit() = 0;
+    virtual void Uninit(){};
 
-    virtual void Update(float dt) = 0;
+    virtual void Update(float dt){};
 
 public:
     GameObject();

@@ -10,7 +10,7 @@
 
 class ModelComponent : public Component {
 private:
-    void CheckTransform();
+    void CheckTransform() const;
 public:
     using Component::Component;
     void Init() override;

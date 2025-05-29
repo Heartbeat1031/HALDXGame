@@ -3,20 +3,20 @@
 //
 
 #include "ModelComponent.h"
-#include "Global.h"
 
-void ModelComponent::CheckTransform() {
+#include "GameObject.h"
+#include "Global.h"
+#include "SimpleMath.h"
+#include "TransformComponent.h"
+
+void ModelComponent::CheckTransform() const {
     if (handle == -1) {
         return;
     }
     ModelObject &modelObject = halgame->GetModelObject(handle);
-    Transform &houseTransform = modelObject.GetTransform();
-    // Vector3 position = m_Parent->GetPosition();
-    // Vector3 rotation = m_Parent->GetRotation();
-    // Vector3 scale = m_Parent->GetScale();
-    // houseTransform.SetPosition(position);
-    // houseTransform.SetRotation(rotation);
-    // houseTransform.SetScale(scale);
+    Transform &modelTransform = modelObject.GetTransform();
+    TransformComponent &transformComponent = m_gameobject->GetComponent<TransformComponent>();
+    modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
 }
 
 void ModelComponent::Init() {
