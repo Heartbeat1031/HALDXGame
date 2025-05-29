@@ -25,7 +25,7 @@ void TestSceen::Init() {
     transform.SetScale(0.5f, 0.5f, 0.5f);
     //transform.SetScale(0.01f, 0.01f, 0.01f);
     // house ゲームオブジェクト
-    AddGameObject<House>(1);
+    AddGameObject<House>();
 }
 
 void TestSceen::Update() {
@@ -48,4 +48,8 @@ void TestSceen::Update() {
     }
     ImGui::End();
     ImGui::Render();
+}
+
+void TestSceen::Uninit() {
+
 }

@@ -10,4 +10,5 @@ class TestSceen : public Scene{
 public:
     void Init() override;
     void Update() override;
+    void Uninit() override;
 };

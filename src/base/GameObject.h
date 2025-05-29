@@ -3,10 +3,13 @@
 #include <list>
 #include <SimpleMath.h>
 #include "Component.h"
+#include "SoAStorage.h"
 
 using namespace DirectX::SimpleMath;
 
 class GameObject {
+private:
+    SoAHandle m_Handle = -1;
 protected:
     bool m_Destroy = false;
     GameObject* m_Parent = nullptr;
@@ -19,7 +22,8 @@ protected:
 public:
     GameObject(){}
     virtual ~GameObject() {}
-
+    void SetHandle(SoAHandle handle) { m_Handle = handle; }
+    SoAHandle GetHandle() const { return m_Handle; }
     Vector3 GetPosition() const { return m_Position; }
     Vector3 GetRotation() const { return m_Rotation; }
     Vector3 GetScale() const { return m_Scale; }

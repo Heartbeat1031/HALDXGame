@@ -3,7 +3,6 @@
 //
 
 #include "ModelComponent.h"
-
 #include "Global.h"
 
 void ModelComponent::CheckTransform() {
