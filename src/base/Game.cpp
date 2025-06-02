@@ -5,6 +5,13 @@
 #include "Game.h"
 #include "TestSceen.h"
 
+//---------------------------------------------------------------//
+// 定义游戏程序, 包含了游戏的窗口, 游戏循环, 渲染, 输入处理等功能
+// ゲームプログラムを定義します。ゲームのウィンドウ、ゲームループ、レンダリング、入力処理などの機能を含みます。
+//---------------------------------------------------------------//
+
+// 游戏实例
+// ゲームインスタンス
 Game::Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight): GameApp(hInstance, windowName, initWidth, initHeight) {
 }
 
@@ -21,8 +28,10 @@ bool Game::Init() {
     config.OversampleH = 1;
     config.OversampleV = 1;
     config.PixelSnapH = true;
+    //日本語文字体を追加
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ja.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesJapanese());
     config.MergeMode = true;
+    // 中国語簡体字、繁体字、韓国語、ラテン文字のフォントを追加
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hans.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-zh_hant.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesChineseFull());
     io.Fonts->AddFontFromFileTTF("assets/fonts/fusion-pixel-10px-monospaced-ko.ttf", 16.0f, &config, io.Fonts->GetGlyphRangesKorean());
@@ -33,18 +42,9 @@ bool Game::Init() {
     return true;
 }
 
+// ゲームの実行
 void Game::Update(float dt) {
     GameApp::Update(dt);
+    // シーンの更新
     m_Scene->UpdateBase(dt);
-}
-
-template<typename T>
-void Game::SetScene() {
-    if (m_Scene != nullptr)
-    {
-        m_Scene->UninitBase();
-        delete m_Scene;
-    }
-    m_Scene = new T();
-    m_Scene->InitBase();
 }

@@ -23,16 +23,16 @@ TransformC::TransformC(GameObject *parent)
 void TransformC::Uninit() {
     Component::Uninit();
     if (m_parent) {
-        m_parent->RemoveChild(this); // 从父节点中移除自己
-        m_parent = nullptr; // 解除父子关系
+        m_parent->RemoveChild(this); // 親ノードから自分自身を取り除く
+        m_parent = nullptr; // 親子関係を解除する
     }
-    // 清理子节点
+    // 子ノードをクリアする
     for (TransformC *child : m_Childs) {
-        child->SetParent(nullptr); // 解除父子关系
+        child->SetParent(nullptr); // 親子関係を解除する
         UID childgameuid = child->m_gameobject->GetUID();
         halgame->GetScene()->RemoveGameObject(childgameuid);
     }
-    m_Childs.clear(); // 清空子节点列表
+    m_Childs.clear();
 }
 
 void TransformC::SetLocalPosition(const Vector3 &position) {
@@ -43,7 +43,7 @@ void TransformC::SetLocalPosition(const Vector3 &position) {
 void TransformC::SetLocalRotation(const Quaternion &rotation) {
     m_localRotation = rotation;
     m_dirty = true;
-    // 更新欧拉角缓存（以 Yaw-Pitch-Roll 解法）
+    // オイラー角キャッシュを更新（Yaw-Pitch-Roll の順で計算）
     float x = rotation.x;
     float y = rotation.y;
     float z = rotation.z;
@@ -144,7 +144,7 @@ Vector3 TransformC::GetWorldRotationEuler() {
     Vector3 translation;
     m_worldMatrix.Decompose(scale, rotation, translation);
 
-    // 使用四元数转换为欧拉角
+    // クォータニオンを使ってオイラー角に変換する
     float x = rotation.x;
     float y = rotation.y;
     float z = rotation.z;
@@ -179,19 +179,19 @@ Vector3 TransformC::GetWorldScale() {
 
 void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
     if (keepWorld) {
-        // 获取当前世界变换
+        // 現在のワールド変換行列を取得
         Matrix oldWorld = GetWorldMatrix();
-        // 设置新父节点
+        // 新しい親ノードを設定
         m_parent = newParent;
 
-        // 重新计算本地矩阵 = 父的逆 * 世界
+        // ローカル行列を再計算：親の逆行列 × ワールド行列
         Matrix parentWorldInv = Matrix::Identity;
         if (m_parent)
             parentWorldInv = m_parent->GetWorldMatrix().Invert();
 
         m_localMatrix = oldWorld * parentWorldInv;
 
-        // 分解矩阵为 position/rotation/scale
+        // 行列を position / rotation / scale に分解
         Vector3 scale;
         Quaternion rotation;
         Vector3 translation;
@@ -199,10 +199,10 @@ void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
         m_localScale = scale;
         m_localRotation = rotation;
         m_localPosition = translation;
-        // 更新欧拉角缓存
+        // オイラー角のキャッシュを更新
         SetLocalRotation(rotation);
     } else {
-        // 不保留世界坐标，直接设置父节点
+        // ワールド座標を保持しない場合、親ノードを直接設定
         m_parent = newParent;
     }
     m_dirty = true;
