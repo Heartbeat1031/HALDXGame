@@ -5,11 +5,6 @@
 #include "Game.h"
 #include "TestSceen.h"
 
-//---------------------------------------------------------------//
-// 定义游戏程序, 包含了游戏的窗口, 游戏循环, 渲染, 输入处理等功能
-// ゲームプログラムを定義します。ゲームのウィンドウ、ゲームループ、レンダリング、入力処理などの機能を含みます。
-//---------------------------------------------------------------//
-
 // 游戏实例
 // ゲームインスタンス
 Game::Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight): GameApp(hInstance, windowName, initWidth, initHeight) {
