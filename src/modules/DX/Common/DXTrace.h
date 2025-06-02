@@ -20,6 +20,18 @@
 // [In]strMsg			用于帮助调试定位的字符串，通常传递L#x(可能为NULL)
 // [In]bPopMsgBox       如果为TRUE，则弹出一个消息弹窗告知错误信息
 // 返回值: 形参hr
+
+// ------------------------------
+// DXTraceW関数
+// ------------------------------
+// フォーマットされたエラー情報をデバッグ出力ウィンドウに表示し、
+// 必要に応じてエラーメッセージボックスを表示します（日本語化済み）
+// [In] strFile         現在のファイル名。通常はマクロ __FILEW__ を渡す
+// [In] hlslFileName    現在の行番号。通常はマクロ __LINE__ を渡す
+// [In] hr              関数実行時に問題が発生した場合の HRESULT 値
+// [In] strMsg          デバッグでの特定を助ける文字列。通常は L#x を渡す（NULL の可能性あり）
+// [In] bPopMsgBox      TRUE の場合、エラーメッセージボックスを表示する
+// 戻り値: 引数 hr
 HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRESULT hr, _In_opt_ const WCHAR* strMsg, _In_ bool bPopMsgBox);
 
 

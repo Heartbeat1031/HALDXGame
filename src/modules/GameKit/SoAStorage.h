@@ -21,6 +21,8 @@ class SoAStorage {
     std::vector<UID> freeIndices;
 
 public:
+    // 添加节点 并返回其唯一标识符
+    // コンポーネントを追加し、その一意の識別子を返します
     UID Add(std::unique_ptr<T> component) {
         UID index;
         if (!freeIndices.empty()) {
@@ -36,6 +38,8 @@ public:
         return index;
     }
 
+    // 删除节点
+    // コンポーネントを削除します
     void Remove(UID handle) {
         assert(handle < actives.size());
         actives[handle] = false;
@@ -43,16 +47,22 @@ public:
         freeIndices.push_back(handle);
     }
 
+    // 获取节点的引用
+    // コンポーネントを取得します
     T &Get(UID handle) {
         assert(handle < actives.size() && actives[handle]);
         return *dataColumn[handle];
     }
 
+    // 获取节点的常量引用
+    // コンポーネントの定数参照を取得します
     const T &GetConst(UID handle) const {
         assert(handle < actives.size() && actives[handle]);
         return *dataColumn[handle];
     }
 
+    // 遍历节点
+    // アクティブなコンポーネントを走査します
     void ForEachActive(const std::function<void(UID, T &)> &fn) {
         for (UID i = 0; i < actives.size(); ++i) {
             if (!actives[i]) continue;
@@ -60,6 +70,8 @@ public:
         }
     }
 
+    // 清空存储 不释放内存空间
+    // ストレージをクリアしますが、メモリは解放しません
     void Clear() {
         for (auto &ptr: dataColumn) {
             ptr.reset();
@@ -68,6 +80,8 @@ public:
         freeIndices.clear();
     }
 
+    // 清空存储 并释放内存空间
+    // ストレージをクリアし、メモリを解放します
     void Reset() {
         dataColumn.clear();
         actives.clear();

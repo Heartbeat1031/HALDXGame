@@ -130,6 +130,7 @@ void Camera::SetViewPort(float topLeftX, float topLeftY, float width, float heig
 
 // ******************
 // 第一人称/自由视角摄像机
+// 第一人称のカメラ/フリールックカメラ
 //
 
 FirstPersonCamera::~FirstPersonCamera()
@@ -206,6 +207,7 @@ void FirstPersonCamera::RotateY(float rad)
 
 // ******************
 // 第三人称摄像机
+// 第三人称カメラ
 //
 
 ThirdPersonCamera::~ThirdPersonCamera()
@@ -251,6 +253,7 @@ void ThirdPersonCamera::Approach(float dist)
 {
     m_Distance += dist;
     // 限制距离在[m_MinDist, m_MaxDist]之间
+    // 範囲を[m_MinDist, m_MaxDist]に制限します
     if (m_Distance < m_MinDist)
         m_Distance = m_MinDist;
     else if (m_Distance > m_MaxDist)
@@ -264,6 +267,7 @@ void ThirdPersonCamera::SetRotationX(float rad)
 {
     XMFLOAT3 rotation = m_Transform.GetRotation();
     // 将绕x轴旋转弧度限制在[0, pi/3]之间
+    // X軸の回転角度を[0, π/3]に制限します
     rotation.x = rad;
     if (rotation.x < 0.0f)
         rotation.x = 0.0f;

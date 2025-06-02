@@ -1,9 +1,6 @@
 
 #pragma once
 
-#ifndef BUFFER_H
-#define BUFFER_H
-
 #include "WinMin.h"
 #include "D3DFormat.h"
 #include <d3d11_1.h>
@@ -22,6 +19,7 @@ public:
     ~Buffer() = default;
 
     // 不允许拷贝，允许移动
+    // コッピーを禁止し、ムーブを許可
     Buffer(const Buffer&) = delete;
     Buffer& operator=(const Buffer&) = delete;
     Buffer(Buffer&&) = default;
@@ -32,12 +30,14 @@ public:
     ID3D11ShaderResourceView* GetShaderResource() { return m_pShaderResource.Get(); }
 
     // 仅支持动态缓冲区
+    // 動的バッファのみサポート
     // TODO: Support NOOVERWRITE ring buffer?
     void* MapDiscard(ID3D11DeviceContext* d3dDeviceContext);
     void Unmap(ID3D11DeviceContext* d3dDeviceContext);
     uint32_t GetByteWidth() const { return m_ByteWidth; }
 
     // 设置调试对象名
+    // デバッグオブジェクト名を設定
     void SetDebugObjectName(std::string_view name);
 
 protected:
@@ -52,6 +52,7 @@ protected:
 
 
 // 注意：确保T与着色器中结构体的大小/布局相同
+// 注意：Tはシェーダー内の構造体のサイズ/レイアウトと一致する必要があります
 template<class T>
 class StructuredBuffer : public Buffer
 {
@@ -63,12 +64,14 @@ public:
     ~StructuredBuffer() = default;
 
     // 不允许拷贝，允许移动
+    // コッピーを禁止し、ムーブを許可
     StructuredBuffer(const StructuredBuffer&) = delete;
     StructuredBuffer& operator=(const StructuredBuffer&) = delete;
     StructuredBuffer(StructuredBuffer&&) = default;
     StructuredBuffer& operator=(StructuredBuffer&&) = default;
 
     // 仅支持动态缓冲区
+    // 動的バッファのみサポート
     // TODO: Support NOOVERWRITE ring buffer?
     T* MapDiscard(ID3D11DeviceContext* d3dDeviceContext);
 
@@ -111,6 +114,7 @@ public:
     ~TypedBuffer() = default;
 
     // 不允许拷贝，允许移动
+    // コッピーを禁止し、ムーブを許可
     TypedBuffer(const TypedBuffer&) = delete;
     TypedBuffer& operator=(const TypedBuffer&) = delete;
     TypedBuffer(TypedBuffer&&) = default;
@@ -142,6 +146,7 @@ public:
     ~ByteAddressBuffer() = default;
 
     // 不允许拷贝，允许移动
+    // コッピーを禁止し、ムーブを許可
     ByteAddressBuffer(const ByteAddressBuffer&) = delete;
     ByteAddressBuffer& operator=(const ByteAddressBuffer&) = delete;
     ByteAddressBuffer(ByteAddressBuffer&&) = default;
@@ -152,7 +157,5 @@ public:
 private:
     uint32_t m_NumUInt32s;
 };
-
-#endif
 
 

@@ -26,6 +26,8 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
     }
     // Windows SDK 8.0起DirectX的错误信息已经集成进错误码中，可以通过FormatMessageW获取错误信息字符串
     // 不需要分配字符串内存
+    //Windows SDK 8.0から DirectXのエラーメッセージはエラーコードに統合されており、FormatMessageWを使用してエラーメッセージ文字列を取得できます。
+    // 文字列のメモリを割り当てる必要はありません
     FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         strBufferError, 256, nullptr);
@@ -33,7 +35,9 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
     WCHAR* errorStr = wcsrchr(strBufferError, L'\r');
     if (errorStr)
     {
-        errorStr[0] = L'\0';	// 擦除FormatMessageW带来的换行符(把\r\n的\r置换为\0即可)
+        // 擦除FormatMessageW带来的换行符(把\r\n的\r置换为\0即可)
+        // FormatMessageWによって追加された改行文字を削除します（\r\nの\rを\0に置き換えるだけです）
+        errorStr[0] = L'\0';
     }
 
     swprintf_s(strBufferHR, 40, L" (0x%0.8x)", hr);
@@ -51,12 +55,12 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 
         wcscpy_s(strBufferMsg, 1024, L"");
         if (nMsgLen > 0)
-            swprintf_s(strBufferMsg, 1024, L"当前调用：%ls\n", strMsg);
+            swprintf_s(strBufferMsg, 1024, L"現在の呼び出し：%ls\n", strMsg);
 
-        swprintf_s(strBuffer, 3000, L"文件名：%ls\n行号：%ls\n错误码含义：%ls\n%ls您需要调试当前应用程序吗？",
+        swprintf_s(strBuffer, 3000, L"ファイル名：%ls\n行番号：%ls\nエラーコードの意味：%ls\n%lsこのアプリケーションのデバッグを行いますか？",
             strBufferFile, strBufferLine, strBufferError, strBufferMsg);
 
-        int nResult = MessageBoxW(GetForegroundWindow(), strBuffer, L"错误", MB_YESNO | MB_ICONERROR);
+        int nResult = MessageBoxW(GetForegroundWindow(), strBuffer, L"エラー", MB_YESNO | MB_ICONERROR);
         if (nResult == IDYES)
             DebugBreak();
     }
