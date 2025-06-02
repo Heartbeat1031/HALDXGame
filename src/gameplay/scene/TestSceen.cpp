@@ -7,21 +7,26 @@
 #include "ModelObject.h"
 #include "House.h"
 #include "Miku.h"
+#include "ModelC.h"
 #include "TransformC.h"
 
 void TestSceen::Init() {
-    // ground モジュール　
-    UID groundHandle = halgame->AddModel("assets\\models\\ground_19.obj");
-    ModelObject &ground = halgame->GetModelObject(groundHandle);
-    Transform &groundTransform = ground.GetTransform();
-    groundTransform.SetPosition(0, 0, 0);
+    // 地面を追加するサンプル
+    GameObject &ground = AddGameObject<GameObject>();
+    // 地面のモデルコンポーネントを追加します
+    ground.AddComponent<ModelC>().Load("assets\\models\\ground_19.obj");
+    // 地面の座標を設定します
+    ground.GetComponent<TransformC>().SetLocalPosition(Vector3(0, -0, 0));
 
-    // house ゲームオブジェクト
+    // House ゲームオブジェクトを追加します
     House &house = AddGameObject<House>();
+    // Miku ゲームオブジェクトを追加します
     Miku &miku = AddGameObject<Miku>();
+    // HouseのTransformCを取得し、MikuのTransformCを取得して位置を設定します
     TransformC &houseTC = house.GetComponent<TransformC>();
     TransformC &mikuTC = miku.GetComponent<TransformC>();
     mikuTC.SetLocalPosition(Vector3(5, 0, 0));
+    // MikuのTransformCをHouseの子に設定します
      houseTC.AddChild(&mikuTC);
 
 }
