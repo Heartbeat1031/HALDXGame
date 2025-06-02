@@ -103,6 +103,9 @@ void TransformC::RecalculateLocalMatrix() {
 
 void TransformC::UpdateTransform() {
     if (m_dirty) {
+        // 必须先将脏位置为false，因为子类更新会回调到此函数, 防止死循环(暂时没有太好的解决方案)
+        //サ ブクラスの更新処理がこの関数を再び呼び出す可能性があるため、最初にダーティーフラグを false に設定しておく必要があります。
+        //無限ループを防ぐためです。（今のところ、あまり良い解決策はありません）
         m_dirty = false;
         RecalculateLocalMatrix();
         if (m_parent) {
@@ -110,7 +113,7 @@ void TransformC::UpdateTransform() {
         } else {
             m_worldMatrix = m_localMatrix;
         }
-
+        // 子TransformCのワールド変換行列を更新
         for (TransformC * transformChild : m_Childs) {
             transformChild->m_dirty = true;
             transformChild->UpdateTransform();

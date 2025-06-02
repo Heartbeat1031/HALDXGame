@@ -3,9 +3,16 @@
 #include "Component.h"
 #include "GameObject.h"
 
+//---------------------------------------------------------------//
+// Scene是游戏当前所有GameObject和Component的容器, 负责管理GameObject和Component的生命周期和更新。
+// Sceneは現在のゲームのすべてのGameObjectとComponentのコンテナであり、GameObjectとComponentのライフサイクルと更新を管理します。
+//----------------------------------------------------------------//
+
 class Scene {
 protected:
+    // GameObjectのコンテナ
     SoAStorage<GameObject> m_GameObjectStorage;
+    // Componentのコンテナ
     SoAStorage<Component> m_ComponentStorage;
 
 public:
@@ -36,12 +43,15 @@ public:
     // ゲームオブジェクトを削除
     void RemoveGameObject(UID handle);
 
+    // コンポーネントを追加
     template<typename T>
     T &AddComponent(GameObject *parent);
 
+    // コンポーネントを取得
     template<typename T>
     T &GetComponent(UID handle);
 
+    // コンポーネントを削除
     void RemoveComponent(UID handle);
 };
 
@@ -60,6 +70,8 @@ template<typename T>
 T &Scene::GetGameObject(UID handle) {
     static_assert(std::is_base_of<GameObject, T>::value, "T は GameObject を継承する必要があります。");
     GameObject &base = m_GameObjectStorage.Get(handle);
+    // 这里使用的强制转换, 虽然有点费效率, 但是优化费劲,调用频率不高, 所以暂时放弃优化. 懒!!
+    // ここでは強制キャストを使用しています。効率は少し低下しますが、最適化は面倒で、呼び出し頻度も高くないため、今のところ最適化は行いません。
     return dynamic_cast<T&>(base);
 }
 

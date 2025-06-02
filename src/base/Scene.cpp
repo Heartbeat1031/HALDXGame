@@ -14,6 +14,8 @@ void Scene::InitBase() {
 }
 
 void Scene::UninitBase() {
+    // 释放所有的GameObject, m_Component不用在这里释放, 因为GameObject会释放它们
+    // すべでのGameObjectを解放します。m_Componentはここで解放する必要はありません。なぜなら、GameObjectがそれらを解放するからです。
     m_GameObjectStorage.ForEachActive([this](UID id, GameObject &game_object) {
         game_object.UninitBase();
     });
@@ -22,6 +24,8 @@ void Scene::UninitBase() {
 }
 
 void Scene::UpdateBase(float dt) {
+    // 先更新所有的Component, 再更新所有GameObject
+    // すべてのComponentを先に更新し、その後にすべてのGameObjectを更新します。
     m_ComponentStorage.ForEachActive([this, dt](UID id, Component &component) {
         component.Update(dt);
     });

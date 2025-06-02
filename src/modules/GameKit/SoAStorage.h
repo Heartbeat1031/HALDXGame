@@ -12,6 +12,8 @@
 
 using UID = std::uint32_t;
 
+// SoAStorage是一个可以支持快速添加、快速删除和快速遍历的多态存储容器.
+// SoAStorageは、迅速な追加、削除、および多態的な走査をサポートするストレージコンテナです。
 template<typename T>
 class SoAStorage {
     std::vector<std::unique_ptr<T> > dataColumn;

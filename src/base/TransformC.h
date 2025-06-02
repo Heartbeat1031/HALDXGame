@@ -77,6 +77,6 @@ private:
     // 子TransformCを削除
     void RemoveChild(TransformC* child);
 public:
-    // 子TransformCを追加
+    // 子TransformCを追加 keepWorldはワールド座標を保持するかどうか
     void AddChild(TransformC* child, bool keepWorld = true);
 };
