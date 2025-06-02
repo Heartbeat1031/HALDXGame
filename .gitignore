@@ -12,7 +12,7 @@ CMakeUserPresets.json
 
 # === CMake のビルドディレクトリ ===
 cmake-build-*/
-build/
+/build/
 out/
 
 # === 依存関係（FetchContent など） ===
