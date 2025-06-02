@@ -71,9 +71,17 @@ add_custom_target(copy_assets ALL
 # third_party ディレクトリの追加
 add_subdirectory(third_party/DirectXTK DirectXTK)
 set(USE_STATIC_MSVC_RUNTIME_LIBRARY OFF CACHE BOOL "Use dynamic CRT for JoltPhysics" FORCE)
+set(PHYSICS_REPO_ROOT ${CMAKE_SOURCE_DIR}/third_party/JoltPhysics)
 add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
+#include(third_party/JoltPhysics/Jolt/Jolt.cmake)
+include(third_party/JoltPhysics/JoltViewer/JoltViewer.cmake)
+include(third_party/JoltPhysics/PerformanceTest/PerformanceTest.cmake)
+include(third_party/JoltPhysics/TestFramework/TestFramework.cmake)
+include(third_party/JoltPhysics/Samples/Samples.cmake)
+include(third_party/JoltPhysics/UnitTests/UnitTests.cmake)
 add_subdirectory(third_party/assimp assimp)
 add_subdirectory(third_party/ImGui ImGui)
+
 
 #モジュールの追加
 add_subdirectory(src/modules/GameKit)
