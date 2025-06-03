@@ -30,13 +30,24 @@ class Game : public GameApp {
 private:
     // 現在のシーン
     Scene *m_Scene = nullptr;
-    JPH::TempAllocator *mTempAllocator = nullptr; //临时内存分配器
-    JPH::JobSystemThreadPool *mJobSystem = nullptr; //作业系统
-    BPLayerInterfaceImpl	mBroadPhaseLayerInterface;									// The broadphase layer interface that maps object layers to broadphase layers
-    ObjectVsBroadPhaseLayerFilterImpl mObjectVsBroadPhaseLayerFilter;					// Class that filters object vs broadphase layers
+    //临时内存分配器
+    JPH::TempAllocator *mTempAllocator = nullptr;
+    //作业系统
+    JPH::JobSystemThreadPool *mJobSystem = nullptr;
+    // 对象层到广相层的映射表
+    BPLayerInterfaceImpl mBroadPhaseLayerInterface;
+    // 对象层与广相层之间的过滤器
+    ObjectVsBroadPhaseLayerFilterImpl mObjectVsBroadPhaseLayerFilter;
+    // 对象层与对象层之间的过滤器
     ObjectLayerPairFilterImpl mObjectVsObjectLayerFilter;
+    // 物理系统实例
+    PhysicsSystem *mPhysicsSystem = nullptr;
+    JPH::PhysicsSettings mPhysicsSettings;
+    // 接触监听器
+    // JoltContactListener mContactListener;
+    // // 刚体激活监听器
+    // JoltBodyActivationListener mBodyActivationListener;
 
-    JPH::PhysicsSettings			mPhysicsSettings;
 public:
     Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight);
 

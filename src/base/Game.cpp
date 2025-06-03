@@ -38,6 +38,16 @@ bool Game::Init() {
     JPH::RegisterTypes();
     mTempAllocator = new JPH::TempAllocatorImpl(32 * 1024 * 1024);
     mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+    mPhysicsSystem = new PhysicsSystem();
+    mPhysicsSystem->Init(10240, 0, 65536, 20480, mBroadPhaseLayerInterface, mObjectVsBroadPhaseLayerFilter, mObjectVsObjectLayerFilter);
+    mPhysicsSystem->SetPhysicsSettings(mPhysicsSettings);
+    // 物理系统的重力设置为 -9.81f
+    mPhysicsSystem->SetGravity(Vec3(0, -9.81f, 0));
+    // 设置临时内存分配器和作业系统
+    mPhysicsSystem->OptimizeBroadPhase();
+    // mPhysicsSystem->SetBodyActivationListener(&mBodyActivationListener);
+    // mPhysicsSystem->SetContactListener(&mContactListener);
+
     // テストシーンを読み込む
     SetScene<TestSceen>();
     return true;
