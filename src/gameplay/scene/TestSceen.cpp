@@ -19,34 +19,16 @@ void TestSceen::Init() {
     ground.AddComponent<ModelC>("assets\\models\\ground_19.obj");
     // 地面の座標を設定します
     ground.GetComponent<TransformC>().SetLocalPosition(Vector3(0, -0, 0));
-    ground.AddComponent<BoxCollisionC>(1);
+    ground.AddComponent<BoxCollisionC>(
+        Vector3(100, 1, 100), // サイズを設定します
+        JPH::EMotionType::Static // 静的な物体
+    );
+
+
     // House ゲームオブジェクトを追加します
     House &house = AddGameObject<House>();
-    // Miku ゲームオブジェクトを追加します
-    Miku &miku = AddGameObject<Miku>();
-    // HouseのTransformCを取得し、MikuのTransformCを取得して位置を設定します
-    TransformC &houseTC = house.GetComponent<TransformC>();
-    TransformC &mikuTC = miku.GetComponent<TransformC>();
-    mikuTC.SetLocalPosition(Vector3(5, 0, 0));
-    // MikuのTransformCをHouseの子に設定します
-     houseTC.AddChild(&mikuTC);
-
-
-    // JPH::BodyInterface &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
-    // // 创建形状
-    // RefConst<JPH::Shape> shape = new JPH::BoxShape(Vec3(1.0f, 1.0f, 1.0f));
-    //
-    // // 设置刚体创建信息
-    // JPH::BodyCreationSettings settings(
-    //     shape,
-    //     RVec3(0.0f, 5.0f, 0.0f),       // 初始位置
-    //     Quat::sIdentity(),
-    //     JPH::EMotionType::Dynamic,
-    //     Layers::MOVING
-    // );
-    //
-    // JPH::Body *body = bodyInterface.CreateBody(settings);
-    // bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
+    house.GetComponent<TransformC>().SetLocalPosition(Vector3(0, 20, 0));
+    house.AddComponent<BoxCollisionC>(Vector3(1, 1, 1), JPH::EMotionType::Dynamic);
 }
 
 void TestSceen::Update() {

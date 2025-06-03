@@ -10,6 +10,14 @@ GameApp::GameApp(HINSTANCE hInstance, const std::wstring &windowName, int initWi
 
 GameApp::~GameApp() = default;
 
+ID3D11Device * GameApp::GetDevice() const {
+    return  m_pd3dDevice1 ? m_pd3dDevice1.Get() : m_pd3dDevice.Get();
+}
+
+ID3D11DeviceContext * GameApp::GetDeviceContext() const {
+    return  m_pd3dImmediateContext1 ? m_pd3dImmediateContext1.Get() : m_pd3dImmediateContext.Get();
+}
+
 bool GameApp::Init() {
     if (!D3DApp::Init()) {
         return false;

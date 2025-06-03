@@ -76,6 +76,65 @@ void TransformC::SetLocalScale(const Vector3 &scale) {
     m_dirty = true;
 }
 
+void TransformC::SetWorldPosition(const DirectX::SimpleMath::Vector3 &position) {
+    UpdateTransform(); // 确保 world matrix 是最新的
+    // 构造新的 world matrix 的 translation
+    DirectX::SimpleMath::Matrix newWorldMatrix = m_worldMatrix;
+    newWorldMatrix.Translation(position);
+
+    if (m_parent) {
+        DirectX::SimpleMath::Matrix parentWorldInv = m_parent->GetWorldMatrix().Invert();
+        m_localMatrix = newWorldMatrix * parentWorldInv;
+    } else {
+        m_localMatrix = newWorldMatrix;
+    }
+
+    // 分解本地矩阵，提取新的 localPosition/Rotation/Scale
+    Vector3 scale;
+    Quaternion rotation;
+    Vector3 translation;
+    m_localMatrix.Decompose(scale, rotation, translation);
+
+    m_localScale = scale;
+    m_localRotation = rotation;
+    m_localPosition = translation;
+    SetLocalRotation(rotation); // 更新欧拉角缓存
+    m_dirty = true;
+}
+
+void TransformC::SetWorldRotation(const DirectX::SimpleMath::Quaternion &rotation) {
+    UpdateTransform(); // 确保 world matrix 是最新的
+
+    // 获取当前世界的位置和缩放
+    Vector3 position = GetWorldPosition();
+    Vector3 scale = GetWorldScale();
+
+    DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateFromQuaternion(rotation);
+    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(scale);
+    DirectX::SimpleMath::Matrix transMatrix = DirectX::SimpleMath::Matrix::CreateTranslation(position);
+
+    DirectX::SimpleMath::Matrix newWorldMatrix = scaleMatrix * rotMatrix * transMatrix;
+
+    if (m_parent) {
+        DirectX::SimpleMath::Matrix parentWorldInv = m_parent->GetWorldMatrix().Invert();
+        m_localMatrix = newWorldMatrix * parentWorldInv;
+    } else {
+        m_localMatrix = newWorldMatrix;
+    }
+
+    // 分解本地矩阵，提取新的 localPosition/Rotation/Scale
+    Vector3 outScale;
+    Quaternion outRotation;
+    Vector3 outTranslation;
+    m_localMatrix.Decompose(outScale, outRotation, outTranslation);
+
+    m_localScale = outScale;
+    m_localRotation = outRotation;
+    m_localPosition = outTranslation;
+    SetLocalRotation(outRotation); // 更新欧拉角缓存
+    m_dirty = true;
+}
+
 Vector3 TransformC::GetLocalPosition() const {
     return m_localPosition;
 }

@@ -49,6 +49,10 @@ public:
     void SetLocalRotationEuler(const DirectX::SimpleMath::Vector3& eulerRadians);
     // ローカルスケールの設定
     void SetLocalScale(const DirectX::SimpleMath::Vector3& scale);
+    // ワールド座標の設定
+    void SetWorldPosition(const DirectX::SimpleMath::Vector3& position);
+    // ワールド回転の設定（クォータニオン）
+    void SetWorldRotation(const DirectX::SimpleMath::Quaternion& rotation);
 
     // ローカル座標の取得
     DirectX::SimpleMath::Vector3 GetLocalPosition() const;

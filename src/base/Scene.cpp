@@ -3,11 +3,9 @@
 //
 #include "Scene.h"
 
-Scene::Scene() {
-}
+Scene::Scene() = default;
 
-Scene::~Scene() {
-}
+Scene::~Scene() = default;
 
 void Scene::InitBase() {
     Init();

@@ -21,7 +21,6 @@ private:
     BasicEffect m_BasicEffect;                           // オブジェクト描画用エフェクト管理
     std::unique_ptr<Depth2D> m_pDepthTexture;            // デプスバッファ
     SoAStorage<ModelObject> m_ModelObjectStorage;        // モデルオブジェクトのストレージ
-
 protected:
     bool Init() override;                                // 初期化処理
     void OnResize() override;                            // リサイズ時の処理
@@ -33,7 +32,9 @@ protected:
 public:
     GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~GameApp() override;
-
+    ID3D11Device *GetDevice() const ;
+    // デバイスコンテキストを取得
+    ID3D11DeviceContext *GetDeviceContext() const;
     std::shared_ptr<ThirdPersonCamera> m_pCamera;        // サードパーソンカメラ
 
     UID AddModel(std::string_view filename);       // モデルの追加
