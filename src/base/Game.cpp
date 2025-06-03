@@ -45,8 +45,8 @@ bool Game::Init() {
     mPhysicsSystem->SetGravity(Vec3(0, -9.81f, 0));
     // 设置临时内存分配器和作业系统
     mPhysicsSystem->OptimizeBroadPhase();
-    // mPhysicsSystem->SetBodyActivationListener(&mBodyActivationListener);
-    // mPhysicsSystem->SetContactListener(&mContactListener);
+    mPhysicsSystem->SetBodyActivationListener(&mBodyActivationListener);
+    mPhysicsSystem->SetContactListener(&mContactListener);
 
     // テストシーンを読み込む
     SetScene<TestSceen>();

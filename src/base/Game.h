@@ -16,6 +16,7 @@
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 
 #include "GameApp.h"
+#include "JoltListener.h"
 #include "Scene.h"
 #include "Layers.h"
 class Scene;
@@ -43,10 +44,10 @@ private:
     // 物理系统实例
     PhysicsSystem *mPhysicsSystem = nullptr;
     JPH::PhysicsSettings mPhysicsSettings;
-    // 接触监听器
-    // JoltContactListener mContactListener;
-    // // 刚体激活监听器
-    // JoltBodyActivationListener mBodyActivationListener;
+    //接触监听器
+    JoltContactListener mContactListener;
+    // 刚体激活监听器
+    JoltBodyActivationListener mBodyActivationListener;
 
 public:
     Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight);
