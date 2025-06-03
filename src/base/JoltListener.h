@@ -1,12 +1,8 @@
 ﻿#pragma once
-#include <Jolt/Jolt.h>                    // 必须：包含 Defines.h 和一切 Jolt 基础
-#include <Jolt/Physics/Collision/ContactListener.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Math/Vec3.h>
 #include <Jolt/Physics/Collision/ContactListener.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 #include <Jolt/Math/Real.h>
-#include <Jolt/Core/Core.h> // 确保定义了 uint64 等类型
+#include <Jolt/Core/Core.h>
 
 class JoltContactListener : public JPH::ContactListener {
 public:

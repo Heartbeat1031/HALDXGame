@@ -1,9 +1,9 @@
+#include <iostream>
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/ContactListener.h>
 #include <Jolt/Physics/Body/Body.h>
 #include <Jolt/Math/Vec3.h>
 #include "JoltListener.h"
-#include <iostream>
 
 using namespace std;
 
