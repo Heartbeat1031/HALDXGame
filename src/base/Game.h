@@ -17,6 +17,7 @@
 
 #include "GameApp.h"
 #include "Scene.h"
+#include "Layers.h"
 class Scene;
 
 
@@ -28,19 +29,31 @@ class Scene;
 class Game : public GameApp {
 private:
     // 現在のシーン
-    Scene* m_Scene = nullptr;
+    Scene *m_Scene = nullptr;
+    JPH::TempAllocator *mTempAllocator = nullptr; //临时内存分配器
+    JPH::JobSystemThreadPool *mJobSystem = nullptr; //作业系统
+    BPLayerInterfaceImpl	mBroadPhaseLayerInterface;									// The broadphase layer interface that maps object layers to broadphase layers
+    ObjectVsBroadPhaseLayerFilterImpl mObjectVsBroadPhaseLayerFilter;					// Class that filters object vs broadphase layers
+    ObjectLayerPairFilterImpl mObjectVsObjectLayerFilter;
+
+    JPH::PhysicsSettings			mPhysicsSettings;
 public:
-    Game(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
+    Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight);
+
     ~Game() override;
+
     // ゲームの初期化
     bool Init() override;
+
     // ゲームの更新 dtはデルタタイム
     void Update(float dt) override;
+
     // シーンを設定する
-    template <typename T>
+    template<typename T>
     void SetScene();
+
     // シーンを取得する
-    Scene* GetScene() const { return m_Scene; }
+    Scene *GetScene() const { return m_Scene; }
 };
 
 // シーンを設定する
@@ -49,8 +62,7 @@ void Game::SetScene() {
     // TはSceneのサブクラスである必要があります
     static_assert(std::is_base_of<Scene, T>::value, "TはSceneのサブクラスでなければなりません");
     // 既存のシーンを解放
-    if (m_Scene != nullptr)
-    {
+    if (m_Scene != nullptr) {
         m_Scene->UninitBase();
         delete m_Scene;
     }

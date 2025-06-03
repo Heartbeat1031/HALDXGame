@@ -7,15 +7,13 @@
 #include "Global.h"
 #include "Scene.h"
 
-using namespace DirectX::SimpleMath;
-
 TransformC::TransformC(GameObject *parent)
     : Component(parent),
       m_localPosition(Vector3::Zero),
       m_localRotation(Quaternion::Identity),
       m_localScale(Vector3::One),
-      m_localMatrix(Matrix::Identity),
-      m_worldMatrix(Matrix::Identity),
+      m_localMatrix(DirectX::SimpleMath::Matrix::Identity),
+      m_worldMatrix(DirectX::SimpleMath::Matrix::Identity),
       m_dirty(true),
       m_parent(nullptr) {
 }
@@ -96,9 +94,9 @@ Vector3 TransformC::GetLocalScale() const {
 }
 
 void TransformC::RecalculateLocalMatrix() {
-    m_localMatrix = Matrix::CreateScale(m_localScale) *
-                    Matrix::CreateFromQuaternion(m_localRotation) *
-                    Matrix::CreateTranslation(m_localPosition);
+    m_localMatrix = DirectX::SimpleMath::Matrix::CreateScale(m_localScale) *
+                    DirectX::SimpleMath::Matrix::CreateFromQuaternion(m_localRotation) *
+                    DirectX::SimpleMath::Matrix::CreateTranslation(m_localPosition);
 }
 
 void TransformC::UpdateTransform() {
@@ -121,7 +119,7 @@ void TransformC::UpdateTransform() {
     }
 }
 
-Matrix TransformC::GetWorldMatrix() {
+DirectX::SimpleMath::Matrix TransformC::GetWorldMatrix() {
     UpdateTransform();
     return m_worldMatrix;
 }
@@ -183,12 +181,12 @@ Vector3 TransformC::GetWorldScale() {
 void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
     if (keepWorld) {
         // 現在のワールド変換行列を取得
-        Matrix oldWorld = GetWorldMatrix();
+        DirectX::SimpleMath::Matrix oldWorld = GetWorldMatrix();
         // 新しい親ノードを設定
         m_parent = newParent;
 
         // ローカル行列を再計算：親の逆行列 × ワールド行列
-        Matrix parentWorldInv = Matrix::Identity;
+        DirectX::SimpleMath::Matrix parentWorldInv = DirectX::SimpleMath::Matrix::Identity;
         if (m_parent)
             parentWorldInv = m_parent->GetWorldMatrix().Invert();
 

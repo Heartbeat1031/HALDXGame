@@ -36,6 +36,8 @@ bool Game::Init() {
     JPH::RegisterDefaultAllocator();
     JPH::Factory::sInstance = new JPH::Factory();
     JPH::RegisterTypes();
+    mTempAllocator = new JPH::TempAllocatorImpl(32 * 1024 * 1024);
+    mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
     // テストシーンを読み込む
     SetScene<TestSceen>();
     return true;

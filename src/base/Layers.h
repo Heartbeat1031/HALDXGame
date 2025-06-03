@@ -6,10 +6,7 @@
 
 #include <Jolt/Physics/Collision/ObjectLayer.h>
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
-
-#include "Jolt/Core/Core.h"
-#include "Jolt/Core/IssueReporting.h"
-
+using namespace JPH;
 /// Layer that objects can be in, determines which other objects it can collide with
 namespace Layers
 {
@@ -60,7 +57,7 @@ namespace BroadPhaseLayers
 	static constexpr BroadPhaseLayer DEBRIS(2);
 	static constexpr BroadPhaseLayer SENSOR(3);
 	static constexpr BroadPhaseLayer UNUSED(4);
-	static constexpr JPH::uint NUM_LAYERS(5);
+	static constexpr uint NUM_LAYERS(5);
 };
 
 /// BroadPhaseLayerInterface implementation
@@ -80,7 +77,7 @@ public:
 		mObjectToBroadPhase[Layers::SENSOR] = BroadPhaseLayers::SENSOR;
 	}
 
-	virtual JPH::uint					GetNumBroadPhaseLayers() const override
+	virtual uint					GetNumBroadPhaseLayers() const override
 	{
 		return BroadPhaseLayers::NUM_LAYERS;
 	}
