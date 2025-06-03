@@ -1,43 +1,56 @@
 ﻿#pragma once
+#include <Jolt/Jolt.h>                    // 必须：包含 Defines.h 和一切 Jolt 基础
+#include <Jolt/Physics/Collision/ContactListener.h>
+#include <Jolt/Physics/Body/Body.h>
+#include <Jolt/Math/Vec3.h>
+#include <Jolt/Physics/Collision/ContactListener.h>
+#include <Jolt/Physics/Body/BodyActivationListener.h>
+#include <Jolt/Math/Real.h>
+#include <Jolt/Core/Core.h> // 确保定义了 uint64 等类型
 
-#include <iostream>
-#include "Jolt/Core/Core.h"
-#include "Jolt/Math/Real.h"
-#include "Jolt/Math/Vec3.h"
-#include "Jolt/Physics/Body/BodyActivationListener.h"
-#include "Jolt/Physics/Collision/ContactListener.h"
-
-using namespace JPH;
-using namespace std;
-
-class JoltContactListener : public ContactListener {
+class JoltContactListener : public JPH::ContactListener {
 public:
-    ValidateResult OnContactValidate(const Body &inBody1, const Body &inBody2, RVec3Arg inBaseOffset, const CollideShapeResult &inCollisionResult) override {
-        cout << "Contact validate callback" << endl;
-        return ValidateResult::AcceptAllContactsForThisBodyPair;
-    };
+    // Called to validate a contact point before it is added
+    virtual JPH::ValidateResult OnContactValidate(
+        const JPH::Body &inBody1,
+        const JPH::Body &inBody2,
+        JPH::RVec3Arg inBaseOffset,
+        const JPH::CollideShapeResult &inCollisionResult
+    ) override;
 
-    void OnContactAdded(const Body &inBody1, const Body &inBody2, const ContactManifold &inManifold, ContactSettings &ioSettings) override {
-        cout << "A contact was added" << endl;
-    };
+    // Called when a new contact point has been added
+    virtual void OnContactAdded(
+        const JPH::Body &inBody1,
+        const JPH::Body &inBody2,
+        const JPH::ContactManifold &inManifold,
+        JPH::ContactSettings &ioSettings
+    ) override;
 
-    void OnContactPersisted(const Body &inBody1, const Body &inBody2, const ContactManifold &inManifold, ContactSettings &ioSettings) override {
-        cout << "A contact was persisted" << endl;
-    };
+    // Called when an existing contact persists
+    virtual void OnContactPersisted(
+        const JPH::Body &inBody1,
+        const JPH::Body &inBody2,
+        const JPH::ContactManifold &inManifold,
+        JPH::ContactSettings &ioSettings
+    ) override;
 
-    void OnContactRemoved(const SubShapeIDPair &inSubShapePair) override {
-        cout << "A contact was removed" << endl;
-    };
+    // Called when a contact point is removed
+    virtual void OnContactRemoved(
+        const JPH::SubShapeIDPair &inSubShapePair
+    ) override;
 };
 
-
-class JoltBodyActivationListener : public BodyActivationListener {
+class JoltBodyActivationListener : public JPH::BodyActivationListener {
 public:
-    void OnBodyActivated(const BodyID &inBodyID, JPH::uint64 inBodyUserData) override {
-        cout << "A body got activated" << endl;
-    };
+    // Called when a body becomes active (e.g. due to a collision or force)
+    virtual void OnBodyActivated(
+        const JPH::BodyID &inBodyID,
+        JPH::uint64 inBodyUserData
+    ) override;
 
-    void OnBodyDeactivated(const BodyID &inBodyID, JPH::uint64 inBodyUserData) override {
-        cout << "A body went to sleep" << endl;
-    };
+    // Called when a body goes to sleep
+    virtual void OnBodyDeactivated(
+        const JPH::BodyID &inBodyID,
+        JPH::uint64 inBodyUserData
+    ) override;
 };

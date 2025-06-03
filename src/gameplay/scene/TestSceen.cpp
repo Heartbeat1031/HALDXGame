@@ -29,6 +29,22 @@ void TestSceen::Init() {
     // MikuのTransformCをHouseの子に設定します
      houseTC.AddChild(&mikuTC);
 
+
+    // JPH::BodyInterface &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
+    // // 创建形状
+    // RefConst<JPH::Shape> shape = new JPH::BoxShape(Vec3(1.0f, 1.0f, 1.0f));
+    //
+    // // 设置刚体创建信息
+    // JPH::BodyCreationSettings settings(
+    //     shape,
+    //     RVec3(0.0f, 5.0f, 0.0f),       // 初始位置
+    //     Quat::sIdentity(),
+    //     JPH::EMotionType::Dynamic,
+    //     Layers::MOVING
+    // );
+    //
+    // JPH::Body *body = bodyInterface.CreateBody(settings);
+    // bodyInterface.AddBody(body->GetID(), JPH::EActivation::Activate);
 }
 
 void TestSceen::Update() {

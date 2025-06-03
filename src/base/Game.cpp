@@ -43,7 +43,7 @@ bool Game::Init() {
     mPhysicsSystem->SetPhysicsSettings(mPhysicsSettings);
     // 物理系统的重力设置为 -9.81f
     mPhysicsSystem->SetGravity(Vec3(0, -9.81f, 0));
-    // 设置临时内存分配器和作业系统
+    // 优化broadphase，使首次更新速度更快
     mPhysicsSystem->OptimizeBroadPhase();
     mPhysicsSystem->SetBodyActivationListener(&mBodyActivationListener);
     mPhysicsSystem->SetContactListener(&mContactListener);
@@ -58,4 +58,6 @@ void Game::Update(float dt) {
     GameApp::Update(dt);
     // シーンの更新
     m_Scene->UpdateBase(dt);
+    // 物理システムの更新
+    mPhysicsSystem->Update(dt, 1, mTempAllocator, mJobSystem);
 }
