@@ -206,161 +206,148 @@ public:
 		cout << "A body went to sleep" << endl;
 	}
 };
-
-// Program entry point
+// 程序入口点
 int main(int argc, char** argv)
 {
-	// Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
-	// This needs to be done before any other Jolt function is called.
+	// 注册默认的内存分配器。在本例中我们使用默认的 malloc/free，如果你想自定义分配器可以重写（见 Memory.h）。
+	// 必须在调用任何 Jolt 函数之前注册。
 	RegisterDefaultAllocator();
 
-	// Install trace and assert callbacks
+	// 安装日志和断言回调
 	Trace = TraceImpl;
 	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl);
 
-	// Create a factory, this class is responsible for creating instances of classes based on their name or hash and is mainly used for deserialization of saved data.
-	// It is not directly used in this example but still required.
+	// 创建工厂类，此类用于根据类名或哈希值创建类实例，主要用于反序列化保存的数据。
+	// 本例中不会直接使用，但仍需创建。
 	Factory::sInstance = new Factory();
 
-	// Register all physics types with the factory and install their collision handlers with the CollisionDispatch class.
-	// If you have your own custom shape types you probably need to register their handlers with the CollisionDispatch before calling this function.
-	// If you implement your own default material (PhysicsMaterial::sDefault) make sure to initialize it before this function or else this function will create one for you.
+	// 注册所有物理类型到工厂中，并将它们的碰撞处理器安装到 CollisionDispatch 中。
+	// 如果你有自定义形状类型，通常需要在调用此函数前注册它们的碰撞处理器。
+	// 如果你自定义了默认物理材质（PhysicsMaterial::sDefault），需在此函数调用前初始化，否则将由此函数自动创建。
 	RegisterTypes();
 
-	// We need a temp allocator for temporary allocations during the physics update. We're
-	// pre-allocating 10 MB to avoid having to do allocations during the physics update.
-	// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
-	// If you don't want to pre-allocate you can also use TempAllocatorMalloc to fall back to
-	// malloc / free.
+	// 创建临时内存分配器，用于物理模拟中的临时分配。
+	// 此处预分配了 10MB，避免在物理更新中频繁分配内存。
+	// 虽然 10MB 对此示例来说太多了，但在实际项目中这是一个常见的值。
+	// 如果不想预分配，也可以使用 TempAllocatorMalloc 来使用 malloc/free。
 	TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
 
-	// We need a job system that will execute physics jobs on multiple threads. Typically
-	// you would implement the JobSystem interface yourself and let Jolt Physics run on top
-	// of your own job scheduler. JobSystemThreadPool is an example implementation.
+	// 创建作业系统，用于在多个线程上执行物理任务。
+	// 通常你会自己实现 JobSystem 接口，并让 Jolt 在你的作业系统上运行。JobSystemThreadPool 是一个示例实现。
 	JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
 
-	// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
+	// 设置最大刚体数量，超过此数量将无法添加刚体。
+	// 注意：这个值较小仅用于测试，实际项目中应设为 65536 左右。
 	const uint cMaxBodies = 1024;
 
-	// This determines how many mutexes to allocate to protect rigid bodies from concurrent access. Set it to 0 for the default settings.
+	// 设置刚体互斥锁数量，保护刚体避免并发访问。设为 0 表示使用默认设置。
 	const uint cNumBodyMutexes = 0;
 
-	// This is the max amount of body pairs that can be queued at any time (the broad phase will detect overlapping
-	// body pairs based on their bounding boxes and will insert them into a queue for the narrowphase). If you make this buffer
-	// too small the queue will fill up and the broad phase jobs will start to do narrow phase work. This is slightly less efficient.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
+	// 设置最大体对数量（由粗阶段碰撞检测生成），缓冲区过小会影响效率。
+	// 注意：这个值较小仅用于测试，实际项目中应设为 65536 左右。
 	const uint cMaxBodyPairs = 1024;
 
-	// This is the maximum size of the contact constraint buffer. If more contacts (collisions between bodies) are detected than this
-	// number then these contacts will be ignored and bodies will start interpenetrating / fall through the world.
-	// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
+	// 设置接触约束的最大数量，超过此数量的碰撞将被忽略，可能导致穿透或穿地。
+	// 注意：这个值较小仅用于测试，实际项目中应设为 10240 左右。
 	const uint cMaxContactConstraints = 1024;
 
-	// Create mapping table from object layer to broadphase layer
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at BroadPhaseLayerInterfaceTable or BroadPhaseLayerInterfaceMask for a simpler interface.
+	// 创建对象层到广相层的映射表
+	// 注意：此接口由 PhysicsSystem 持有引用，必须保持其生命周期。
 	BPLayerInterfaceImpl broad_phase_layer_interface;
 
-	// Create class that filters object vs broadphase layers
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at ObjectVsBroadPhaseLayerFilterTable or ObjectVsBroadPhaseLayerFilterMask for a simpler interface.
+	// 创建对象层与广相层之间的过滤器
+	// 注意：此接口由 PhysicsSystem 持有引用，必须保持其生命周期。
 	ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter;
 
-	// Create class that filters object vs object layers
-	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
-	// Also have a look at ObjectLayerPairFilterTable or ObjectLayerPairFilterMask for a simpler interface.
+	// 创建对象层与对象层之间的过滤器
+	// 注意：此接口由 PhysicsSystem 持有引用，必须保持其生命周期。
 	ObjectLayerPairFilterImpl object_vs_object_layer_filter;
 
-	// Now we can create the actual physics system.
+	// 创建物理系统实例
 	PhysicsSystem physics_system;
 	physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
 
-	// A body activation listener gets notified when bodies activate and go to sleep
-	// Note that this is called from a job so whatever you do here needs to be thread safe.
-	// Registering one is entirely optional.
+	// 创建刚体激活监听器，用于监听刚体的激活/休眠状态变化
+	// 注意：回调将在作业线程中执行，必须是线程安全的。非必需注册。
 	MyBodyActivationListener body_activation_listener;
 	physics_system.SetBodyActivationListener(&body_activation_listener);
 
-	// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
-	// Note that this is called from a job so whatever you do here needs to be thread safe.
-	// Registering one is entirely optional.
+	// 创建碰撞监听器，用于监听刚体的碰撞开始与结束事件
+	// 注意：回调将在作业线程中执行，必须是线程安全的。非必需注册。
 	MyContactListener contact_listener;
 	physics_system.SetContactListener(&contact_listener);
 
-	// The main way to interact with the bodies in the physics system is through the body interface. There is a locking and a non-locking
-	// variant of this. We're going to use the locking version (even though we're not planning to access bodies from multiple threads)
+	// 获取刚体接口，用于操作物理系统中的刚体。
+	// 这里使用带锁版本（即使我们只在单线程中操作）。
 	BodyInterface &body_interface = physics_system.GetBodyInterface();
 
-	// Next we can create a rigid body to serve as the floor, we make a large box
-	// Create the settings for the collision volume (the shape).
-	// Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
+	// 创建一个地板刚体，一个大尺寸的盒子
+	// 创建用于碰撞体积的设置对象（形状设置）
+	// 对于简单形状（如盒子），也可以直接创建 BoxShape。
 	BoxShapeSettings floor_shape_settings(Vec3(100.0f, 1.0f, 100.0f));
-	floor_shape_settings.SetEmbedded(); // A ref counted object on the stack (base class RefTarget) should be marked as such to prevent it from being freed when its reference count goes to 0.
+	floor_shape_settings.SetEmbedded(); // 标记为栈上的引用计数对象，避免引用计数为 0 时被释放
 
-	// Create the shape
+	// 创建形状
 	ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
-	ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+	ShapeRefC floor_shape = floor_shape_result.Get(); // 本例中不期望出错，但可以通过 HasError()/GetError() 检查
 
-	// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
+	// 创建刚体设置，可设置位置、旋转、材质等
 	BodyCreationSettings floor_settings(floor_shape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 
-	// Create the actual rigid body
-	Body *floor = body_interface.CreateBody(floor_settings); // Note that if we run out of bodies this can return nullptr
+	// 创建地板刚体
+	Body *floor = body_interface.CreateBody(floor_settings); // 如果刚体数达到上限，可能返回 nullptr
 
-	// Add it to the world
+	// 将地板添加到物理世界中
 	body_interface.AddBody(floor->GetID(), EActivation::DontActivate);
 
-	// Now create a dynamic body to bounce on the floor
-	// Note that this uses the shorthand version of creating and adding a body to the world
+	// 创建一个动态刚体，在地板上弹跳
+	// 使用简洁方式直接创建并添加到世界中
 	BodyCreationSettings sphere_settings(new SphereShape(0.5f), RVec3(0.0_r, 2.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
 	BodyID sphere_id = body_interface.CreateAndAddBody(sphere_settings, EActivation::Activate);
 
-	// Now you can interact with the dynamic body, in this case we're going to give it a velocity.
-	// (note that if we had used CreateBody then we could have set the velocity straight on the body before adding it to the physics system)
+	// 设置刚体的初始速度
+	// （如果用 CreateBody 创建刚体，可以在加入系统前设置速度）
 	body_interface.SetLinearVelocity(sphere_id, Vec3(0.0f, -5.0f, 0.0f));
 
-	// We simulate the physics world in discrete time steps. 60 Hz is a good rate to update the physics system.
+	// 设置每帧物理时间步，60Hz 是一个合适的频率
 	const float cDeltaTime = 1.0f / 60.0f;
 
-	// Optional step: Before starting the physics simulation you can optimize the broad phase. This improves collision detection performance (it's pointless here because we only have 2 bodies).
-	// You should definitely not call this every frame or when e.g. streaming in a new level section as it is an expensive operation.
-	// Instead insert all new objects in batches instead of 1 at a time to keep the broad phase efficient.
+	// 可选：优化广相阶段，提高碰撞检测性能（此示例中仅两个刚体，没有意义）
+	// 注意：此操作代价较高，不应每帧调用，建议批量插入物体后调用。
 	physics_system.OptimizeBroadPhase();
 
-	// Now we're ready to simulate the body, keep simulating until it goes to sleep
+	// 模拟物理世界，直到球体进入休眠状态
 	uint step = 0;
 	while (body_interface.IsActive(sphere_id))
 	{
-		// Next step
 		++step;
 
-		// Output current position and velocity of the sphere
+		// 输出球体当前位置与速度
 		RVec3 position = body_interface.GetCenterOfMassPosition(sphere_id);
 		Vec3 velocity = body_interface.GetLinearVelocity(sphere_id);
 		cout << "Step " << step << ": Position = (" << position.GetX() << ", " << position.GetY() << ", " << position.GetZ() << "), Velocity = (" << velocity.GetX() << ", " << velocity.GetY() << ", " << velocity.GetZ() << ")" << endl;
 
-		// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
+		// 如果时间步大于 1/60 秒，需执行多次碰撞检测以保持稳定
 		const int cCollisionSteps = 1;
 
-		// Step the world
+		// 进行一次物理世界的更新
 		physics_system.Update(cDeltaTime, cCollisionSteps, &temp_allocator, &job_system);
 	}
 
-	// Remove the sphere from the physics system. Note that the sphere itself keeps all of its state and can be re-added at any time.
+	// 从物理系统中移除球体（保留状态，可再次添加）
 	body_interface.RemoveBody(sphere_id);
 
-	// Destroy the sphere. After this the sphere ID is no longer valid.
+	// 销毁球体（ID 无效）
 	body_interface.DestroyBody(sphere_id);
 
-	// Remove and destroy the floor
+	// 移除并销毁地板
 	body_interface.RemoveBody(floor->GetID());
 	body_interface.DestroyBody(floor->GetID());
 
-	// Unregisters all types with the factory and cleans up the default material
+	// 反注册所有类型并清理默认材质
 	UnregisterTypes();
 
-	// Destroy the factory
+	// 销毁工厂
 	delete Factory::sInstance;
 	Factory::sInstance = nullptr;
 
