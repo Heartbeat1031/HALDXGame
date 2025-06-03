@@ -9,6 +9,10 @@
 #include "SimpleMath.h"
 #include "TransformC.h"
 
+ModelC::ModelC(std::string_view filename) {
+    handle = halgame->AddModel(filename);
+}
+
 void ModelC::Init() {
     Component::Init();
 }
@@ -25,16 +29,12 @@ void ModelC::Uninit() {
     halgame->RemoveModel(handle);
 }
 
-void ModelC::Load(std::string_view filename) {
-    handle = halgame->AddModel(filename);
-}
-
 void ModelC::CheckTransform() const {
     if (handle == -1) {
         return;
     }
     ModelObject &modelObject = halgame->GetModelObject(handle);
     Transform &modelTransform = modelObject.GetTransform();
-    TransformC &transformComponent = m_gameobject->GetComponent<TransformC>();
+    TransformC &transformComponent = m_gameObject->GetComponent<TransformC>();
     modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
 }

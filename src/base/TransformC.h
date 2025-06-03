@@ -37,7 +37,7 @@ private:
     void RecalculateLocalMatrix();
 
 public:
-    TransformC(GameObject* parent);
+    TransformC();
     ~TransformC() override = default;
     void Uninit() override;
 

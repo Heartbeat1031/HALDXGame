@@ -13,17 +13,19 @@ private:
 	UID uid = -1;
 protected:
 	// 所属するGameObject
-	class  GameObject* m_gameobject = nullptr;
+	class  GameObject* m_gameObject = nullptr;
 
 public:
-	Component(GameObject* parent) { m_gameobject = parent; }
-	virtual ~Component() {}
+	Component();
+	virtual ~Component();
+	// コンポーネントの所属するGameObjectを設定
+	void SetGameObject(GameObject* gameObject);
 	// コンポーネントのUIDを設定
-	void SetUID(UID uuid) { uid = uuid; }
+	void SetUID(UID uuid);
 	// コンポーネントのUIDを取得
-	UID GetUID() const { return uid; }
+	UID GetUID() const;
 
-	virtual void Init() {};
-	virtual void Uninit() {};
-	virtual void Update(float dt) {};
+	virtual void Init();
+	virtual void Uninit();
+	virtual void Update(float dt);
 };

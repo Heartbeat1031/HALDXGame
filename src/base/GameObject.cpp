@@ -6,11 +6,9 @@
 #include "Scene.h"
 #include "TransformC.h"
 
-GameObject::GameObject() {
-}
+GameObject::GameObject() = default;
 
-GameObject::~GameObject() {
-}
+GameObject::~GameObject() = default;
 
 void GameObject::SetUID(UID uuid) {
     uid = uuid;

@@ -7,7 +7,7 @@
 
 class BoxCollisionC: public Component {
 public:
-    BoxCollisionC(GameObject* parent) : Component(parent) {}
+    explicit BoxCollisionC(int a);
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;

@@ -3,6 +3,8 @@
 //
 
 #include "TestSceen.h"
+
+#include "BoxCollisionC.h"
 #include "Global.h"
 #include "ModelObject.h"
 #include "House.h"
@@ -14,10 +16,10 @@ void TestSceen::Init() {
     // 地面を追加するサンプル
     GameObject &ground = AddGameObject<GameObject>();
     // 地面のモデルコンポーネントを追加します
-    ground.AddComponent<ModelC>().Load("assets\\models\\ground_19.obj");
+    ground.AddComponent<ModelC>("assets\\models\\ground_19.obj");
     // 地面の座標を設定します
     ground.GetComponent<TransformC>().SetLocalPosition(Vector3(0, -0, 0));
-
+    ground.AddComponent<BoxCollisionC>(1);
     // House ゲームオブジェクトを追加します
     House &house = AddGameObject<House>();
     // Miku ゲームオブジェクトを追加します

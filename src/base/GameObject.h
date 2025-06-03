@@ -40,7 +40,6 @@ protected:
 
 public:
     GameObject();
-
     virtual ~GameObject();
     // ゲームオブジェクトのUIDを設定
     void SetUID(UID uuid);
@@ -54,16 +53,17 @@ public:
     void UpdateBase(float dt);
 
     // コンポーネントを追加する
-    template<typename T>
-    T &AddComponent();
+    template<class T, class ... Args>
+    T &AddComponent(Args &&... args);
+
     // コンポーネントを取得する
     template<typename T>
     T &GetComponent();
 };
 
 
-template<typename T>
-T &GameObject::AddComponent() {
+template<typename T, typename... Args>
+T &GameObject::AddComponent(Args&&... args) {
     // TはComponentの派生クラスである必要があります
     static_assert(std::is_base_of<Component, T>::value, "T は Component の派生クラスでなければなりません");
     // 同じタイプのコンポーネントがすでに存在するか確認
@@ -76,7 +76,7 @@ T &GameObject::AddComponent() {
     // 今はSceneを取得して、コンポーネントを追加する
     Scene *scene = halgame->GetScene();
     // Tのインスタンスを作成し、GameObjectに追加する
-    T &component = scene->AddComponent<T>(this);
+    T &component = scene->AddComponent<T>(this, std::forward<Args>(args)...);
     // コンポーネントのUIDをキャッシュする
     m_ComponentMap[std::type_index(typeid(T))] = component.GetUID();
     return component;

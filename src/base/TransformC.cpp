@@ -7,9 +7,8 @@
 #include "Global.h"
 #include "Scene.h"
 
-TransformC::TransformC(GameObject *parent)
-    : Component(parent),
-      m_localPosition(Vector3::Zero),
+TransformC::TransformC()
+    : m_localPosition(Vector3::Zero),
       m_localRotation(Quaternion::Identity),
       m_localScale(Vector3::One),
       m_localMatrix(DirectX::SimpleMath::Matrix::Identity),
@@ -27,7 +26,7 @@ void TransformC::Uninit() {
     // 子ノードをクリアする
     for (TransformC *child : m_Childs) {
         child->SetParent(nullptr); // 親子関係を解除する
-        UID childgameuid = child->m_gameobject->GetUID();
+        UID childgameuid = child->m_gameObject->GetUID();
         halgame->GetScene()->RemoveGameObject(childgameuid);
     }
     m_Childs.clear();

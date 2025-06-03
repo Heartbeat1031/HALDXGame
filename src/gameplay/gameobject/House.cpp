@@ -15,7 +15,7 @@ House::~House() {
 void House::Init() {
     GameObject::Init();
     // ModelC コンポーネントを追加し、モデルをロードします
-    AddComponent<ModelC>().Load("assets\\models\\house.obj");
+    AddComponent<ModelC>("assets\\models\\house.obj");
     // TransformC コンポーネントを取得し、ローカル位置を設定します
     GetComponent<TransformC>().SetLocalScale(Vector3(0.015f, 0.015f, 0.015f));
 }

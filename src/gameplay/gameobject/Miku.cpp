@@ -17,7 +17,7 @@ void Miku::Init() {
     GameObject::Init();
     GetComponent<TransformC>().SetLocalScale(Vector3(0.5, 0.5, 0.5));
     //AddComponent<ModelC>().Load("assets\\models\\GothicMiku\\Gothic Miku (Apearance Ver.)5.pmx");
-    AddComponent<ModelC>().Load("assets/models/芭芭拉/芭芭拉.pmx");
+    AddComponent<ModelC>("assets/models/芭芭拉/芭芭拉.pmx");
 }
 
 void Miku::Update(float dt) {

@@ -4,9 +4,12 @@
 
 #include "BoxCollisionC.h"
 
+BoxCollisionC::BoxCollisionC( int a) {
+    int i = a; // ここで何か処理をする場合は、適宜実装してください
+}
+
 void BoxCollisionC::Init() {
     Component::Init();
-    
 }
 
 void BoxCollisionC::Uninit() {

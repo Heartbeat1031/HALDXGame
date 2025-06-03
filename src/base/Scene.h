@@ -33,19 +33,20 @@ public:
     void UpdateBase(float dt);
 
     // ゲームオブジェクトを追加
-    template<typename T>
-    T &AddGameObject();
+    template<class T, class ... Args>
+    T &AddGameObject(Args &&... args);
 
     // ゲームオブジェクトを取得
     template<typename T>
     T &GetGameObject(UID handle);
 
+
     // ゲームオブジェクトを削除
     void RemoveGameObject(UID handle);
 
     // コンポーネントを追加
-    template<typename T>
-    T &AddComponent(GameObject *parent);
+    template<class T, class ... Args>
+    T &AddComponent(GameObject *parent, Args &&... args);
 
     // コンポーネントを取得
     template<typename T>
@@ -55,10 +56,10 @@ public:
     void RemoveComponent(UID handle);
 };
 
-template<typename T>
-T &Scene::AddGameObject() {
+template<typename T, typename... Args>
+T &Scene::AddGameObject(Args&&... args) {
     static_assert(std::is_base_of<GameObject, T>::value, "T は GameObject を継承する必要があります。");
-    std::unique_ptr<T> gameObject = std::make_unique<T>();
+    std::unique_ptr<T> gameObject = std::make_unique<T>(std::forward<Args>(args)...);
     T *rawPtr = gameObject.get();
     UID handle = m_GameObjectStorage.Add(std::unique_ptr<GameObject>(std::move(gameObject)));
     rawPtr->SetUID(handle);
@@ -75,12 +76,13 @@ T &Scene::GetGameObject(UID handle) {
     return dynamic_cast<T&>(base);
 }
 
-template<typename T>
-T &Scene::AddComponent(GameObject *parent) {
+template<typename T, typename... Args>
+T &Scene::AddComponent(GameObject *parent, Args&&... args) {
     static_assert(std::is_base_of<Component, T>::value, "T は Component を継承する必要があります。");
-    std::unique_ptr<T> component = std::make_unique<T>(parent);
+    std::unique_ptr<T> component = std::make_unique<T>(std::forward<Args>(args)...);
     T *rawPtr = component.get();
     UID uid = m_ComponentStorage.Add(std::unique_ptr<Component>(std::move(component)));
+    rawPtr->SetGameObject(parent);
     rawPtr->SetUID(uid);
     rawPtr->Init();
     return *rawPtr;
