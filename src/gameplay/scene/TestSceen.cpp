@@ -23,12 +23,10 @@ void TestSceen::Init() {
         Vector3(10, 1, 10), // サイズを設定します
         JPH::EMotionType::Static // 静的な物体
     );
-
+    ground.GetComponent<BoxCollisionC>().SetOffset(Vector3(0, -2, 0));
 
     // House ゲームオブジェクトを追加します
     House &house = AddGameObject<House>();
-    house.GetComponent<TransformC>().SetLocalPosition(Vector3(0, 20, 0));
-    house.AddComponent<BoxCollisionC>(Vector3(1, 1, 1), JPH::EMotionType::Dynamic);
 }
 
 void TestSceen::Update() {

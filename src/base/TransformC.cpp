@@ -97,7 +97,7 @@ void TransformC::SetWorldPosition(const DirectX::SimpleMath::Vector3 &position) 
 
     m_localScale = scale;
     m_localRotation = rotation;
-    m_localPosition = translation;
+    SetLocalPosition(translation);
     SetLocalRotation(rotation); // 更新欧拉角缓存
     m_dirty = true;
 }
@@ -130,7 +130,7 @@ void TransformC::SetWorldRotation(const DirectX::SimpleMath::Quaternion &rotatio
 
     m_localScale = outScale;
     m_localRotation = outRotation;
-    m_localPosition = outTranslation;
+    SetLocalPosition(outTranslation);
     SetLocalRotation(outRotation); // 更新欧拉角缓存
     m_dirty = true;
 }
@@ -255,11 +255,9 @@ void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
         Quaternion rotation;
         Vector3 translation;
         m_localMatrix.Decompose(scale, rotation, translation);
-        m_localScale = scale;
-        m_localRotation = rotation;
-        m_localPosition = translation;
-        // オイラー角のキャッシュを更新
+        SetLocalPosition(translation);
         SetLocalRotation(rotation);
+        SetLocalScale(scale);
     } else {
         // ワールド座標を保持しない場合、親ノードを直接設定
         m_parent = newParent;
