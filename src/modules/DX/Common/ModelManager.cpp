@@ -189,12 +189,12 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
         buildBoneHierarchy(pAssimpScene->mRootNode, -1);
 
         // 输出骨骼信息
-        for (int i = 0; i < model.bones.size(); ++i) {
-            std::string info = "Bone[ " + std::to_string(i) + "]: " + model.bones[i].name +
-                ", parent=" + std::to_string(model.bones[i].parentIndex) +
-                ", children=" + std::to_string(model.bones[i].children.size());
-            std::cout << info << std::endl;
-        }
+        // for (int i = 0; i < model.bones.size(); ++i) {
+        //     std::string info = "Bone[ " + std::to_string(i) + "]: " + model.bones[i].name +
+        //         ", parent=" + std::to_string(model.bones[i].parentIndex) +
+        //         ", children=" + std::to_string(model.bones[i].children.size());
+        //     std::cout << info << std::endl;
+        // }
 
         // 处理材质
         for (uint32_t i = 0; i < pAssimpScene->mNumMaterials; ++i)
