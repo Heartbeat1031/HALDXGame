@@ -54,6 +54,7 @@ void TestSceen::Update() {
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
         ImGui::Text("日本語と简体と繁體中文と한국인をテストします");
     }
+    ImGui::End();
 }
 
 void TestSceen::Uninit() {
