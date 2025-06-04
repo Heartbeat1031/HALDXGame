@@ -185,7 +185,6 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
 
                 pAiMaterial->GetTexture(type, 0, &aiPath);
 
-                // 纹理已经预先加载进来
                 if (aiPath.data[0] == '*')
                 {
                     texName = filename;
@@ -195,11 +194,36 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                     TextureManager::Get().CreateFromMemory(texName, pTex->pcData, pTex->mHeight ? pTex->mWidth * pTex->mHeight : pTex->mWidth, genMips, forceSRGB);
                     material.Set(propertyName, std::string(texName));
                 }
-                // 纹理通过文件名索引
                 else
                 {
-                    texFilename = filename;
-                    texFilename = texFilename.parent_path() / aiPath.C_Str();
+                    fs::path modelPath = filename;
+                    fs::path modelDir = modelPath.parent_path();
+                    fs::path fbmDir = modelDir / (modelPath.stem().string() + ".fbm");
+                    fs::path originalTexPath = aiPath.C_Str();
+
+                    fs::path candidatePaths[] = {
+                        // 1. FBX原始路径（绝对或相对）
+                        originalTexPath,
+                        // 2. 模型目录下的原始路径
+                        modelDir / originalTexPath,
+                        // 3. .fbm 文件夹下的文件名
+                        fbmDir / originalTexPath.filename(),
+                        // 4. 模型目录下的文件名
+                        modelDir / originalTexPath.filename()
+                    };
+
+                    bool found = false;
+                    for (auto& tryPath : candidatePaths) {
+                        if (fs::exists(tryPath)) {
+                            texFilename = tryPath;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        texFilename = modelDir / originalTexPath.filename(); // 兜底
+                    }
+
                     TextureManager::Get().CreateFromFile(texFilename.string(), genMips, forceSRGB);
                     material.Set(propertyName, texFilename.string());
                 }
