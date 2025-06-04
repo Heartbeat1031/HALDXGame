@@ -20,7 +20,7 @@ void TestSceen::Init() {
     // 地面の座標を設定します
     ground.GetComponent<TransformC>().SetLocalPosition(Vector3(0, -0, 0));
     ground.AddComponent<BoxCollisionC>(
-        Vector3(100, 1, 100), // サイズを設定します
+        Vector3(10, 1, 10), // サイズを設定します
         JPH::EMotionType::Static // 静的な物体
     );
 
@@ -49,8 +49,6 @@ void TestSceen::Update() {
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
         ImGui::Text("日本語と简体と繁體中文と한국인をテストします");
     }
-    ImGui::End();
-    ImGui::Render();
 }
 
 void TestSceen::Uninit() {

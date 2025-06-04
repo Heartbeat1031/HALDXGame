@@ -59,6 +59,7 @@ bool Game::Init() {
     // 物理系统的绘制设置
     gHalDebugRenderer = new HalDebugRenderer();
     mBodyDrawSettings.mDrawShape = true;
+    mBodyDrawSettings.mDrawShapeWireframe = true;
     // テストシーンを読み込む
     SetScene<TestSceen>();
     return true;
@@ -72,9 +73,9 @@ void Game::Update(float dt) {
     // 物理システムの更新
     mPhysicsSystem->Update(dt, 1, mTempAllocator, mJobSystem);
 
-    // mPhysicsSystem->DrawBodies(
-    //     mBodyDrawSettings,
-    //     gHalDebugRenderer
-    // );
+    mPhysicsSystem->DrawBodies(
+        mBodyDrawSettings,
+        gHalDebugRenderer
+    );
 
 }

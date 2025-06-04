@@ -52,5 +52,5 @@ void BoxCollisionC::Update(float dt) {
     RVec3 newPos = bodyInterface.GetCenterOfMassPosition(m_bodyID);
     myTransform.SetWorldPosition(Vector3(newPos.GetX(), newPos.GetY(), newPos.GetZ()) - m_offset);
     Quat newRotation = bodyInterface.GetRotation(m_bodyID);
-    myTransform.SetWorldRotation(Quaternion(newRotation.GetX(), newRotation.GetY(), newRotation.GetZ(), newRotation.GetW()) - m_rotation);
+    myTransform.SetWorldRotation(Quaternion(newRotation.GetX(), newRotation.GetY(), newRotation.GetZ(), newRotation.GetW()));
 }

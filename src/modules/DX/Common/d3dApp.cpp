@@ -71,6 +71,8 @@ int D3DApp::Run() {
                 PreUpdate(m_Timer.DeltaTime());
                 Update(m_Timer.DeltaTime());
                 PostUpdate(m_Timer.DeltaTime());
+                ImGui::End();
+                ImGui::Render();
                 Draw();
                 m_FrameCount++;
             } else {
