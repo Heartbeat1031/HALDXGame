@@ -108,6 +108,7 @@ target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 # HALDXGame のインクルードディレクトリ
 target_link_libraries(HALDXGame PRIVATE DirectXTK)
 target_link_libraries(HALDXGame PRIVATE Jolt)
+target_link_libraries(HALDXGame PRIVATE assimp)
 target_link_libraries(HALDXGame PRIVATE GameKit)
 target_link_libraries(HALDXGame PRIVATE DX)
 

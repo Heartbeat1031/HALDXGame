@@ -9,6 +9,7 @@
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 
+#include "AnimationManager.h"
 #include "GameApp.h"
 #include "HalDebugRenderer.h"
 #include "JoltListener.h"
@@ -47,13 +48,14 @@ private:
     HalDebugRenderer *gHalDebugRenderer = nullptr;
     BodyManager::DrawSettings mBodyDrawSettings;
 public:
-    Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight);
+    AnimationManager animationManager;
 
+public:
+    Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight);
     ~Game() override;
 
     // ゲームの初期化
     bool Init() override;
-
     // ゲームの更新 dtはデルタタイム
     void Update(float dt) override;
 

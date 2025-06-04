@@ -60,6 +60,10 @@ bool Game::Init() {
     gHalDebugRenderer = new HalDebugRenderer();
     mBodyDrawSettings.mDrawShape = true;
     mBodyDrawSettings.mDrawShapeWireframe = true;
+
+    // アニメ
+    animationManager.LoadAnimationClips("assets/models/Praying.fbx", {"xiagui"});
+
     // テストシーンを読み込む
     SetScene<TestSceen>();
     return true;
