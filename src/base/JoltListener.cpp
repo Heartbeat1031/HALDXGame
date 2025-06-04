@@ -13,7 +13,7 @@ JPH::ValidateResult JoltContactListener::OnContactValidate(
     JPH::RVec3Arg inBaseOffset,
     const JPH::CollideShapeResult &inCollisionResult)
 {
-    cout << "Contact validate callback" << endl;
+    //cout << "Contact validate callback" << endl;
     return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
 }
 
@@ -23,7 +23,7 @@ void JoltContactListener::OnContactAdded(
     const JPH::ContactManifold &inManifold,
     JPH::ContactSettings &ioSettings)
 {
-    cout << "A contact was added" << endl;
+    //cout << "A contact was added" << endl;
 }
 
 void JoltContactListener::OnContactPersisted(
@@ -32,24 +32,24 @@ void JoltContactListener::OnContactPersisted(
     const JPH::ContactManifold &inManifold,
     JPH::ContactSettings &ioSettings)
 {
-    cout << "A contact was persisted" << endl;
+    //cout << "A contact was persisted" << endl;
 }
 
 void JoltContactListener::OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair)
 {
-    cout << "A contact was removed" << endl;
+    //cout << "A contact was removed" << endl;
 }
 
 void JoltBodyActivationListener::OnBodyActivated(
     const JPH::BodyID &inBodyID,
     JPH::uint64 inBodyUserData)
 {
-    cout << "A body got activated" << endl;
+    //cout << "A body got activated" << endl;
 }
 
 void JoltBodyActivationListener::OnBodyDeactivated(
     const JPH::BodyID &inBodyID,
     JPH::uint64 inBodyUserData)
 {
-    cout << "A body went to sleep" << endl;
+    //cout << "A body went to sleep" << endl;
 }

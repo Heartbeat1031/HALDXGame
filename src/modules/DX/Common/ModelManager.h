@@ -12,6 +12,15 @@
 #include <d3d11_1.h>
 #include <wrl/client.h>
 
+// Bone 信息
+struct BoneInfo
+{
+    std::string name;
+    DirectX::XMFLOAT4X4 offsetMatrix; // aiBone::mOffsetMatrix
+    int parentIndex = -1;
+    std::vector<int> children; // 子骨骼索引
+};
+
 struct Model
 {
     Model() = default;
@@ -24,12 +33,14 @@ struct Model
     std::vector<Material> materials;
     std::vector<MeshData> meshdatas;
     DirectX::BoundingBox boundingbox;
+    // 骨骼信息
+    std::vector<BoneInfo> bones;
+    std::unordered_map<std::string, int> boneNameToIndex;
     static void CreateFromFile(Model& model, ID3D11Device* device, std::string_view filename);
     static void CreateFromGeometry(Model& model, ID3D11Device* device, const GeometryData& data, bool isDynamic = false);
     
     void SetDebugObjectName(std::string_view name);
 };
-
 
 class ModelManager
 {

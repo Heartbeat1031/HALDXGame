@@ -4,6 +4,7 @@
 #include "ImGuiLog.h"
 
 #include <filesystem>
+#include <iostream>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -147,7 +148,55 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
             mesh.m_MaterialIndex = pAiMesh->mMaterialIndex;
         }
 
+        // 骨骼
+        //遍历所有 mesh，收集所有骨骼名、offset 矩阵
+        for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i)
+        {
+            auto pAiMesh = pAssimpScene->mMeshes[i];
+            for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b)
+            {
+                aiBone* ai_bone = pAiMesh->mBones[b];
+                std::string boneName = ai_bone->mName.C_Str();
+                // 没记录过才插入
+                if (model.boneNameToIndex.count(boneName) == 0)
+                {
+                    int boneIndex = (int)model.bones.size();
+                    model.boneNameToIndex[boneName] = boneIndex;
+                    BoneInfo info;
+                    info.name = boneName;
+                    memcpy(&info.offsetMatrix, &ai_bone->mOffsetMatrix, sizeof(ai_bone->mOffsetMatrix));
+                    model.bones.push_back(info);
+                }
+            }
+        }
 
+        // 递归补全骨骼的 parentIndex 和 children
+        std::function<void(aiNode*, int)> buildBoneHierarchy = [&](aiNode* node, int parent) {
+            std::string name = node->mName.C_Str();
+            // 如果这个node是骨骼
+            if (model.boneNameToIndex.count(name)) {
+                int idx = model.boneNameToIndex[name];
+                model.bones[idx].parentIndex = parent;
+                if (parent >= 0)
+                    model.bones[parent].children.push_back(idx);
+                parent = idx; // 递归的parent更新为当前骨骼
+            }
+            for (uint32_t c = 0; c < node->mNumChildren; ++c) {
+                buildBoneHierarchy(node->mChildren[c], parent);
+            }
+        };
+        // 调用一次，根节点parent填-1
+        buildBoneHierarchy(pAssimpScene->mRootNode, -1);
+
+        // 输出骨骼信息
+        for (int i = 0; i < model.bones.size(); ++i) {
+            std::string info = "Bone[ " + std::to_string(i) + "]: " + model.bones[i].name +
+                ", parent=" + std::to_string(model.bones[i].parentIndex) +
+                ", children=" + std::to_string(model.bones[i].children.size());
+            std::cout << info << std::endl;
+        }
+
+        // 处理材质
         for (uint32_t i = 0; i < pAssimpScene->mNumMaterials; ++i)
         {
             auto& material = model.materials[i];
