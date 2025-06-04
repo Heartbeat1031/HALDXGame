@@ -66,12 +66,9 @@ void House::Update(float dt) {
     }
     if (moveDir.LengthSquared() > 0.0001f) moveDir.Normalize();
 
-    BoxCollisionC &boxCollision = GetComponent<BoxCollisionC>();
+    auto &boxCollision = GetComponent<BoxCollisionC>();
     if (keyFlag > 0) {
         boxCollision.SetPosition(boxCollision.GetPosition() + moveDir * 5 * dt);
-        if (ImGui::IsKeyPressed(ImGuiKey_R)) {
-            halgame->GetScene()->RemoveGameObject(GetUID());
-        }
     }
 
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {

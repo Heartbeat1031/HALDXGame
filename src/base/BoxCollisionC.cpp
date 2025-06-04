@@ -43,6 +43,8 @@ void BoxCollisionC::Init() {
 
 void BoxCollisionC::Uninit() {
     Component::Uninit();
+    JPH::BodyInterface &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
+    bodyInterface.RemoveBody(m_bodyID);
 }
 
 void BoxCollisionC::SetPosition(DirectX::SimpleMath::Vector3 position) {
