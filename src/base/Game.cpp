@@ -62,7 +62,7 @@ bool Game::Init() {
     mBodyDrawSettings.mDrawShapeWireframe = true;
 
     // アニメ
-    animationManager.LoadAnimationClips("assets/models/Praying.fbx", {"xiagui"});
+    animationManager.LoadAnimationClips("assets/models/Praying.fbx", {"Idle"});
 
     // テストシーンを読み込む
     SetScene<TestSceen>();

@@ -4,6 +4,7 @@
 
 #include "TestSceen.h"
 
+#include "AnimatorC.h"
 #include "BoxCollisionC.h"
 #include "Global.h"
 #include "ModelObject.h"
@@ -30,6 +31,7 @@ void TestSceen::Init() {
 
     Miku &miku = AddGameObject<Miku>();
     miku.AddComponent<ModelC>("assets/models/Praying.fbx");
+    miku.AddComponent<AnimatorC>("Idle");
     miku.GetComponent<TransformC>().SetLocalPosition(Vector3(5, 10, 0));
      miku.GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
     miku.AddComponent<BoxCollisionC>(Vector3(2, 2, 2), JPH::EMotionType::Dynamic).SetOffset(Vector3(0, 2, 0));
