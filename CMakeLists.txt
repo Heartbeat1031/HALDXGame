@@ -97,7 +97,7 @@ source_group("shaders" FILES ${HLSL_FILES})
 
 # HALDXGame のソースコード
 add_executable(HALDXGame
-        src/main.cpp
+        src/Main.cpp
         ${HLSL_FILES}
         ${BASE_CPP_FILES}
         ${GAMEPLAY_CPP_FILES}
