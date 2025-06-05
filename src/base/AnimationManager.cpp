@@ -42,7 +42,11 @@ void AnimationManager::LoadAnimationClips(std::string path, const std::vector<st
             unsigned keyCount = std::max({channel->mNumPositionKeys, channel->mNumRotationKeys, channel->mNumScalingKeys});
             for (unsigned k = 0; k < keyCount; ++k)
             {
-                Keyframe frame;
+                Keyframe frame{};
+                frame.time = 0.0;
+                frame.translation = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+                frame.rotation = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+                frame.scaling = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
                 // 位置
                 if (k < channel->mNumPositionKeys) {
                     frame.time = channel->mPositionKeys[k].mTime / clip.ticksPerSecond;

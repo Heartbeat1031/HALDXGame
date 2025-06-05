@@ -4,6 +4,8 @@
 
 #include "AnimatorC.h"
 
+#include <iostream>
+
 #include "AnimationManager.h"
 #include "Global.h"
 #include "ModelC.h"
@@ -112,10 +114,23 @@ void AnimatorC::Update(float dt) {
     //遍历所有root骨骼
     for (int i = 0; i < boneCount; ++i) {
         if (m_model->bones[i].parentIndex == -1) {
-            //updateBone(i, DirectX::XMMatrixIdentity());
+            updateBone(i, DirectX::XMMatrixIdentity());
         }
     }
 
+    // 打印调试信息
+    std::cout << "AnimatorC: " << m_animatorName << " at time: " << m_currentTime << "\n";
+    for (int i = 0; i < (int)m_finalBoneMatrices.size(); ++i) {
+        DirectX::XMFLOAT4X4& mat = m_finalBoneMatrices[i];
+        std::cout << "Bone " << i << ": "
+                  << mat._11 << ", " << mat._12 << ", " << mat._13 << ", " << mat._14 << "\n"
+                  << mat._21 << ", " << mat._22 << ", " << mat._23 << ", " << mat._24 << "\n"
+                  << mat._31 << ", " << mat._32 << ", " << mat._33 << ", " << mat._34 << "\n"
+                  << mat._41 << ", " << mat._42 << ", " << mat._43 << ", " << mat._44 << "\n";
+    }
+    std::cout << "Total bones: " << boneCount << "\n";
+
+    // 设置模型对象的骨骼矩阵
     if (m_modelObject) {
         m_modelObject->SetBoneMatrices(&m_finalBoneMatrices);
     }

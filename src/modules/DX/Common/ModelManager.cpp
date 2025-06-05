@@ -260,7 +260,11 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                     model.boneNameToIndex[boneName] = boneIndex;
                     BoneInfo info;
                     info.name = boneName;
-                    memcpy(&info.offsetMatrix, &ai_bone->mOffsetMatrix, sizeof(ai_bone->mOffsetMatrix));
+                    DirectX::XMFLOAT4X4 temp;
+                    memcpy(&temp, &ai_bone->mOffsetMatrix, sizeof(ai_bone->mOffsetMatrix));
+                    DirectX::XMMATRIX offset = DirectX::XMLoadFloat4x4(&temp);
+                    offset = DirectX::XMMatrixTranspose(offset); // Convert from Assimp column-major
+                    DirectX::XMStoreFloat4x4(&info.offsetMatrix, offset);
                     info.nodeTransform = DirectX::XMFLOAT4X4(
                         1,0,0,0,
                         0,1,0,0,
@@ -324,7 +328,11 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
             std::string name = node->mName.C_Str();
             if (model.boneNameToIndex.count(name)) {
                 int idx = model.boneNameToIndex[name];
-                memcpy(&model.bones[idx].nodeTransform, &node->mTransformation, sizeof(node->mTransformation));
+                DirectX::XMFLOAT4X4 temp;
+                memcpy(&temp, &node->mTransformation, sizeof(node->mTransformation));
+                DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&temp);
+                m = DirectX::XMMatrixTranspose(m); // Convert from Assimp column-major
+                DirectX::XMStoreFloat4x4(&model.bones[idx].nodeTransform, m);
             }
             for (uint32_t c = 0; c < node->mNumChildren; ++c) {
                 fillNodeTransform(node->mChildren[c]);
