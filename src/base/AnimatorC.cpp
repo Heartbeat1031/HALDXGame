@@ -10,7 +10,6 @@
 #include "Global.h"
 #include "ModelC.h"
 
-
 DirectX::XMMATRIX CalcInterpolatedBoneMatrix(
     const std::string& boneName,
     const AnimationClip& clip,
@@ -142,6 +141,9 @@ void AnimatorC::Uninit() {
 }
 
 void AnimatorC::Play(const std::string& animName) {
+    if ( m_animatorName == animName && m_currentTime > 0.0) {
+        return;
+    }
     m_animatorName = animName;
     m_currentTime = 0.0;
 }

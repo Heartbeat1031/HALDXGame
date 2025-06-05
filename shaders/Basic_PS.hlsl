@@ -49,8 +49,9 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
         spec += S;
     }
   
-    
-    float4 litColor = texColor * (ambient + diffuse) + spec;
+    // 暂时不考虑环境光和漫反射光的影响
+    //float4 litColor = texColor * (ambient + diffuse) + spec;
+    float4 litColor = texColor  + spec;
     litColor.a = texColor.a * g_Material.diffuse.a;
     return litColor;
 }

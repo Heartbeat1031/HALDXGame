@@ -23,14 +23,15 @@ void BoxCollisionC::Init() {
     Component::Init();
 
     JPH::BodyInterface &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
-    // 创建形状
+    // 形状を作成
     RefConst<JPH::Shape> shape = new JPH::BoxShape(Vec3(m_size.x, m_size.y, m_size.z));
     auto &myTransform = m_gameObject->GetComponent<TransformC>();
     Vector3 myPos = myTransform.GetWorldPosition();
-    // 设置刚体创建信息
+
+    // 初期位置を設定
     JPH::BodyCreationSettings settings(
         shape,
-        RVec3(myPos.x + m_offset.x, myPos.y + m_offset.y, myPos.z + m_offset.z), // 初期位置
+        RVec3(myPos.x + m_offset.x, myPos.y + m_offset.y, myPos.z + m_offset.z),
         Quat::sIdentity(),
         m_MotionType,
         Layers::MOVING
@@ -50,14 +51,14 @@ void BoxCollisionC::Uninit() {
 void BoxCollisionC::SetPosition(DirectX::SimpleMath::Vector3 position) {
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
 
-    // 获取当前旋转
+    // 現在の回転を取得
     Quat newRotation = bodyInterface.GetRotation(m_bodyID);
     Quaternion dxRot(newRotation.GetX(), newRotation.GetY(), newRotation.GetZ(), newRotation.GetW());
 
-    // 把 offset 旋转到世界空间
+    // オフセットをワールド空間に変換
     Vector3 worldOffset = Vector3::Transform(m_offset, dxRot);
 
-    // 设置刚体中心的新位置
+    // 新しい位置を設定
     Vector3 bodyPos = position + worldOffset;
     bodyInterface.SetPosition(
         m_bodyID,
@@ -84,14 +85,14 @@ DirectX::SimpleMath::Vector3 BoxCollisionC::GetPosition() const {
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
     RVec3 pos = bodyInterface.GetCenterOfMassPosition(m_bodyID);
 
-    // 获取当前旋转
+    // 現在の回転を取得
     Quat rot = bodyInterface.GetRotation(m_bodyID);
     Quaternion dxRot(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
 
-    // 把 offset 变换到世界空间
+    // オフセットをワールド空間に変換
     Vector3 worldOffset = Vector3::Transform(m_offset, dxRot);
 
-    // 返回修正后的位置
+    // 修正された位置を返す
     return Vector3(pos.GetX(), pos.GetY(), pos.GetZ()) - worldOffset;
 }
 
@@ -99,10 +100,10 @@ DirectX::SimpleMath::Vector3 BoxCollisionC::GetRotationEuler() const {
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
     Quat rot = bodyInterface.GetRotation(m_bodyID);
 
-    // 将 Jolt 的 Quat 转换为 DirectX::SimpleMath::Quaternion
+    // Jolt の Quat を DirectX::SimpleMath::Quaternion に変換
     Quaternion dxRot(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
 
-    // 从 Quaternion 获取欧拉角
+    // Quaternion からオイラー角を取得
     float pitch = std::atan2(2.0f * (dxRot.y * dxRot.z + dxRot.w * dxRot.x),
                              1.0f - 2.0f * (dxRot.x * dxRot.x + dxRot.y * dxRot.y));
     float yaw = std::asin(2.0f * (dxRot.w * dxRot.y - dxRot.x * dxRot.z));
@@ -117,17 +118,17 @@ void BoxCollisionC::Update(float dt) {
     Component::Update(dt);
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
 
-    // 获取刚体位置与旋转
+    // 物理システムから位置と回転を取得
     RVec3 newPos = bodyInterface.GetCenterOfMassPosition(m_bodyID);
     Quat newRotation = bodyInterface.GetRotation(m_bodyID);
 
-    // 转为DX类型
+    // DirectX::SimpleMath::Quaternion に変換
     Quaternion dxRot(newRotation.GetX(), newRotation.GetY(), newRotation.GetZ(), newRotation.GetW());
 
-    // 旋转offset
+    // オフセットを回転
     Vector3 worldOffset = Vector3::Transform(m_offset, dxRot);
 
-    // 正确设置Transform
+    // TransformC コンポーネントを正しく設定
     auto &myTransform = m_gameObject->GetComponent<TransformC>();
     myTransform.SetWorldPosition(Vector3(newPos.GetX(), newPos.GetY(), newPos.GetZ()) - worldOffset);
     myTransform.SetWorldRotation(dxRot);

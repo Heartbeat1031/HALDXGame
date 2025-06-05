@@ -17,7 +17,7 @@ void AnimationManager::LoadAnimationClips(std::string path, const std::vector<st
         aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenBoundingBoxes
     );
 
-    if (!pAssimpScene || (pAssimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || !pAssimpScene->mRootNode) {
+    if (!pAssimpScene || !pAssimpScene->mRootNode) {
         std::cout << "アニメーションの読み込みに失敗: " << importer.GetErrorString() << std::endl;
         return;
     }

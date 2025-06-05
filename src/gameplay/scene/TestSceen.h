@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "Miku.h"
 #include "Scene.h"
 //----------------------------------------------------------------//
 // 这是一个测试场景类，用于演示如何使用Scene类和GameObject类
@@ -12,6 +13,8 @@
 // サンプルのテストシーン
 class TestSceen : public Scene{
 public:
+    Miku *miku = nullptr;
+
     void Init() override;
     void Update() override;
     void Uninit() override;

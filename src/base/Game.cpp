@@ -61,8 +61,9 @@ bool Game::Init() {
     mBodyDrawSettings.mDrawShape = true;
     mBodyDrawSettings.mDrawShapeWireframe = true;
 
-    // アニメ
-    animationManager.LoadAnimationClips("assets/models/Praying.fbx", {"Idle"});
+    // アニメを追加
+    animationManager.LoadAnimationClips("assets/animation/Idle.fbx", {"Idle"});
+    animationManager.LoadAnimationClips("assets/animation/Walking.fbx", {"Walking"});
 
     // テストシーンを読み込む
     SetScene<TestSceen>();
