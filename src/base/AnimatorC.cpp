@@ -130,7 +130,6 @@ void AnimatorC::Update(float dt) {
     }
     std::cout << "Total bones: " << boneCount << "\n";
 
-    // 设置模型对象的骨骼矩阵
     if (m_modelObject) {
         m_modelObject->SetBoneMatrices(&m_finalBoneMatrices);
     }

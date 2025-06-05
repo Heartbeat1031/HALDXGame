@@ -196,7 +196,36 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                 for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b)
                 {
                     aiBone* ai_bone = pAiMesh->mBones[b];
-                    int boneIndex = model.boneNameToIndex[ai_bone->mName.C_Str()];
+                    std::string boneName = ai_bone->mName.C_Str();
+
+                    // Ensure bone index exists before using it
+                    int boneIndex;
+                    auto it = model.boneNameToIndex.find(boneName);
+                    if (it == model.boneNameToIndex.end())
+                    {
+                        boneIndex = static_cast<int>(model.bones.size());
+                        model.boneNameToIndex[boneName] = boneIndex;
+
+                        BoneInfo info;
+                        info.name = boneName;
+                        DirectX::XMFLOAT4X4 temp;
+                        memcpy(&temp, &ai_bone->mOffsetMatrix, sizeof(ai_bone->mOffsetMatrix));
+                        DirectX::XMMATRIX offset = DirectX::XMLoadFloat4x4(&temp);
+                        offset = DirectX::XMMatrixTranspose(offset); // Convert from Assimp column-major
+                        DirectX::XMStoreFloat4x4(&info.offsetMatrix, offset);
+                        info.nodeTransform = DirectX::XMFLOAT4X4(
+                            1,0,0,0,
+                            0,1,0,0,
+                            0,0,1,0,
+                            0,0,0,1
+                        );
+                        model.bones.push_back(info);
+                    }
+                    else
+                    {
+                        boneIndex = it->second;
+                    }
+
                     for (uint32_t w = 0; w < ai_bone->mNumWeights; ++w)
                     {
                         const aiVertexWeight& aw = ai_bone->mWeights[w];
