@@ -371,16 +371,16 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
 
         // 输出骨骼信息
         // 打印骨骼结构调试输出
-        for (int i = 0; i < (int)model.bones.size(); ++i) {
-            const auto& bone = model.bones[i];
-            std::cout << "Bone[" << i << "]: " << bone.name
-                      << ", parent=" << bone.parentIndex
-                      << ", children=" << bone.children.size() << std::endl;
-            for (int c : bone.children) {
-                if (c == i)
-                    std::cerr << "⚠️ 骨骼自身包含自己为子骨骼: " << bone.name << std::endl;
-            }
-        }
+        // for (int i = 0; i < (int)model.bones.size(); ++i) {
+        //     const auto& bone = model.bones[i];
+        //     std::cout << "Bone[" << i << "]: " << bone.name
+        //               << ", parent=" << bone.parentIndex
+        //               << ", children=" << bone.children.size() << std::endl;
+        //     for (int c : bone.children) {
+        //         if (c == i)
+        //             std::cerr << "骨骼自身包含自己为子骨骼: " << bone.name << std::endl;
+        //     }
+        // }
 
 
         // 处理材质
