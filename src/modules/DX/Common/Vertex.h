@@ -205,4 +205,25 @@ struct VertexPosNormalTangentTex
     }
 };
 
+struct VertexPosNormalTexSkinned
+{
+    DirectX::XMFLOAT3 pos;
+    DirectX::XMFLOAT3 normal;
+    DirectX::XMFLOAT2 tex;
+    DirectX::XMUINT4 boneIndices;
+    DirectX::XMFLOAT4 boneWeights;
+
+    static D3D11_INPUT_ELEMENT_DESC_ARRAY<5> GetInputLayout()
+    {
+        static const D3D11_INPUT_ELEMENT_DESC inputLayout[5] = {
+            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 2, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_UINT, 3, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        };
+        return inputLayout;
+    }
+};
+
 #endif

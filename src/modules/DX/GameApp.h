@@ -2,7 +2,7 @@
 
 #include <WinMin.h>
 #include "d3dApp.h"
-#include "Effects.h"
+#include "Common/Effects.h"
 #include <Camera.h>
 #include <RenderStates.h>
 #include <ModelObject.h>

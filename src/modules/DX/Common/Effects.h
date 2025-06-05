@@ -9,6 +9,7 @@
 #include <Material.h>
 #include <MeshData.h>
 #include <LightHelper.h>
+#include <vector>
 
 class BasicEffect : public IEffect, public IEffectTransform,
     public IEffectMaterial, public IEffectMeshData
@@ -49,6 +50,8 @@ public:
 
     // デフォルトの描画状態を設定
     void SetRenderDefault();
+    void SetRenderSkinned();
+    void SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>& boneMatrices);
 
     // 各ライトタイプの最大数
     static constexpr int maxLights = 5;

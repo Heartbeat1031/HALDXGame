@@ -4,11 +4,14 @@
 #include <EffectHelper.h>
 #include <DXTrace.h>
 #include <filesystem>
+#include <algorithm>
 #include <Vertex.h>
 #include <TextureManager.h>
 #include "LightHelper.h"
 
 using namespace DirectX;
+
+static constexpr size_t MAX_BONES = 256;
 
 # pragma warning(disable: 26812)
 
@@ -29,6 +32,7 @@ public:
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
+    ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexSkinnedLayout;
 
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
     ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
@@ -90,10 +94,16 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     std::filesystem::path exePath = std::filesystem::current_path();
     pImpl->m_pEffectHelper->CreateShaderFromFile("BasicVS", L"shaders/Basic_VS.cso", device,
         nullptr, nullptr, nullptr, blob.GetAddressOf());
-
+    
     // 頂点レイアウトの作成
     HR(device->CreateInputLayout(VertexPosNormalTex::GetInputLayout(), ARRAYSIZE(VertexPosNormalTex::GetInputLayout()),
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
+
+    // スキニング用頂点シェーダー
+    pImpl->m_pEffectHelper->CreateShaderFromFile("SkinnedVS", L"shaders/Skinned_VS.cso", device,
+        nullptr, nullptr, nullptr, blob.ReleaseAndGetAddressOf());
+    HR(device->CreateInputLayout(VertexPosNormalTexSkinned::GetInputLayout(), ARRAYSIZE(VertexPosNormalTexSkinned::GetInputLayout()),
+        blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexSkinnedLayout.GetAddressOf()));
 
     // ピクセルシェーダーの作成
     pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"shaders/Basic_PS.cso", device);
@@ -104,12 +114,17 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     passDesc.namePS = "BasicPS";
     HR(pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc));
 
+    passDesc.nameVS = "SkinnedVS";
+    passDesc.namePS = "BasicPS";
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Skinned", device, &passDesc));
+
     // サンプラーステートの設定
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 
     // デバッグ用オブジェクト名の設定
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
     SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "BasicEffect.VertexPosNormalTexLayout");
+    SetDebugObjectName(pImpl->m_pVertexPosNormalTexSkinnedLayout.Get(), "BasicEffect.VertexPosNormalTexSkinnedLayout");
 #endif
     pImpl->m_pEffectHelper->SetDebugObjectName("BasicEffect");
 
@@ -153,13 +168,28 @@ MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
     input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
     input.topology = pImpl->m_CurrTopology;
 
-    input.pVertexBuffers = {
-        meshData.m_pVertices.Get(),
-        meshData.m_pNormals.Get(),
-        meshData.m_pTexcoordArrays.empty() ? nullptr : meshData.m_pTexcoordArrays[0].Get()
-    };
-    input.strides = { 12, 12, 8 };
-    input.offsets = { 0, 0, 0 };
+    if (pImpl->m_pCurrInputLayout.Get() == pImpl->m_pVertexPosNormalTexSkinnedLayout.Get())
+    {
+        input.pVertexBuffers = {
+            meshData.m_pVertices.Get(),
+            meshData.m_pNormals.Get(),
+            meshData.m_pTexcoordArrays.empty() ? nullptr : meshData.m_pTexcoordArrays[0].Get(),
+            meshData.m_pBlendIndices.Get(),
+            meshData.m_pBlendWeights.Get()
+        };
+        input.strides = { 12, 12, 8, 16, 16 };
+        input.offsets = { 0, 0, 0, 0, 0 };
+    }
+    else
+    {
+        input.pVertexBuffers = {
+            meshData.m_pVertices.Get(),
+            meshData.m_pNormals.Get(),
+            meshData.m_pTexcoordArrays.empty() ? nullptr : meshData.m_pTexcoordArrays[0].Get()
+        };
+        input.strides = { 12, 12, 8 };
+        input.offsets = { 0, 0, 0 };
+    }
 
     input.pIndexBuffer = meshData.m_pIndices.Get();
     input.indexCount = meshData.m_IndexCount;
@@ -197,6 +227,30 @@ void BasicEffect::SetRenderDefault()
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Basic");
     pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
     pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+}
+
+void BasicEffect::SetRenderSkinned()
+{
+    pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Skinned");
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexSkinnedLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+}
+
+void BasicEffect::SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>& boneMatrices)
+{
+    if (!boneMatrices.empty())
+    {
+        size_t count = std::min<size_t>(boneMatrices.size(), MAX_BONES);
+        std::vector<DirectX::XMFLOAT4X4> transposed(count);
+        for (size_t i = 0; i < count; ++i)
+        {
+            DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&boneMatrices[i]);
+            m = DirectX::XMMatrixTranspose(m);
+            DirectX::XMStoreFloat4x4(&transposed[i], m);
+        }
+        pImpl->m_pEffectHelper->GetConstantBufferVariable("g_BoneTransforms")
+            ->SetRaw(transposed.data(), 0, sizeof(DirectX::XMFLOAT4X4) * count);
+    }
 }
 
 void BasicEffect::Apply(ID3D11DeviceContext* deviceContext)

@@ -26,6 +26,8 @@ struct MeshData
     ComPtr<ID3D11Buffer> m_pTangents;
     ComPtr<ID3D11Buffer> m_pBitangents;
     ComPtr<ID3D11Buffer> m_pColors;
+    ComPtr<ID3D11Buffer> m_pBlendIndices;
+    ComPtr<ID3D11Buffer> m_pBlendWeights;
 
     ComPtr<ID3D11Buffer> m_pIndices;
     uint32_t m_VertexCount = 0;

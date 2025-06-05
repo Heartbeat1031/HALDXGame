@@ -1,5 +1,7 @@
 #include "LightHelper.hlsli"
 
+static const uint MAX_BONES = 256;
+
 Texture2D g_DiffuseMap : register(t0);
 SamplerState g_Sam : register(s0);
 
@@ -24,6 +26,11 @@ cbuffer CBChangesRarely : register(b2)
     SpotLight g_SpotLight[5];
 }
 
+cbuffer CBBones : register(b3)
+{
+    matrix g_BoneTransforms[MAX_BONES];
+};
+
 
 
 struct VertexPosNormalTex
@@ -31,6 +38,15 @@ struct VertexPosNormalTex
     float3 posL : POSITION;
     float3 normalL : NORMAL;
     float2 tex : TEXCOORD;
+};
+
+struct VertexSkinned
+{
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float2 tex : TEXCOORD;
+    uint4 boneIndices : BLENDINDICES;
+    float4 boneWeights : BLENDWEIGHT;
 };
 
 struct VertexPosHWNormalTex

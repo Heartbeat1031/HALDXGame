@@ -33,7 +33,7 @@ void TestSceen::Init() {
     miku.AddComponent<ModelC>("assets/models/Praying.fbx");
     miku.AddComponent<AnimatorC>("Idle");
     miku.GetComponent<TransformC>().SetLocalPosition(Vector3(5, 10, 0));
-     miku.GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
+    miku.GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
     miku.AddComponent<BoxCollisionC>(Vector3(2, 2, 2), JPH::EMotionType::Dynamic).SetOffset(Vector3(0, 2, 0));
     //miku.GetComponent<TransformC>().SetLocalScale(Vector3(0.5, 0.5, 0.5));
 }
@@ -60,5 +60,4 @@ void TestSceen::Update() {
 }
 
 void TestSceen::Uninit() {
-
 }

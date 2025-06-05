@@ -52,9 +52,14 @@ void ExportEmbeddedTextures(const aiScene* scene, const std::filesystem::path& m
     }
 }
 
-void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view filename) {
+void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view filename)
+{
     using namespace Assimp;
     namespace fs = std::filesystem;
+
+    // Clear previous data to avoid duplicated hierarchy when reloading
+    model.bones.clear();
+    model.boneNameToIndex.clear();
 
     model.materials.clear();
     model.meshdatas.clear();
@@ -64,32 +69,35 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
     // 去掉里面的点、线图元
     importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
     auto pAssimpScene = importer.ReadFile(filename.data(),
-                                          aiProcess_ConvertToLeftHanded | // 转为左手系
-                                          aiProcess_GenBoundingBoxes | // 获取碰撞盒
-                                          aiProcess_Triangulate | // 将多边形拆分
-                                          aiProcess_ImproveCacheLocality | // 改善缓存局部性
-                                          aiProcess_SortByPType); // 按图元顶点数排序用于移除非三角形图元
+        aiProcess_ConvertToLeftHanded |     // 转为左手系
+        aiProcess_GenBoundingBoxes |        // 获取碰撞盒
+        aiProcess_Triangulate |             // 将多边形拆分
+        aiProcess_ImproveCacheLocality |    // 改善缓存局部性
+        aiProcess_SortByPType);             // 按图元顶点数排序用于移除非三角形图元
 
-    if (pAssimpScene && !(pAssimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && pAssimpScene->HasMeshes()) {
+    if (pAssimpScene && !(pAssimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && pAssimpScene->HasMeshes())
+    {
         ExportEmbeddedTextures(pAssimpScene, std::filesystem::path(filename));
         model.meshdatas.resize(pAssimpScene->mNumMeshes);
         model.materials.resize(pAssimpScene->mNumMaterials);
-        for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i) {
-            auto &mesh = model.meshdatas[i];
+        for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i)
+        {
+            auto& mesh = model.meshdatas[i];
 
             auto pAiMesh = pAssimpScene->mMeshes[i];
             uint32_t numVertices = pAiMesh->mNumVertices;
 
             CD3D11_BUFFER_DESC bufferDesc(0, D3D11_BIND_VERTEX_BUFFER);
-            D3D11_SUBRESOURCE_DATA initData{nullptr, 0, 0};
+            D3D11_SUBRESOURCE_DATA initData{ nullptr, 0, 0 };
             // 位置
-            if (pAiMesh->mNumVertices > 0) {
+            if (pAiMesh->mNumVertices > 0)
+            {
                 initData.pSysMem = pAiMesh->mVertices;
                 bufferDesc.ByteWidth = numVertices * sizeof(XMFLOAT3);
                 device->CreateBuffer(&bufferDesc, &initData, mesh.m_pVertices.GetAddressOf());
 
                 BoundingBox::CreateFromPoints(mesh.m_BoundingBox, numVertices,
-                                              (const XMFLOAT3 *) pAiMesh->mVertices, sizeof(XMFLOAT3));
+                    (const XMFLOAT3*)pAiMesh->mVertices, sizeof(XMFLOAT3));
                 if (i == 0)
                     model.boundingbox = mesh.m_BoundingBox;
                 else
@@ -97,27 +105,31 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
             }
 
             // 法线
-            if (pAiMesh->HasNormals()) {
+            if (pAiMesh->HasNormals())
+            {
                 initData.pSysMem = pAiMesh->mNormals;
                 bufferDesc.ByteWidth = numVertices * sizeof(XMFLOAT3);
                 device->CreateBuffer(&bufferDesc, &initData, mesh.m_pNormals.GetAddressOf());
             }
 
             // 切线和副切线
-            if (pAiMesh->HasTangentsAndBitangents()) {
+            if (pAiMesh->HasTangentsAndBitangents())
+            {
                 std::vector<XMFLOAT4> tangents(numVertices, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-                for (uint32_t i = 0; i < pAiMesh->mNumVertices; ++i) {
+                for (uint32_t i = 0; i < pAiMesh->mNumVertices; ++i)
+                {
                     memcpy_s(&tangents[i], sizeof(XMFLOAT3),
-                             pAiMesh->mTangents + i, sizeof(XMFLOAT3));
+                        pAiMesh->mTangents + i, sizeof(XMFLOAT3));
                 }
 
                 initData.pSysMem = tangents.data();
                 bufferDesc.ByteWidth = pAiMesh->mNumVertices * sizeof(XMFLOAT4);
                 device->CreateBuffer(&bufferDesc, &initData, mesh.m_pTangents.GetAddressOf());
 
-                for (uint32_t i = 0; i < pAiMesh->mNumVertices; ++i) {
+                for (uint32_t i = 0; i < pAiMesh->mNumVertices; ++i)
+                {
                     memcpy_s(&tangents[i], sizeof(XMFLOAT3),
-                             pAiMesh->mBitangents + i, sizeof(XMFLOAT3));
+                        pAiMesh->mBitangents + i, sizeof(XMFLOAT3));
                 }
                 device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBitangents.GetAddressOf());
             }
@@ -127,13 +139,16 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
             while (numUVs && !pAiMesh->HasTextureCoords(numUVs - 1))
                 numUVs--;
 
-            if (numUVs > 0) {
+            if (numUVs > 0)
+            {
                 mesh.m_pTexcoordArrays.resize(numUVs);
-                for (uint32_t i = 0; i < numUVs; ++i) {
+                for (uint32_t i = 0; i < numUVs; ++i)
+                {
                     std::vector<XMFLOAT2> uvs(numVertices);
-                    for (uint32_t j = 0; j < numVertices; ++j) {
+                    for (uint32_t j = 0; j < numVertices; ++j)
+                    {
                         memcpy_s(&uvs[j], sizeof(XMFLOAT2),
-                                 pAiMesh->mTextureCoords[i] + j, sizeof(XMFLOAT2));
+                            pAiMesh->mTextureCoords[i] + j, sizeof(XMFLOAT2));
                     }
                     initData.pSysMem = uvs.data();
                     bufferDesc.ByteWidth = numVertices * sizeof(XMFLOAT2);
@@ -144,11 +159,14 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
             // 索引
             uint32_t numFaces = pAiMesh->mNumFaces;
             uint32_t numIndices = numFaces * 3;
-            if (numFaces > 0) {
+            if (numFaces > 0)
+            {
                 mesh.m_IndexCount = numIndices;
-                if (numIndices < 65535) {
+                if (numIndices < 65535)
+                {
                     std::vector<uint16_t> indices(numIndices);
-                    for (size_t i = 0; i < numFaces; ++i) {
+                    for (size_t i = 0; i < numFaces; ++i)
+                    {
                         indices[i * 3] = static_cast<uint16_t>(pAiMesh->mFaces[i].mIndices[0]);
                         indices[i * 3 + 1] = static_cast<uint16_t>(pAiMesh->mFaces[i].mIndices[1]);
                         indices[i * 3 + 2] = static_cast<uint16_t>(pAiMesh->mFaces[i].mIndices[2]);
@@ -156,15 +174,69 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
                     bufferDesc = CD3D11_BUFFER_DESC(numIndices * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
                     initData.pSysMem = indices.data();
                     device->CreateBuffer(&bufferDesc, &initData, mesh.m_pIndices.GetAddressOf());
-                } else {
+                }
+                else
+                {
                     std::vector<uint32_t> indices(numIndices);
-                    for (size_t i = 0; i < numFaces; ++i) {
+                    for (size_t i = 0; i < numFaces; ++i)
+                    {
                         memcpy_s(indices.data() + i * 3, sizeof(uint32_t) * 3,
-                                 pAiMesh->mFaces[i].mIndices, sizeof(uint32_t) * 3);
+                            pAiMesh->mFaces[i].mIndices, sizeof(uint32_t) * 3);
                     }
                     bufferDesc = CD3D11_BUFFER_DESC(numIndices * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
                     initData.pSysMem = indices.data();
                     device->CreateBuffer(&bufferDesc, &initData, mesh.m_pIndices.GetAddressOf());
+                }
+            }
+
+            // 骨骼权重
+            if (pAiMesh->HasBones())
+            {
+                std::vector<std::vector<std::pair<int, float>>> weightInfo(numVertices);
+                for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b)
+                {
+                    aiBone* ai_bone = pAiMesh->mBones[b];
+                    int boneIndex = model.boneNameToIndex[ai_bone->mName.C_Str()];
+                    for (uint32_t w = 0; w < ai_bone->mNumWeights; ++w)
+                    {
+                        const aiVertexWeight& aw = ai_bone->mWeights[w];
+                        weightInfo[aw.mVertexId].push_back({ boneIndex, aw.mWeight });
+                    }
+                }
+
+                std::vector<DirectX::XMUINT4> blendIndices(numVertices, DirectX::XMUINT4(0,0,0,0));
+                std::vector<DirectX::XMFLOAT4> blendWeights(numVertices, DirectX::XMFLOAT4(0,0,0,0));
+                for (uint32_t v = 0; v < numVertices; ++v)
+                {
+                    auto& vec = weightInfo[v];
+                    if (!vec.empty())
+                    {
+                        std::sort(vec.begin(), vec.end(), [](auto& a, auto& b) { return a.second > b.second; });
+                        for (size_t k = 0; k < 4 && k < vec.size(); ++k)
+                        {
+                            (&blendIndices[v].x)[k] = vec[k].first;
+                            (&blendWeights[v].x)[k] = vec[k].second;
+                        }
+                        float sum = blendWeights[v].x + blendWeights[v].y + blendWeights[v].z + blendWeights[v].w;
+                        if (sum > 0)
+                        {
+                            blendWeights[v].x /= sum;
+                            blendWeights[v].y /= sum;
+                            blendWeights[v].z /= sum;
+                            blendWeights[v].w /= sum;
+                        }
+                    }
+                }
+
+                if (!blendIndices.empty())
+                {
+                    bufferDesc.ByteWidth = numVertices * sizeof(DirectX::XMUINT4);
+                    initData.pSysMem = blendIndices.data();
+                    device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBlendIndices.GetAddressOf());
+
+                    bufferDesc.ByteWidth = numVertices * sizeof(DirectX::XMFLOAT4);
+                    initData.pSysMem = blendWeights.data();
+                    device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBlendWeights.GetAddressOf());
                 }
             }
 
@@ -174,52 +246,110 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
 
         // 骨骼
         //遍历所有 mesh，收集所有骨骼名、offset 矩阵
-        for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i) {
+        for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i)
+        {
             auto pAiMesh = pAssimpScene->mMeshes[i];
-            for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b) {
-                aiBone *ai_bone = pAiMesh->mBones[b];
+            for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b)
+            {
+                aiBone* ai_bone = pAiMesh->mBones[b];
                 std::string boneName = ai_bone->mName.C_Str();
                 // 没记录过才插入
-                if (model.boneNameToIndex.count(boneName) == 0) {
-                    int boneIndex = (int) model.bones.size();
+                if (model.boneNameToIndex.count(boneName) == 0)
+                {
+                    int boneIndex = (int)model.bones.size();
                     model.boneNameToIndex[boneName] = boneIndex;
                     BoneInfo info;
                     info.name = boneName;
                     memcpy(&info.offsetMatrix, &ai_bone->mOffsetMatrix, sizeof(ai_bone->mOffsetMatrix));
+                    info.nodeTransform = DirectX::XMFLOAT4X4(
+                        1,0,0,0,
+                        0,1,0,0,
+                        0,0,1,0,
+                        0,0,0,1
+                    );
                     model.bones.push_back(info);
                 }
             }
         }
 
-        // 递归补全骨骼的 parentIndex 和 children
-        std::function<void(aiNode *, int)> buildBoneHierarchy = [&](aiNode *node, int parent) {
+        std::function<void(aiNode*)> collectAllBones = [&](aiNode* node) {
             std::string name = node->mName.C_Str();
-            // 如果这个node是骨骼
-            if (model.boneNameToIndex.count(name)) {
-                int idx = model.boneNameToIndex[name];
-                model.bones[idx].parentIndex = parent;
-                if (parent >= 0)
-                    model.bones[parent].children.push_back(idx);
-                parent = idx; // 递归的parent更新为当前骨骼
+            if (model.boneNameToIndex.count(name) == 0) {
+                int idx = (int)model.bones.size();
+                model.boneNameToIndex[name] = idx;
+                BoneInfo info;
+                info.name = name;
+                // 单位矩阵
+                info.offsetMatrix = DirectX::XMFLOAT4X4(
+                    1,0,0,0,
+                    0,1,0,0,
+                    0,0,1,0,
+                    0,0,0,1
+                );
+                info.nodeTransform = info.offsetMatrix;
+                model.bones.push_back(info);
             }
             for (uint32_t c = 0; c < node->mNumChildren; ++c) {
-                buildBoneHierarchy(node->mChildren[c], parent);
+                collectAllBones(node->mChildren[c]);
             }
         };
-        // 调用一次，根节点parent填-1
+        collectAllBones(pAssimpScene->mRootNode);
+
+        // 递归补全骨骼的 parentIndex 和 children
+        std::function<void(aiNode*, int)> buildBoneHierarchy = [&](aiNode* node, int parent) {
+            std::string name = node->mName.C_Str();
+            int curParent = parent;
+            if (model.boneNameToIndex.count(name)) {
+                int idx = model.boneNameToIndex[name];
+
+                // 修复 parentIndex 错误为自己的情况
+                if (parent == idx)
+                    model.bones[idx].parentIndex = -1;
+                else
+                    model.bones[idx].parentIndex = parent;
+
+                if (parent >= 0 && parent != idx)
+                    model.bones[parent].children.push_back(idx);
+
+                curParent = idx;
+            }
+            for (uint32_t c = 0; c < node->mNumChildren; ++c) {
+                buildBoneHierarchy(node->mChildren[c], curParent);
+            }
+        };
         buildBoneHierarchy(pAssimpScene->mRootNode, -1);
 
+        // 记录每个骨骼默认的节点变换
+        std::function<void(aiNode*)> fillNodeTransform = [&](aiNode* node) {
+            std::string name = node->mName.C_Str();
+            if (model.boneNameToIndex.count(name)) {
+                int idx = model.boneNameToIndex[name];
+                memcpy(&model.bones[idx].nodeTransform, &node->mTransformation, sizeof(node->mTransformation));
+            }
+            for (uint32_t c = 0; c < node->mNumChildren; ++c) {
+                fillNodeTransform(node->mChildren[c]);
+            }
+        };
+        fillNodeTransform(pAssimpScene->mRootNode);
+
         // 输出骨骼信息
-        // for (int i = 0; i < model.bones.size(); ++i) {
-        //     std::string info = "Bone[ " + std::to_string(i) + "]: " + model.bones[i].name +
-        //         ", parent=" + std::to_string(model.bones[i].parentIndex) +
-        //         ", children=" + std::to_string(model.bones[i].children.size());
-        //     std::cout << info << std::endl;
-        // }
+        // 打印骨骼结构调试输出
+        for (int i = 0; i < (int)model.bones.size(); ++i) {
+            const auto& bone = model.bones[i];
+            std::cout << "Bone[" << i << "]: " << bone.name
+                      << ", parent=" << bone.parentIndex
+                      << ", children=" << bone.children.size() << std::endl;
+            for (int c : bone.children) {
+                if (c == i)
+                    std::cerr << "⚠️ 骨骼自身包含自己为子骨骼: " << bone.name << std::endl;
+            }
+        }
+
 
         // 处理材质
-        for (uint32_t i = 0; i < pAssimpScene->mNumMaterials; ++i) {
-            auto &material = model.materials[i];
+        for (uint32_t i = 0; i < pAssimpScene->mNumMaterials; ++i)
+        {
+            auto& material = model.materials[i];
 
             auto pAiMaterial = pAssimpScene->mMaterials[i];
             XMFLOAT4 vec{};
@@ -227,85 +357,74 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
             uint32_t boolean{};
             uint32_t num = 3;
 
-            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_AMBIENT, (float *) &vec, &num))
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_AMBIENT, (float*)&vec, &num))
                 material.Set("$AmbientColor", vec);
-            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, (float *) &vec, &num))
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, (float*)&vec, &num))
                 material.Set("$DiffuseColor", vec);
-            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, (float *) &vec, &num))
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_SPECULAR, (float*)&vec, &num))
                 material.Set("$SpecularColor", vec);
             if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_SPECULAR_FACTOR, value))
                 material.Set("$SpecularFactor", value);
-            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, (float *) &vec, &num))
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, (float*)&vec, &num))
                 material.Set("$EmissiveColor", vec);
             if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_OPACITY, value))
                 material.Set("$Opacity", value);
-            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_TRANSPARENT, (float *) &vec, &num))
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_TRANSPARENT, (float*)&vec, &num))
                 material.Set("$TransparentColor", vec);
-            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, (float *) &vec, &num))
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, (float*)&vec, &num))
                 material.Set("$ReflectiveColor", vec);
 
             aiString aiPath;
             fs::path texFilename;
             std::string texName;
 
-            auto TryCreateTexture = [&](aiTextureType type, std::string_view propertyName, bool genMips = false,
-                                        bool forceSRGB = false) {
+            auto TryCreateTexture = [&](aiTextureType type, std::string_view propertyName, bool genMips = false, bool forceSRGB = false) {
                 if (!pAiMaterial->GetTextureCount(type))
                     return;
 
                 pAiMaterial->GetTexture(type, 0, &aiPath);
 
-                if (aiPath.data[0] == '*') {
+                if (aiPath.data[0] == '*')
+                {
                     texName = filename;
                     texName += aiPath.C_Str();
-                    char *pEndStr = nullptr;
-                    aiTexture *pTex = pAssimpScene->mTextures[strtol(aiPath.data + 1, &pEndStr, 10)];
-                    TextureManager::Get().CreateFromMemory(texName, pTex->pcData,
-                                                           pTex->mHeight ? pTex->mWidth * pTex->mHeight : pTex->mWidth,
-                                                           genMips, forceSRGB);
+                    char* pEndStr = nullptr;
+                    aiTexture* pTex = pAssimpScene->mTextures[strtol(aiPath.data + 1, &pEndStr, 10)];
+                    TextureManager::Get().CreateFromMemory(texName, pTex->pcData, pTex->mHeight ? pTex->mWidth * pTex->mHeight : pTex->mWidth, genMips, forceSRGB);
                     material.Set(propertyName, std::string(texName));
                 }
-                // 纹理通过文件名索引
-                else {
-                    texFilename = filename;
-                    texFilename = texFilename.parent_path() / aiPath.C_Str();
-                    if (fs::exists(texFilename)) {
-                        TextureManager::Get().CreateFromFile(texFilename.string(), genMips, forceSRGB);
-                        material.Set(propertyName, texFilename.string());
-                    } else {
-                        texFilename = filename;
-                        texFilename = texFilename.parent_path() / aiPath.C_Str();
-                        fs::path modelPath = filename;
-                        fs::path modelDir = modelPath.parent_path();
-                        fs::path fbmDir = modelDir / (modelPath.stem().string() + ".fbm");
-                        fs::path originalTexPath = aiPath.C_Str();
+                else
+                {
+                    fs::path modelPath = filename;
+                    fs::path modelDir = modelPath.parent_path();
+                    fs::path fbmDir = modelDir / (modelPath.stem().string() + ".fbm");
+                    fs::path originalTexPath = aiPath.C_Str();
 
-                        fs::path candidatePaths[] = {
-                            // 1. FBX原始路径（绝对或相对）
-                            originalTexPath,
-                            // 2. 模型目录下的原始路径
-                            modelDir / originalTexPath,
-                            // 3. .fbm 文件夹下的文件名
-                            fbmDir / originalTexPath.filename(),
-                            // 4. 模型目录下的文件名
-                            modelDir / originalTexPath.filename()
-                        };
+                    fs::path candidatePaths[] = {
+                        // 1. FBX原始路径（绝对或相对）
+                        originalTexPath,
+                        // 2. 模型目录下的原始路径
+                        modelDir / originalTexPath,
+                        // 3. .fbm 文件夹下的文件名
+                        fbmDir / originalTexPath.filename(),
+                        // 4. 模型目录下的文件名
+                        modelDir / originalTexPath.filename()
+                    };
 
-                        bool found = false;
-                        for (auto &tryPath: candidatePaths) {
-                            if (fs::exists(tryPath)) {
-                                texFilename = tryPath;
-                                found = true;
-                                break;
-                            }
+                    bool found = false;
+                    for (auto& tryPath : candidatePaths) {
+                        if (fs::exists(tryPath)) {
+                            texFilename = tryPath;
+                            found = true;
+                            break;
                         }
-                        if (!found) {
-                            texFilename = modelDir / originalTexPath.filename(); // 兜底
-                        }
-
-                        TextureManager::Get().CreateFromFile(texFilename.string(), genMips, forceSRGB);
-                        material.Set(propertyName, texFilename.string());
                     }
+                    if (!found) {
+                        texFilename = modelDir / originalTexPath.filename(); // 兜底
+                    }
+
+                    TextureManager::Get().CreateFromFile(texFilename.string(), genMips, forceSRGB);
+                    material.Set(propertyName, texFilename.string());
                 }
             };
 
@@ -317,84 +436,96 @@ void Model::CreateFromFile(Model &model, ID3D11Device *device, std::string_view 
             TryCreateTexture(aiTextureType_DIFFUSE_ROUGHNESS, "$Roughness");
             TryCreateTexture(aiTextureType_AMBIENT_OCCLUSION, "$AmbientOcclusion");
         }
-    } else {
+    }
+    else
+    {
         std::string warning = "[Warning]: ModelManager::CreateFromFile, failed to load \"";
         warning += filename;
         warning += "\"\n";
 
-        if (ImGuiLog::HasInstance()) {
+        if (ImGuiLog::HasInstance())
+        {
             ImGuiLog::Get().AddLog(warning.c_str());
-        } else {
+        }
+        else
+        {
             OutputDebugStringA(warning.c_str());
         }
     }
 }
 
-void Model::CreateFromGeometry(Model &model, ID3D11Device *device, const GeometryData &data, bool isDynamic) {
+void Model::CreateFromGeometry(Model& model, ID3D11Device* device, const GeometryData& data, bool isDynamic)
+{
     // 默认材质
-    model.materials = {Material{}};
+    model.materials = { Material{} };
     model.materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
     model.materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
     model.materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
     model.materials[0].Set<float>("$SpecularFactor", 10.0f);
     model.materials[0].Set<float>("$Opacity", 1.0f);
 
-    model.meshdatas = {MeshData{}};
+    model.meshdatas = { MeshData{} };
     model.meshdatas[0].m_pTexcoordArrays.resize(1);
-    model.meshdatas[0].m_VertexCount = (uint32_t) data.vertices.size();
-    model.meshdatas[0].m_IndexCount = (uint32_t) (!data.indices16.empty()
-                                                      ? data.indices16.size()
-                                                      : data.indices32.size());
+    model.meshdatas[0].m_VertexCount = (uint32_t)data.vertices.size();
+    model.meshdatas[0].m_IndexCount = (uint32_t)(!data.indices16.empty() ? data.indices16.size() : data.indices32.size());
     model.meshdatas[0].m_MaterialIndex = 0;
 
     CD3D11_BUFFER_DESC bufferDesc(0,
-                                  D3D11_BIND_VERTEX_BUFFER,
-                                  isDynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
-                                  isDynamic ? D3D11_CPU_ACCESS_WRITE : 0);
-    D3D11_SUBRESOURCE_DATA initData{nullptr, 0, 0};
+        D3D11_BIND_VERTEX_BUFFER,
+        isDynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
+        isDynamic ? D3D11_CPU_ACCESS_WRITE : 0);
+    D3D11_SUBRESOURCE_DATA initData{ nullptr, 0, 0 };
 
     initData.pSysMem = data.vertices.data();
-    bufferDesc.ByteWidth = (uint32_t) data.vertices.size() * sizeof(XMFLOAT3);
+    bufferDesc.ByteWidth = (uint32_t)data.vertices.size() * sizeof(XMFLOAT3);
     device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pVertices.GetAddressOf());
 
-    if (!data.normals.empty()) {
+    if (!data.normals.empty())
+    {
         initData.pSysMem = data.normals.data();
-        bufferDesc.ByteWidth = (uint32_t) data.normals.size() * sizeof(XMFLOAT3);
+        bufferDesc.ByteWidth = (uint32_t)data.normals.size() * sizeof(XMFLOAT3);
         device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pNormals.GetAddressOf());
     }
 
-    if (!data.texcoords.empty()) {
+    if (!data.texcoords.empty())
+    {
         initData.pSysMem = data.texcoords.data();
-        bufferDesc.ByteWidth = (uint32_t) data.texcoords.size() * sizeof(XMFLOAT2);
+        bufferDesc.ByteWidth = (uint32_t)data.texcoords.size() * sizeof(XMFLOAT2);
         device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTexcoordArrays[0].GetAddressOf());
     }
 
-    if (!data.tangents.empty()) {
+    if (!data.tangents.empty())
+    {
         initData.pSysMem = data.tangents.data();
-        bufferDesc.ByteWidth = (uint32_t) data.tangents.size() * sizeof(XMFLOAT4);
+        bufferDesc.ByteWidth = (uint32_t)data.tangents.size() * sizeof(XMFLOAT4);
         device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTangents.GetAddressOf());
     }
 
     bufferDesc.Usage = D3D11_USAGE_DEFAULT;
     bufferDesc.CPUAccessFlags = 0;
-    if (!data.indices16.empty()) {
+    if (!data.indices16.empty())
+    {
         initData.pSysMem = data.indices16.data();
-        bufferDesc = CD3D11_BUFFER_DESC((uint16_t) data.indices16.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
+        bufferDesc = CD3D11_BUFFER_DESC((uint16_t)data.indices16.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
         device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
-    } else {
+    }
+    else
+    {
         initData.pSysMem = data.indices32.data();
-        bufferDesc = CD3D11_BUFFER_DESC((uint32_t) data.indices32.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
+        bufferDesc = CD3D11_BUFFER_DESC((uint32_t)data.indices32.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
         device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
     }
 }
 
-void Model::SetDebugObjectName(std::string_view name) {
+void Model::SetDebugObjectName(std::string_view name)
+{
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
     std::string baseStr = name.data();
     size_t sz = meshdatas.size();
     std::string str;
     str.reserve(100);
-    for (size_t i = 0; i < sz; ++i) {
+    for (size_t i = 0; i < sz; ++i)
+    {
         baseStr = name.data();
         baseStr += "[" + std::to_string(i) + "].";
         if (meshdatas[i].m_pVertices)
@@ -407,7 +538,12 @@ void Model::SetDebugObjectName(std::string_view name) {
             ::SetDebugObjectName(meshdatas[i].m_pBitangents.Get(), baseStr + "bitangents");
         if (meshdatas[i].m_pColors)
             ::SetDebugObjectName(meshdatas[i].m_pColors.Get(), baseStr + "colors");
-        if (!meshdatas[i].m_pTexcoordArrays.empty()) {
+        if (meshdatas[i].m_pBlendIndices)
+            ::SetDebugObjectName(meshdatas[i].m_pBlendIndices.Get(), baseStr + "blendIndices");
+        if (meshdatas[i].m_pBlendWeights)
+            ::SetDebugObjectName(meshdatas[i].m_pBlendWeights.Get(), baseStr + "blendWeights");
+        if (!meshdatas[i].m_pTexcoordArrays.empty())
+        {
             size_t texSz = meshdatas[i].m_pTexcoordArrays.size();
             for (size_t j = 0; j < texSz; ++j)
                 ::SetDebugObjectName(meshdatas[i].m_pTexcoordArrays[j].Get(), baseStr + "uv" + std::to_string(j));
@@ -420,60 +556,70 @@ void Model::SetDebugObjectName(std::string_view name) {
 #endif
 }
 
-namespace {
+namespace
+{
     // ModelManager单例
-    ModelManager *s_pInstance = nullptr;
+    ModelManager* s_pInstance = nullptr;
 }
 
 
-ModelManager::ModelManager() {
+ModelManager::ModelManager()
+{
     if (s_pInstance)
         throw std::exception("ModelManager is a singleton!");
     s_pInstance = this;
 }
 
-ModelManager::~ModelManager() {
+ModelManager::~ModelManager()
+{
 }
 
-ModelManager &ModelManager::Get() {
+ModelManager& ModelManager::Get()
+{
     if (!s_pInstance)
         throw std::exception("ModelManager needs an instance!");
     return *s_pInstance;
 }
 
-void ModelManager::Init(ID3D11Device *device) {
+void ModelManager::Init(ID3D11Device* device)
+{
     m_pDevice = device;
     m_pDevice->GetImmediateContext(m_pDeviceContext.ReleaseAndGetAddressOf());
 }
 
-Model *ModelManager::CreateFromFile(std::string_view filename) {
+Model* ModelManager::CreateFromFile(std::string_view filename)
+{
     return CreateFromFile(filename, filename);
 }
 
 // 多用图创建模型 比如路径下的模型 创建多个子模型等等
-Model *ModelManager::CreateFromFile(std::string_view name, std::string_view filename) {
+Model* ModelManager::CreateFromFile(std::string_view name, std::string_view filename)
+{
     XID modelID = StringToID(name);
-    auto &model = m_Models[modelID];
+    auto& model = m_Models[modelID];
     Model::CreateFromFile(model, m_pDevice.Get(), filename);
     return &model;
 }
 
-Model *ModelManager::CreateFromGeometry(std::string_view name, const GeometryData &data, bool isDynamic) {
+Model* ModelManager::CreateFromGeometry(std::string_view name, const GeometryData& data, bool isDynamic)
+{
     XID modelID = StringToID(name);
-    auto &model = m_Models[modelID];
+    auto& model = m_Models[modelID];
     Model::CreateFromGeometry(model, m_pDevice.Get(), data, isDynamic);
 
     return &model;
 }
 
-const Model *ModelManager::GetModel(std::string_view name) const {
+const Model* ModelManager::GetModel(std::string_view name) const
+{
     XID nameID = StringToID(name);
     if (auto it = m_Models.find(nameID); it != m_Models.end())
         return &it->second;
     return nullptr;
 }
 
-Model *ModelManager::GetModel(std::string_view name) {
+Model* ModelManager::GetModel(std::string_view name)
+{
     XID nameID = StringToID(name);
     if (m_Models.count(nameID))
         return &m_Models[nameID];

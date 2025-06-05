@@ -2,6 +2,7 @@
 #include "ModelObject.h"
 #include "DXTrace.h"
 #include "ModelManager.h"
+#include "Effects.h"
 
 using namespace DirectX;
 
@@ -146,6 +147,19 @@ void ModelObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
         IEffectTransform* pEffectTransform = dynamic_cast<IEffectTransform*>(&effect);
         if (pEffectTransform)
             pEffectTransform->SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
+
+        if (auto pBasic = dynamic_cast<BasicEffect*>(&effect))
+        {
+            if (m_pBoneMatrices)
+            {
+                pBasic->SetRenderSkinned();
+                pBasic->SetBoneMatrices(*m_pBoneMatrices);
+            }
+            else
+            {
+                pBasic->SetRenderDefault();
+            }
+        }
 
         effect.Apply(deviceContext);
 

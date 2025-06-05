@@ -64,12 +64,12 @@ AnimatorC::AnimatorC(std::string defaultAnim) {
 void AnimatorC::Init() {
     Component::Init();
     // 获取模型组件
-    UID modelHandle = m_gameObject->GetComponent<ModelC>().handle;
-    if (modelHandle == -1) {
+    m_modelHandle = m_gameObject->GetComponent<ModelC>().handle;
+    if (m_modelHandle == -1) {
         throw std::runtime_error("ゲームオブジェクトにモデルコンポーネントがありません");
     }
-    ModelObject &modelObject = halgame->GetModelObject(modelHandle);
-    m_model = modelObject.GetModel();
+    m_modelObject = &halgame->GetModelObject(m_modelHandle);
+    m_model = m_modelObject->GetModel();
 }
 
 void AnimatorC::Update(float dt) {
@@ -82,28 +82,49 @@ void AnimatorC::Update(float dt) {
 
     // 骨骼变换缓存resize
     size_t boneCount = m_model->bones.size();
-    if (m_finalBoneMatrices.size() != boneCount) m_finalBoneMatrices.resize(boneCount, DirectX::XMFLOAT4X4{});
+    if (m_finalBoneMatrices.size() != boneCount) {
+        DirectX::XMFLOAT4X4 identity;
+        DirectX::XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+        m_finalBoneMatrices.resize(boneCount, identity);
+    }
 
     // 递归刷新骨骼变换（插值动画，父子递归）
     std::function<void(int, const DirectX::XMMATRIX&)> updateBone;
+    std::vector<bool> visited(boneCount, false);
     updateBone = [&](int boneIdx, const DirectX::XMMATRIX& parentMat) {
+        if (boneIdx < 0 || boneIdx >= (int)boneCount)
+            return;
+        if (visited[boneIdx])
+            return; // 防止骨骼层级出现环导致死循环
+        visited[boneIdx] = true;
         auto& boneInfo = m_model->bones[boneIdx];
-        DirectX::XMMATRIX localMat = CalcInterpolatedBoneMatrix(boneInfo.name, clip, m_currentTime); // 插值得到当前local
+        DirectX::XMMATRIX localMat = XMLoadFloat4x4(&boneInfo.nodeTransform);
+        if (clip.boneAnimations.count(boneInfo.name))
+            localMat = CalcInterpolatedBoneMatrix(boneInfo.name, clip, m_currentTime);
         DirectX::XMMATRIX globalMat = localMat * parentMat;
-        m_finalBoneMatrices[boneIdx] = boneInfo.offsetMatrix * globalMat; // 注意乘法顺序！
-        // 递归所有子骨骼
+        DirectX::XMMATRIX offset = XMLoadFloat4x4(&boneInfo.offsetMatrix);
+        DirectX::XMMATRIX finalMat = offset * globalMat; // 注意乘法顺序！
+        DirectX::XMStoreFloat4x4(&m_finalBoneMatrices[boneIdx], finalMat);
         for (int childIdx : boneInfo.children)
             updateBone(childIdx, globalMat);
     };
-    // 遍历所有root骨骼
+
+    //遍历所有root骨骼
     for (int i = 0; i < boneCount; ++i) {
-        if (m_model->bones[i].parentIndex == -1)
-            updateBone(i, DirectX::XMMatrixIdentity());
+        if (m_model->bones[i].parentIndex == -1) {
+            //updateBone(i, DirectX::XMMatrixIdentity());
+        }
+    }
+
+    if (m_modelObject) {
+        m_modelObject->SetBoneMatrices(&m_finalBoneMatrices);
     }
 }
 
 void AnimatorC::Uninit() {
     Component::Uninit();
+    if (m_modelObject)
+        m_modelObject->SetBoneMatrices(nullptr);
 }
 
 void AnimatorC::Play(const std::string& animName) {

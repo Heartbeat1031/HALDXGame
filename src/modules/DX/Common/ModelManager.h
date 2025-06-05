@@ -17,6 +17,7 @@ struct BoneInfo
 {
     std::string name;
     DirectX::XMFLOAT4X4 offsetMatrix; // aiBone::mOffsetMatrix
+    DirectX::XMFLOAT4X4 nodeTransform{ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 }; // default transform
     int parentIndex = -1;
     std::vector<int> children; // 子骨骼索引
 };
