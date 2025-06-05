@@ -79,6 +79,8 @@ add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
 #include(third_party/JoltPhysics/TestFramework/TestFramework.cmake)
 #include(third_party/JoltPhysics/Samples/Samples.cmake)
 #include(third_party/JoltPhysics/UnitTests/UnitTests.cmake)
+
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Build Assimp tests" FORCE)
 add_subdirectory(third_party/assimp assimp)
 add_subdirectory(third_party/ImGui ImGui)
 
