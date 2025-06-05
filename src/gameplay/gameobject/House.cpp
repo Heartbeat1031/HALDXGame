@@ -20,7 +20,6 @@ void House::Init() {
     AddComponent<ModelC>("assets\\models\\house.obj");
     // TransformC コンポーネントを取得し、ローカル位置を設定します
     GetComponent<TransformC>().SetLocalScale(Vector3(0.015f, 0.015f, 0.015f));
-    GetComponent<TransformC>().SetLocalPosition(Vector3(0, 10, 0));
     AddComponent<BoxCollisionC>(Vector3(2, 2, 2), JPH::EMotionType::Dynamic).SetOffset(Vector3(0, 2, 0));
 }
 
@@ -41,6 +40,10 @@ void House::Update(float dt) {
                 0.0f
             ) * dt
         );
+    }
+
+    if (GetComponent<TransformC>().GetWorldPosition().y < -10.0f) {
+        GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
     }
 }
 

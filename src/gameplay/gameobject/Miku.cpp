@@ -22,15 +22,14 @@ void Miku::Init() {
     AddComponent<ModelC>("assets/models/Praying.fbx");
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
-    GetComponent<TransformC>().SetLocalPosition(Vector3(5, 10, 0));
     GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
-    AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic).SetOffset(Vector3(0, 2, 0));
+    BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
+    boxCollision.SetOffset(Vector3(0, 2, 0));
 }
 
 void Miku::Update(float dt) {
     GameObject::Update(dt);
 
-    Vector3 moveDir = Vector3::Zero;
     // カメラの前方と右方向を取得
     Vector3 cameraVertical(0, 0, 1);
     Vector3 cameraHorizontal(1,0,0);
@@ -43,6 +42,7 @@ void Miku::Update(float dt) {
         if (cameraHorizontal.LengthSquared() > 0.0001f) cameraHorizontal.Normalize();
     }
 
+    Vector3 moveDir = Vector3::Zero;
     // キー入力による移動方向を決定
     if (ImGui::IsKeyDown(ImGuiKey_W)) {
         moveDir += cameraVertical;
@@ -79,6 +79,10 @@ void Miku::Update(float dt) {
         GetComponent<AnimatorC>().Play("Idle");
     }
 
+    // 落下したら位置をリセット
+    if (GetComponent<TransformC>().GetWorldPosition().y < -10.0f) {
+        GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
+    }
 }
 
 void Miku::Uninit() {

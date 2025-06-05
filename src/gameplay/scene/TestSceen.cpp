@@ -26,8 +26,10 @@ void TestSceen::Init() {
     ground.GetComponent<BoxCollisionC>().SetOffset(Vector3(0, -2, 0));
 
     // ゲームオブジェクトを追加します
-    auto &house = AddGameObject<House>();
     miku = &AddGameObject<Miku>();
+    miku->GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 8, 0));
+    auto &house = AddGameObject<House>();
+    house.GetComponent<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 }
 
 void TestSceen::Update() {
