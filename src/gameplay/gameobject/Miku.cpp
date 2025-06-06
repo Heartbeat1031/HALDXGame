@@ -19,7 +19,7 @@ Miku::~Miku() {
 void Miku::Init() {
     GameObject::Init();
     // モデルコンポーネントを追加し、モデルをロードします
-    AddComponent<ModelC>("assets/models/Praying.fbx");
+    AddComponent<ModelC>("assets/models/Ch46_nonPBR.fbx");
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
     GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
