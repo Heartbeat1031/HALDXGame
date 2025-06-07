@@ -36,10 +36,6 @@ void LoadSaveRigTest::Initialize()
 		const Skeleton *skeleton = settings->GetSkeleton();
 		int left_arm = skeleton->GetJointIndex("L_Wrist_sjnt_0");
 		int right_arm = skeleton->GetJointIndex("R_Wrist_sjnt_0");
-		for (int i = 0; i < skeleton->GetJointCount(); ++i)
-		{
-			skeleton->GetJoint(i).mName = "Joint_" + std::to_string(i); // Ensure joint names are unique for serialization
-		}
 		Ref<DistanceConstraintSettings> constraint = new DistanceConstraintSettings;
 		constraint->mSpace = EConstraintSpace::LocalToBodyCOM;
 		constraint->mMaxDistance = 0.1f;
