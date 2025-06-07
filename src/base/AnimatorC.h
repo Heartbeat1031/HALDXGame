@@ -27,5 +27,5 @@ public:
     void Uninit() override;
 
     void Play(const std::string& animName);
-    const std::vector<DirectX::XMFLOAT4X4>& GetFinalBoneMatrices() const;
+    std::vector<DirectX::XMFLOAT4X4>& GetFinalBoneMatrices();
 };

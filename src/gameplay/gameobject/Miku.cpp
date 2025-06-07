@@ -11,7 +11,6 @@
 #include "TransformC.h"
 
 Miku::Miku() {
-
 }
 
 Miku::~Miku() {
@@ -24,10 +23,10 @@ void Miku::Init() {
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
     GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
-    BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
-    boxCollision.SetOffset(Vector3(0, 2, 0));
+     BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
+     boxCollision.SetOffset(Vector3(0, 2, 0));
 
-    AddComponent<MixamoRagdollC>();
+   // AddComponent<MixamoRagdollC>();
 }
 
 void Miku::Update(float dt) {
@@ -35,12 +34,12 @@ void Miku::Update(float dt) {
 
     // カメラの前方と右方向を取得
     Vector3 cameraVertical(0, 0, 1);
-    Vector3 cameraHorizontal(1,0,0);
+    Vector3 cameraHorizontal(1, 0, 0);
     if (halgame && halgame->m_pCamera) {
         auto f = halgame->m_pCamera->GetLookAxis();
         auto r = halgame->m_pCamera->GetRightAxis();
         cameraVertical = Vector3(f.x, 0, f.z);
-        cameraHorizontal   = Vector3(r.x, 0, r.z);
+        cameraHorizontal = Vector3(r.x, 0, r.z);
         if (cameraVertical.LengthSquared() > 0.0001f) cameraVertical.Normalize();
         if (cameraHorizontal.LengthSquared() > 0.0001f) cameraHorizontal.Normalize();
     }
@@ -64,28 +63,48 @@ void Miku::Update(float dt) {
     if (moveDir.LengthSquared() > 0.0001f) {
         moveDir.Normalize();
         //物理オブジェクトの移動は BoxCollisionC コンポーネントを通じて行います
-        auto &boxCollision = GetComponent<BoxCollisionC>();
-        Vector3 targetPos = boxCollision.GetPosition() + moveDir * 5 * dt;
-        boxCollision.SetPosition(targetPos);
-        boxCollision.SetRotation(
-            Quaternion::CreateFromYawPitchRoll(
-                std::atan2(-moveDir.x, -moveDir.z),
-                0.0f,
-                0.0f
-            )
-        );
+        if (HasComponent<BoxCollisionC>()) {
+            auto &boxCollision = GetComponent<BoxCollisionC>();
+            Vector3 targetPos = boxCollision.GetPosition() + moveDir * 5 * dt;
+            boxCollision.SetPosition(targetPos);
+            boxCollision.SetRotation(
+                Quaternion::CreateFromYawPitchRoll(
+                    std::atan2(-moveDir.x, -moveDir.z),
+                    0.0f,
+                    0.0f
+                )
+            );
+        }else {
+            auto &transform = GetComponent<TransformC>();
+            Vector3 targetPos = transform.GetWorldPosition() + moveDir * 5 * dt;
+            transform.SetWorldPosition(targetPos);
+            transform.SetWorldRotation(
+                Quaternion::CreateFromYawPitchRoll(
+                    std::atan2(-moveDir.x, -moveDir.z),
+                    0.0f,
+                    0.0f
+                )
+            );
+        }
 
         // 移動時のアニメーション
-        GetComponent<AnimatorC>().Play("Walking");
-    }else {
+        if (HasComponent<AnimatorC>()) {
+            GetComponent<AnimatorC>().Play("Walking");
+        }
+    } else {
         // 停止時のアニメーション
-        GetComponent<AnimatorC>().Play("Idle");
+        if (HasComponent<AnimatorC>()) {
+            GetComponent<AnimatorC>().Play("Idle");
+        }
     }
 
     // 落下したら位置をリセット
-    if (GetComponent<TransformC>().GetWorldPosition().y < -10.0f) {
-        GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
+    if (HasComponent<BoxCollisionC>()) {
+        if (GetComponent<TransformC>().GetWorldPosition().y < -10.0f) {
+            GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
+        }
     }
+
 }
 
 void Miku::Uninit() {

@@ -4,6 +4,8 @@
 
 #include "ModelC.h"
 
+#include <iostream>
+
 #include "AnimatorC.h"
 #include "GameObject.h"
 #include "Global.h"
@@ -23,7 +25,6 @@ void ModelC::Update(float dt) {
     Component::Update(dt);
     // 毎フレームモデルのTransformをチェックして更新します
     CheckTransform();
-    UpdateBones();
 }
 
 void ModelC::Uninit() {
@@ -32,29 +33,32 @@ void ModelC::Uninit() {
     halgame->RemoveModel(handle);
 }
 
-ModelObject & ModelC::GetModelObject() {
-        return halgame->GetModelObject(handle);
+ModelObject &ModelC::GetModelObject() {
+    return halgame->GetModelObject(handle);
 }
 
-void ModelC::CheckTransform() const {
+void ModelC::CheckTransform() {
     if (handle == -1) {
         return;
     }
     ModelObject &modelObject = halgame->GetModelObject(handle);
     Transform &modelTransform = modelObject.GetTransform();
-    TransformC &transformComponent = m_gameObject->GetComponent<TransformC>();
-    modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
-}
-
-void ModelC::UpdateBones() {
-    ModelObject &modelObject = halgame->GetModelObject(handle);
-
-    //if (HasComponent<MixamoRagdollC>() && GetComponent<MixamoRagdollC>().mRagdoll->IsActive()) {
-    if (false){
+    TransformC &transformComponent = GetComponent<TransformC>();
+    if (HasComponent<MixamoRagdollC>()) {
         auto &ragdollC = GetComponent<MixamoRagdollC>();
         modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
-    } else if (HasComponent<MixamoRagdollC>()) {
+        // 更新模型Transform以跟随ragdoll根节点
+        // RVec3 outPosition;
+        // Quat outRotation;
+        // ragdollC.mRagdoll->GetRootTransform(outPosition, outRotation);
+        // transformComponent.SetWorldPosition(Vector3(outPosition.GetX(), outPosition.GetY(), outPosition.GetZ()));
+        // transformComponent.SetWorldRotation(
+        //     DirectX::SimpleMath::Quaternion(outRotation.GetX(), outRotation.GetY(), outRotation.GetZ(),
+        //                                     outRotation.GetW()));
+        // transformComponent.SetLocalRotationEuler(transformComponent.GetLocalRotationEuler());
+    } else if (HasComponent<AnimatorC>()) {
         auto &animC = GetComponent<AnimatorC>();
         modelObject.SetBoneMatrices(&animC.GetFinalBoneMatrices());
     }
+    modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
 }

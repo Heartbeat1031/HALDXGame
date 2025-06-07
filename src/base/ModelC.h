@@ -20,8 +20,7 @@ private:
     UID handle = -1;
     // 检查并且更新模型的Transform
     // モデルのTransformをチェックして更新します
-    void CheckTransform() const;
-    void UpdateBones();
+    void CheckTransform();
 public:
     explicit ModelC(std::string_view filename);
     void Init() override;

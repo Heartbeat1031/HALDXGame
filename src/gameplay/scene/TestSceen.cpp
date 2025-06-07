@@ -29,7 +29,9 @@ void TestSceen::Init() {
 
     // ゲームオブジェクトを追加します
     miku = &AddGameObject<Miku>();
-    miku->GetComponent<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
+    if (miku->HasComponent<BoxCollisionC>()) {
+        miku->GetComponent<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
+    }
     auto &house = AddGameObject<House>();
     house.GetComponent<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 }
@@ -45,7 +47,7 @@ void TestSceen::Update() {
     // 三人称カメラの操作
     ImGuiIO &io = ImGui::GetIO();
     // カメラのターゲットをミクの位置に設定します
-    halgame->m_pCamera->SetTarget(miku->GetComponent<TransformC>().GetWorldPosition());
+    halgame->m_pCamera->SetTarget(miku->GetComponent<TransformC>().GetWorldPosition() + Vector3(0, 2, 0));
     // オブジェクトの周りを回転する
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
         halgame->m_pCamera->RotateX(io.MouseDelta.y * 0.01f);

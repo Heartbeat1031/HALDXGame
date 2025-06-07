@@ -133,6 +133,6 @@ void AnimatorC::Play(const std::string &animName) {
     m_currentTime = 0.0;
 }
 
-const std::vector<DirectX::XMFLOAT4X4> &AnimatorC::GetFinalBoneMatrices() const {
+std::vector<DirectX::XMFLOAT4X4> &AnimatorC::GetFinalBoneMatrices() {
     return m_finalBoneMatrices;
 }

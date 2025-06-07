@@ -67,6 +67,8 @@ public:
     Scene *GetScene() const { return m_Scene; }
     // 物理システムを取得する
     PhysicsSystem *GetPhysicsSystem() const { return mPhysicsSystem; }
+
+    HalDebugRenderer *GetDebugRenderer() const { return gHalDebugRenderer; }
 };
 
 // シーンを設定する
