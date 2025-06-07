@@ -13,6 +13,7 @@ file(GLOB HEADER_FILES ./*.h)
 
 add_library(DX ${DIR_SRCS} ${HEADER_FILES})
 target_link_libraries(DX d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
+target_link_libraries(DX DirectXTK)
 
 # ImGui
 target_link_libraries(DX ImGui)
@@ -31,4 +32,4 @@ target_link_libraries(DX GameKit)
 
 set_target_properties(DX PROPERTIES OUTPUT_NAME "DX")
 
-target_include_directories(DX PUBLIC .)
+target_include_directories(DX PUBLIC . ${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)

@@ -32,6 +32,19 @@ bool GameApp::Init() {
     if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
+    // Primitive batch for simple geometry
+    m_PrimitiveBatch = std::make_unique<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>(m_pd3dImmediateContext.Get());
+    m_PrimitiveEffect = std::make_unique<DirectX::BasicEffect>(m_pd3dDevice.Get());
+    m_PrimitiveEffect->SetVertexColorEnabled(true);
+    const void* shaderCode = nullptr;
+    size_t codeLength = 0;
+    m_PrimitiveEffect->GetVertexShaderBytecode(&shaderCode, &codeLength);
+    HR(m_pd3dDevice->CreateInputLayout(
+            DirectX::VertexPositionColor::InputElements,
+            DirectX::VertexPositionColor::InputElementCount,
+            shaderCode, codeLength,
+            m_PrimitiveInputLayout.ReleaseAndGetAddressOf()));
+
     // ******************
     // カメラの初期化
     //
@@ -122,6 +135,30 @@ void GameApp::Draw() {
         modelObject.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     });
 
+    // プリミティブ描画
+    if (m_PrimitiveBatch && (!m_LineQueue.empty() || !m_TriangleQueue.empty())) {
+        m_PrimitiveEffect->SetWorld(DirectX::XMMatrixIdentity());
+        m_PrimitiveEffect->SetView(m_pCamera->GetViewMatrixXM());
+        m_PrimitiveEffect->SetProjection(m_pCamera->GetProjMatrixXM());
+        m_PrimitiveEffect->Apply(m_pd3dImmediateContext.Get());
+        m_pd3dImmediateContext->IASetInputLayout(m_PrimitiveInputLayout.Get());
+
+        m_PrimitiveBatch->Begin();
+        for (const auto& line : m_LineQueue)
+            m_PrimitiveBatch->DrawLine(
+                DirectX::VertexPositionColor(line.start, line.color),
+                DirectX::VertexPositionColor(line.end, line.color));
+        for (const auto& tri : m_TriangleQueue)
+            m_PrimitiveBatch->DrawTriangle(
+                DirectX::VertexPositionColor(tri.v1, tri.color),
+                DirectX::VertexPositionColor(tri.v2, tri.color),
+                DirectX::VertexPositionColor(tri.v3, tri.color));
+        m_PrimitiveBatch->End();
+
+        m_LineQueue.clear();
+        m_TriangleQueue.clear();
+    }
+
     // ImGuiの描画
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -165,4 +202,13 @@ ModelObject &GameApp::GetModelObject(UID handle) {
 bool GameApp::RemoveModel(UID handle) {
     m_ModelObjectStorage.Remove(handle);
     return true;
+}
+
+void GameApp::DrawLine(const DirectX::XMFLOAT3 &start, const DirectX::XMFLOAT3 &end, const DirectX::XMFLOAT4 &color) {
+    m_LineQueue.push_back({start, end, color});
+}
+
+void GameApp::DrawTriangle(const DirectX::XMFLOAT3 &v1, const DirectX::XMFLOAT3 &v2, const DirectX::XMFLOAT3 &v3,
+    const DirectX::XMFLOAT4 &color) {
+    m_TriangleQueue.push_back({v1, v2, v3, color});
 }

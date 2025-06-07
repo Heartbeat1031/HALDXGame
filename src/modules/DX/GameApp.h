@@ -10,6 +10,10 @@
 #include <Buffer.h>
 #include <ModelManager.h>
 #include <TextureManager.h>
+#include <PrimitiveBatch.h>
+#include <VertexTypes.h>
+#include <Effects.h>
+#include <vector>
 
 #include "SoAStorage.h"
 
@@ -21,6 +25,25 @@ private:
     BasicEffect m_BasicEffect;                           // オブジェクト描画用エフェクト管理
     std::unique_ptr<Depth2D> m_pDepthTexture;            // デプスバッファ
     SoAStorage<ModelObject> m_ModelObjectStorage;        // モデルオブジェクトのストレージ
+    std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_PrimitiveBatch; // プリミティブ描画用
+    std::unique_ptr<DirectX::BasicEffect> m_PrimitiveEffect; // ライン描画用エフェクト
+    Microsoft::WRL::ComPtr<ID3D11InputLayout> m_PrimitiveInputLayout; // 入力レイアウト
+
+    struct LinePrimitive {
+        DirectX::XMFLOAT3 start;
+        DirectX::XMFLOAT3 end;
+        DirectX::XMFLOAT4 color;
+    };
+
+    struct TrianglePrimitive {
+        DirectX::XMFLOAT3 v1;
+        DirectX::XMFLOAT3 v2;
+        DirectX::XMFLOAT3 v3;
+        DirectX::XMFLOAT4 color;
+    };
+
+    std::vector<LinePrimitive> m_LineQueue;          // 1フレーム分のライン描画キュー
+    std::vector<TrianglePrimitive> m_TriangleQueue;  // 1フレーム分の三角形描画キュー
 protected:
     bool Init() override;                                // 初期化処理
     void OnResize() override;                            // リサイズ時の処理
@@ -40,4 +63,9 @@ public:
     UID AddModel(std::string_view filename);       // モデルの追加
     ModelObject& GetModelObject(UID handle);       // モデルオブジェクトの取得
     bool RemoveModel(UID handle);                  // モデルの削除
+
+    // 描画用のラインを追加
+    void DrawLine(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const DirectX::XMFLOAT4& color);
+    void DrawTriangle(const DirectX::XMFLOAT3& v1, const DirectX::XMFLOAT3& v2, const DirectX::XMFLOAT3& v3, const DirectX::XMFLOAT4& color) ;
+
 };

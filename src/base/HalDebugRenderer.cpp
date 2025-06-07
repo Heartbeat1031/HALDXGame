@@ -1,90 +1,31 @@
 #include "HalDebugRenderer.h"
 
 #include "Global.h"
-#include <imgui.h>
 
 using namespace DirectX;
 
-ImVec2 WorldToScreen(const JPH::RVec3 &p) {
-    if (halgame == nullptr || halgame->m_pCamera == nullptr)
-        return ImVec2();
-
-    XMMATRIX vp = halgame->m_pCamera->GetViewProjMatrixXM();
-    D3D11_VIEWPORT view = halgame->m_pCamera->GetViewPort();
-
-    XMVECTOR pos = XMVectorSet((float)p.GetX(), (float)p.GetY(), (float)p.GetZ(), 1.0f);
-    pos = XMVector3TransformCoord(pos, vp);
-
-
-    float x = XMVectorGetX(pos) * 0.5f + 0.5f;
-    float y = XMVectorGetY(pos) * 0.5f + 0.5f;
-
-    ImVec2 result;
-    result.x = view.TopLeftX + x * view.Width;
-    result.y = view.TopLeftY + (1.0f - y) * view.Height;
-    return result;
-}
-
-HalDebugRenderer::HalDebugRenderer() {
-}
-struct ScreenProjectResult {
-    bool valid;
-    ImVec2 screen;
-};
-
-ScreenProjectResult ProjectToScreen(const JPH::RVec3& p) {
-    if (halgame == nullptr || halgame->m_pCamera == nullptr)
-        return { false, {} };
-
-    XMMATRIX vp = halgame->m_pCamera->GetViewProjMatrixXM();
-    D3D11_VIEWPORT view = halgame->m_pCamera->GetViewPort();
-
-    XMVECTOR pos = XMVectorSet((float)p.GetX(), (float)p.GetY(), (float)p.GetZ(), 1.0f);
-    XMVECTOR clip = XMVector4Transform(pos, vp);
-
-    float cx = XMVectorGetX(clip);
-    float cy = XMVectorGetY(clip);
-    float cz = XMVectorGetZ(clip);
-    float cw = XMVectorGetW(clip);
-
-    // 检查是否在可见范围
-    if (cw <= 0.0f) return { false, {} };
-    if (cx < -cw || cx > cw || cy < -cw || cy > cw || cz < 0.0f || cz > cw)
-        return { false, {} };
-
-    // NDC
-    float x = cx / cw * 0.5f + 0.5f;
-    float y = cy / cw * 0.5f + 0.5f;
-
-    ImVec2 result;
-    result.x = view.TopLeftX + x * view.Width;
-    result.y = view.TopLeftY + (1.0f - y) * view.Height;
-    return { true, result };
-}
-
 // 用于绘线
 void HalDebugRenderer::DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor) {
-    auto p1 = ProjectToScreen(inFrom);
-    auto p2 = ProjectToScreen(inTo);
-
-    if (p1.valid && p2.valid) {
-        ImU32 color = IM_COL32(inColor.r, inColor.g, inColor.b, inColor.a);
-        ImGui::GetBackgroundDrawList()->AddLine(p1.screen, p2.screen, color);
-    }
+    using DirectX::XMFLOAT3;
+    using DirectX::XMFLOAT4;
+    XMFLOAT3 start{static_cast<float>(inFrom.GetX()), static_cast<float>(inFrom.GetY()), static_cast<float>(inFrom.GetZ())};
+    XMFLOAT3 end{static_cast<float>(inTo.GetX()), static_cast<float>(inTo.GetY()), static_cast<float>(inTo.GetZ())};
+    XMFLOAT4 color{inColor.r / 255.0f, inColor.g / 255.0f, inColor.b / 255.0f, inColor.a / 255.0f};
+    halgame->DrawLine(start, end, color);
 }
 
 void HalDebugRenderer::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow)
 {
-    ImVec2 p1 = WorldToScreen(inV1);
-    ImVec2 p2 = WorldToScreen(inV2);
-    ImVec2 p3 = WorldToScreen(inV3);
-    ImU32 color = IM_COL32(inColor.r, inColor.g, inColor.b, inColor.a);
-    ImGui::GetBackgroundDrawList()->AddTriangle(p1, p2, p3, color);
+    using DirectX::XMFLOAT3;
+    using DirectX::XMFLOAT4;
+    XMFLOAT3 v1{static_cast<float>(inV1.GetX()), static_cast<float>(inV1.GetY()), static_cast<float>(inV1.GetZ())};
+    XMFLOAT3 v2{static_cast<float>(inV2.GetX()), static_cast<float>(inV2.GetY()), static_cast<float>(inV2.GetZ())};
+    XMFLOAT3 v3{static_cast<float>(inV3.GetX()), static_cast<float>(inV3.GetY()), static_cast<float>(inV3.GetZ())};
+    XMFLOAT4 color{inColor.r / 255.0f, inColor.g / 255.0f, inColor.b / 255.0f, inColor.a / 255.0f};
+    halgame->DrawTriangle(v1, v2, v3, color);
 }
 
 
 void HalDebugRenderer::DrawText3D(JPH::RVec3Arg inPosition, const std::string_view &inString, JPH::ColorArg inColor, float inHeight) {
-    ImVec2 p = WorldToScreen(inPosition);
-    ImU32 color = IM_COL32(inColor.r, inColor.g, inColor.b, inColor.a);
-    ImGui::GetBackgroundDrawList()->AddText(p, color, std::string(inString).c_str());
+    // Text rendering not implemented
 }

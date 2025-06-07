@@ -6,6 +6,7 @@
 
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
+#include "MixamoRagdollC.h"
 #include "ModelC.h"
 #include "TransformC.h"
 
@@ -25,6 +26,8 @@ void Miku::Init() {
     GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
     BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
     boxCollision.SetOffset(Vector3(0, 2, 0));
+
+    AddComponent<MixamoRagdollC>();
 }
 
 void Miku::Update(float dt) {

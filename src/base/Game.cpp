@@ -82,5 +82,4 @@ void Game::Update(float dt) {
         mBodyDrawSettings,
         gHalDebugRenderer
     );
-
 }
