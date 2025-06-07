@@ -1,4 +1,6 @@
 #pragma once
+#include <stdexcept>
+
 #include "SoAStorage.h"
 
 //------------------------------------------------------//
@@ -28,4 +30,26 @@ public:
 	virtual void Init();
 	virtual void Uninit();
 	virtual void Update(float dt);
+
+	template<class T>
+	T &GetComponent();
+
+	template<class T>
+	bool HasComponent() const;
 };
+
+template<typename T>
+T &Component::GetComponent() {
+	if (m_gameObject == nullptr) {
+		throw std::runtime_error("GameObjectが設定されていません"); // GameObjectが設定されていない場合は例外を投げる
+	}
+	return m_gameObject->GetComponent<T>();
+}
+
+template<typename T>
+bool Component::HasComponent() const {
+	if (m_gameObject == nullptr) {
+		return false; // GameObjectが設定されていない場合はfalseを返す
+	}
+	return m_gameObject->HasComponent<T>();
+}

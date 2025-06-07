@@ -102,8 +102,9 @@ void AnimatorC::Update(float dt) {
         visited[boneIdx] = true;
         auto &boneInfo = m_model->bones[boneIdx];
         DirectX::XMMATRIX localMat = XMLoadFloat4x4(&boneInfo.nodeTransform);
-        if (clip.boneAnimations.count(boneInfo.name))
+        if (clip.boneAnimations.count(boneInfo.name)) {
             localMat = CalcInterpolatedBoneMatrix(boneInfo.name, clip, m_currentTime);
+        }
         DirectX::XMMATRIX globalMat = localMat * parentMat;
         DirectX::XMMATRIX offset = XMLoadFloat4x4(&boneInfo.offsetMatrix);
         DirectX::XMMATRIX finalMat = offset * globalMat; // 注意乘法顺序！
@@ -118,28 +119,10 @@ void AnimatorC::Update(float dt) {
             updateBone(i, DirectX::XMMatrixIdentity());
         }
     }
-
-    // 打印调试信息
-    // std::cout << "AnimatorC: " << m_animatorName << " at time: " << m_currentTime << "\n";
-    // for (int i = 0; i < (int)m_finalBoneMatrices.size(); ++i) {
-    //     DirectX::XMFLOAT4X4& mat = m_finalBoneMatrices[i];
-    //     std::cout << "Bone " << i << ": "
-    //               << mat._11 << ", " << mat._12 << ", " << mat._13 << ", " << mat._14 << "\n"
-    //               << mat._21 << ", " << mat._22 << ", " << mat._23 << ", " << mat._24 << "\n"
-    //               << mat._31 << ", " << mat._32 << ", " << mat._33 << ", " << mat._34 << "\n"
-    //               << mat._41 << ", " << mat._42 << ", " << mat._43 << ", " << mat._44 << "\n";
-    // }
-    // std::cout << "Total bones: " << boneCount << "\n";
-
-    if (m_modelObject) {
-        m_modelObject->SetBoneMatrices(&m_finalBoneMatrices);
-    }
 }
 
 void AnimatorC::Uninit() {
     Component::Uninit();
-    if (m_modelObject)
-        m_modelObject->SetBoneMatrices(nullptr);
 }
 
 void AnimatorC::Play(const std::string &animName) {

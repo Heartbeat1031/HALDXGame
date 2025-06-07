@@ -3,6 +3,10 @@
 //
 
 #pragma once
+#include <complex.h>
+#include <DirectXMath.h>
+#include <vector>
+
 #include "Component.h"
 #include <Jolt/Jolt.h>
 #include "Jolt/Core/Reference.h"
@@ -10,11 +14,18 @@
 
 class MixamoRagdollC: public Component {
 private:
-    JPH::Ref<JPH::Ragdoll>					mRagdoll;
+    // ragdoll骨骼 -> model骨骼下标
+    std::vector<int> ragdollToModelBone;
+    std::vector<DirectX::XMFLOAT4X4> m_finalBoneMatrices;
+    JPH::SkeletonPose			mRagdollPose;
 public:
     MixamoRagdollC();
     ~MixamoRagdollC() override;
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;
+
+    JPH::Ref<JPH::Ragdoll> mRagdoll ; // ragdoll本体
+
+    const std::vector<DirectX::XMFLOAT4X4>& GetFinalBoneMatrices() const;
 };

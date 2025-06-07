@@ -177,4 +177,8 @@ void ModelObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
     }
 }
 
+void ModelObject::SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4> *bones) {
+     m_pBoneMatrices = bones;
+}
+
 

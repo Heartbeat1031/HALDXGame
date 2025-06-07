@@ -59,6 +59,10 @@ public:
     // コンポーネントを取得する
     template<typename T>
     T &GetComponent();
+
+    // コンポーネントが存在するか確認する
+    template<class T>
+    bool HasComponent() const;
 };
 
 
@@ -89,4 +93,10 @@ T &GameObject::GetComponent() {
         throw std::runtime_error("ゲームオブジェクトにコンポーネントが見つかりません");
     }
     return halgame->GetScene()->GetComponent<T>(it->second);
+}
+
+template<typename T>
+bool GameObject::HasComponent() const {
+    auto it = m_ComponentMap.find(std::type_index(typeid(T)));
+    return it != m_ComponentMap.end();
 }

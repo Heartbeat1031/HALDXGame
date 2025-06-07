@@ -63,7 +63,7 @@ void Miku::Update(float dt) {
     // moveDir がゼロでない場合、移動方向を正規化し、位置を更新
     if (moveDir.LengthSquared() > 0.0001f) {
         moveDir.Normalize();
-        // 物理オブジェクトの移動は BoxCollisionC コンポーネントを通じて行います
+        //物理オブジェクトの移動は BoxCollisionC コンポーネントを通じて行います
         auto &boxCollision = GetComponent<BoxCollisionC>();
         Vector3 targetPos = boxCollision.GetPosition() + moveDir * 5 * dt;
         boxCollision.SetPosition(targetPos);

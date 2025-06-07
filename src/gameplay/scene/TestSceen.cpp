@@ -29,7 +29,7 @@ void TestSceen::Init() {
 
     // ゲームオブジェクトを追加します
     miku = &AddGameObject<Miku>();
-    miku->GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 8, 0));
+    miku->GetComponent<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
     auto &house = AddGameObject<House>();
     house.GetComponent<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 }
@@ -39,12 +39,6 @@ void TestSceen::Update() {
         ImGui::Text("三人称モード");
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
         ImGui::Text("WASDキーで移動します");
-
-
-        Vector3 posT = miku->GetComponent<TransformC>().GetLocalPosition();
-        ImGui::Text("ミクの位置: (%.2f, %.2f, %.2f)", posT.x, posT.y, posT.z);
-        Vector3 posB = miku->GetComponent<BoxCollisionC>().GetPosition();
-        ImGui::Text("ミクのボックスコリジョン位置: (%.2f, %.2f, %.2f)", posB.x, posB.y, posB.z);
     }
     ImGui::End();
 
@@ -59,20 +53,19 @@ void TestSceen::Update() {
     }
     halgame->m_pCamera->Approach(-io.MouseWheel * 1.0f);
 
-    // 地面に小さな立方体を描画します
-    for (int x = -10; x < 10; x++) {
-        halgame->DrawLine(
-            Vector3(x, 0.01f, -10),
-            Vector3(x, 0.01f, 10),
-            DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)
-        );
-    }
 
-    for (int y = -10; y < 10; y++) {
+    int drawSize = 10;
+    // 地面に小さな立方体を描画します
+    for (int x = -drawSize; x < drawSize; x++) {
         halgame->DrawLine(
-            Vector3(-10, 0.01f, y),
-            Vector3(10, 0.01f, y),
-            DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)
+            Vector3(x, 0.01f, -drawSize),
+            Vector3(x, 0.01f, drawSize),
+            DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f)
+            );
+        halgame->DrawLine(
+            Vector3(-drawSize, 0.01f, x),
+            Vector3(drawSize, 0.01f, x),
+            DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f)
         );
     }
 }

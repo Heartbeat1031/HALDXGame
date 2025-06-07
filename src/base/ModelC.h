@@ -21,10 +21,14 @@ private:
     // 检查并且更新模型的Transform
     // モデルのTransformをチェックして更新します
     void CheckTransform() const;
+    void UpdateBones();
 public:
     explicit ModelC(std::string_view filename);
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;
     UID GetHandle() const { return handle; }
+    // 获取模型对象
+    ModelObject &GetModelObject();
+
 };

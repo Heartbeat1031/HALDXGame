@@ -66,7 +66,7 @@ public:
     // 绘制对象
     void Draw(ID3D11DeviceContext* deviceContext, IEffect& effect);
 
-    void SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>* bones) { m_pBoneMatrices = bones; }
+    void SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>* bones);
     const std::vector<DirectX::XMFLOAT4X4>* GetBoneMatrices() const { return m_pBoneMatrices; }
 
 protected:
