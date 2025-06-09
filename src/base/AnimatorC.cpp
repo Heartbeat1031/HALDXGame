@@ -79,8 +79,9 @@ void AnimatorC::Init() {
     for (size_t i = 0; i < boneCount; ++i) {
         m_cachedOffset[i] = DirectX::XMLoadFloat4x4(&m_model->bones[i].offsetMatrix);
         m_cachedNode[i] = DirectX::XMLoadFloat4x4(&m_model->bones[i].nodeTransform);
-        if (m_model->bones[i].parentIndex == -1)
+        if (m_model->bones[i].parentIndex == -1) {
             m_rootBones.push_back(static_cast<int>(i));
+        }
     }
     DirectX::XMFLOAT4X4 identity;
     DirectX::XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());

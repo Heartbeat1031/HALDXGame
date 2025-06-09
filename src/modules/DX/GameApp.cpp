@@ -212,3 +212,30 @@ void GameApp::DrawTriangle(const DirectX::XMFLOAT3 &v1, const DirectX::XMFLOAT3 
     const DirectX::XMFLOAT4 &color) {
     m_TriangleQueue.push_back({v1, v2, v3, color});
 }
+
+ImVec2 GameApp::ProjectToScreen(const DirectX::XMFLOAT3& p) {
+    XMMATRIX vp = m_pCamera->GetViewProjMatrixXM();
+    D3D11_VIEWPORT view = m_pCamera->GetViewPort();
+
+    XMVECTOR pos = XMVectorSet(p.x, p.y, p.z, 1.0f);
+    XMVECTOR clip = XMVector4Transform(pos, vp);
+
+    float cx = XMVectorGetX(clip);
+    float cy = XMVectorGetY(clip);
+    float cz = XMVectorGetZ(clip);
+    float cw = XMVectorGetW(clip);
+
+    // 检查是否在可见范围
+    if (cw <= 0.0f) return { false, {} };
+    if (cx < -cw || cx > cw || cy < -cw || cy > cw || cz < 0.0f || cz > cw)
+        return { false, {} };
+
+    // NDC
+    float x = cx / cw * 0.5f + 0.5f;
+    float y = cy / cw * 0.5f + 0.5f;
+
+    ImVec2 result;
+    result.x = view.TopLeftX + x * view.Width;
+    result.y = view.TopLeftY + (1.0f - y) * view.Height;
+    return  result;
+}

@@ -29,7 +29,6 @@ private:
     // ゲームオブジェクトの一意の識別子
     UID uid = -1;
     std::unordered_map<std::type_index, UID> m_ComponentMap;
-
 protected:
     // GameObjectの初期化
     virtual void Init(){};
@@ -37,6 +36,8 @@ protected:
     virtual void Uninit(){};
     // GameObjectの更新
     virtual void Update(float dt){};
+    // ゲームオブジェクトの名前
+    std::string m_Name;
 
 public:
     GameObject();
@@ -52,13 +53,17 @@ public:
     // ゲームオブジェクトの更新
     void UpdateBase(float dt);
 
+    // ゲームオブジェクトの名前を設定・取得
+    void SetName(std::string name){ m_Name = name; }
+    std::string GetName() const { return m_Name; }
+
     // コンポーネントを追加する
     template<class T, class ... Args>
     T &AddComponent(Args &&... args);
 
     // コンポーネントを取得する
     template<typename T>
-    T &GetComponent();
+    T &GetComponent() const;
 
     // コンポーネントが存在するか確認する
     template<class T>
@@ -87,7 +92,7 @@ T &GameObject::AddComponent(Args&&... args) {
 }
 
 template<typename T>
-T &GameObject::GetComponent() {
+T &GameObject::GetComponent() const {
     auto it = m_ComponentMap.find(std::type_index(typeid(T)));
     if (it == m_ComponentMap.end()) {
         throw std::runtime_error("ゲームオブジェクトにコンポーネントが見つかりません");

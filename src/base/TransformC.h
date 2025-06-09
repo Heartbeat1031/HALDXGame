@@ -76,11 +76,11 @@ public:
 private:
     // 親TransformCを設定
     void SetParent(TransformC* newParent, bool keepWorld = true);
-    // 親TransformCを取得
-    TransformC* GetParent() const { return m_parent; }
     // 子TransformCを削除
     void RemoveChild(TransformC* child);
 public:
+    // 親TransformCを取得
+    TransformC* GetParent() const { return m_parent; }
     // 子TransformCを追加 keepWorldはワールド座標を保持するかどうか
     void AddChild(TransformC* child, bool keepWorld = true);
 };

@@ -67,5 +67,6 @@ public:
     // 描画用のラインを追加
     void DrawLine(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const DirectX::XMFLOAT4& color);
     void DrawTriangle(const DirectX::XMFLOAT3& v1, const DirectX::XMFLOAT3& v2, const DirectX::XMFLOAT3& v3, const DirectX::XMFLOAT4& color) ;
-
+    // 画面座標に変換
+    ImVec2 ProjectToScreen(const DirectX::XMFLOAT3 &p);
 };
