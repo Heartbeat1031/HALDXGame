@@ -26,11 +26,6 @@ void BoneObj::Update(float dt) {
         auto p1 = halgame->ProjectToScreen(transform.GetWorldPosition());
         auto p2 = halgame->ProjectToScreen(parentPosition);
         ImGui::GetBackgroundDrawList()->AddLine(p1, p2, IM_COL32(255, 0, 0, 255));
-        // halgame->DrawLine(
-        //     transform.GetWorldPosition(),
-        //     parentPosition,
-        //     DirectX::SimpleMath::Vector4(1.0f, 0.0f, 0.0f, 1.0f)
-        // );
     }
 }
 
