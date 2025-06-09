@@ -71,6 +71,20 @@ void AnimatorC::Init() {
     }
     m_modelObject = &halgame->GetModelObject(m_modelHandle);
     m_model = m_modelObject->GetModel();
+
+    size_t boneCount = m_model->bones.size();
+    m_cachedOffset.resize(boneCount);
+    m_cachedNode.resize(boneCount);
+    m_rootBones.clear();
+    for (size_t i = 0; i < boneCount; ++i) {
+        m_cachedOffset[i] = DirectX::XMLoadFloat4x4(&m_model->bones[i].offsetMatrix);
+        m_cachedNode[i] = DirectX::XMLoadFloat4x4(&m_model->bones[i].nodeTransform);
+        if (m_model->bones[i].parentIndex == -1)
+            m_rootBones.push_back(static_cast<int>(i));
+    }
+    DirectX::XMFLOAT4X4 identity;
+    DirectX::XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+    m_finalBoneMatrices.assign(boneCount, identity);
 }
 
 void AnimatorC::Update(float dt) {
@@ -83,40 +97,28 @@ void AnimatorC::Update(float dt) {
         m_currentTime = fmod(m_currentTime, clip.duration);
     }
 
-    // 骨骼变换缓存resize
-    size_t boneCount = m_model->bones.size();
-    if (m_finalBoneMatrices.size() != boneCount) {
-        DirectX::XMFLOAT4X4 identity;
-        DirectX::XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
-        m_finalBoneMatrices.resize(boneCount, identity);
+    struct NodeState { int idx; DirectX::XMMATRIX parentMat; };
+    std::vector<NodeState> stack;
+    for (int i : m_rootBones) {
+        stack.push_back({i, DirectX::XMMatrixIdentity()});
     }
 
-    // 递归刷新骨骼变换（插值动画，父子递归）
-    std::function<void(int, const DirectX::XMMATRIX &)> updateBone;
-    std::vector<bool> visited(boneCount, false);
-    updateBone = [&](int boneIdx, const DirectX::XMMATRIX &parentMat) {
-        if (boneIdx < 0 || boneIdx >= (int) boneCount)
-            return;
-        if (visited[boneIdx])
-            return; // 防止骨骼层级出现环导致死循环
-        visited[boneIdx] = true;
-        auto &boneInfo = m_model->bones[boneIdx];
-        DirectX::XMMATRIX localMat = XMLoadFloat4x4(&boneInfo.nodeTransform);
-        if (clip.boneAnimations.count(boneInfo.name)) {
-            localMat = CalcInterpolatedBoneMatrix(boneInfo.name, clip, m_currentTime);
-        }
-        DirectX::XMMATRIX globalMat = localMat * parentMat;
-        DirectX::XMMATRIX offset = XMLoadFloat4x4(&boneInfo.offsetMatrix);
-        DirectX::XMMATRIX finalMat = offset * globalMat; // 注意乘法顺序！
-        DirectX::XMStoreFloat4x4(&m_finalBoneMatrices[boneIdx], finalMat);
-        for (int childIdx: boneInfo.children)
-            updateBone(childIdx, globalMat);
-    };
+    while (!stack.empty()) {
+        NodeState cur = stack.back();
+        stack.pop_back();
+        int idx = cur.idx;
+        const auto& boneInfo = m_model->bones[idx];
 
-    //遍历所有root骨骼
-    for (int i = 0; i < boneCount; ++i) {
-        if (m_model->bones[i].parentIndex == -1) {
-            updateBone(i, DirectX::XMMatrixIdentity());
+        DirectX::XMMATRIX local = m_cachedNode[idx];
+        if (clip.boneAnimations.count(boneInfo.name)) {
+            local = CalcInterpolatedBoneMatrix(boneInfo.name, clip, m_currentTime);
+        }
+        DirectX::XMMATRIX global = local * cur.parentMat;
+        DirectX::XMMATRIX finalMat = m_cachedOffset[idx] * global;
+        DirectX::XMStoreFloat4x4(&m_finalBoneMatrices[idx], finalMat);
+
+        for (int child : boneInfo.children) {
+            stack.push_back({child, global});
         }
     }
 }

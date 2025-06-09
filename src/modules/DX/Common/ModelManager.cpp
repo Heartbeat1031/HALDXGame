@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <array>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -192,7 +193,13 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
             // 骨骼权重
             if (pAiMesh->HasBones())
             {
-                std::vector<std::vector<std::pair<int, float>>> weightInfo(numVertices);
+                struct BlendTemp { std::array<uint32_t,4> indices; std::array<float,4> weights; };
+                std::vector<BlendTemp> weightInfo(numVertices);
+                for (auto &tmp : weightInfo)
+                {
+                    tmp.indices = {0,0,0,0};
+                    tmp.weights = {0,0,0,0};
+                }
                 for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b)
                 {
                     aiBone* ai_bone = pAiMesh->mBones[b];
@@ -229,41 +236,52 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                     for (uint32_t w = 0; w < ai_bone->mNumWeights; ++w)
                     {
                         const aiVertexWeight& aw = ai_bone->mWeights[w];
-                        weightInfo[aw.mVertexId].push_back({ boneIndex, aw.mWeight });
+                        auto &vert = weightInfo[aw.mVertexId];
+                        float weight = aw.mWeight;
+                        for (int slot = 0; slot < 4; ++slot)
+                        {
+                            if (weight > vert.weights[slot])
+                            {
+                                for (int s = 3; s > slot; --s)
+                                {
+                                    vert.weights[s] = vert.weights[s-1];
+                                    vert.indices[s] = vert.indices[s-1];
+                                }
+                                vert.weights[slot] = weight;
+                                vert.indices[slot] = boneIndex;
+                                break;
+                            }
+                        }
                     }
                 }
 
-                std::vector<DirectX::XMUINT4> blendIndices(numVertices, DirectX::XMUINT4(0,0,0,0));
-                std::vector<DirectX::XMFLOAT4> blendWeights(numVertices, DirectX::XMFLOAT4(0,0,0,0));
+                std::vector<DirectX::XMUINT4> blendIndices(numVertices);
+                std::vector<DirectX::XMFLOAT4> blendWeights(numVertices);
                 for (uint32_t v = 0; v < numVertices; ++v)
                 {
-                    auto& vec = weightInfo[v];
-                    if (!vec.empty())
+                    auto &tmp = weightInfo[v];
+                    for (int k = 0; k < 4; ++k)
                     {
-                        std::sort(vec.begin(), vec.end(), [](auto& a, auto& b) { return a.second > b.second; });
-                        for (size_t k = 0; k < 4 && k < vec.size(); ++k)
-                        {
-                            (&blendIndices[v].x)[k] = vec[k].first;
-                            (&blendWeights[v].x)[k] = vec[k].second;
-                        }
-                        float sum = blendWeights[v].x + blendWeights[v].y + blendWeights[v].z + blendWeights[v].w;
-                        if (sum > 0)
-                        {
-                            blendWeights[v].x /= sum;
-                            blendWeights[v].y /= sum;
-                            blendWeights[v].z /= sum;
-                            blendWeights[v].w /= sum;
-                        }
+                        (&blendIndices[v].x)[k] = tmp.indices[k];
+                        (&blendWeights[v].x)[k] = tmp.weights[k];
+                    }
+                    float sum = tmp.weights[0] + tmp.weights[1] + tmp.weights[2] + tmp.weights[3];
+                    if (sum > 0)
+                    {
+                        (&blendWeights[v].x)[0] /= sum;
+                        (&blendWeights[v].x)[1] /= sum;
+                        (&blendWeights[v].x)[2] /= sum;
+                        (&blendWeights[v].x)[3] /= sum;
                     }
                 }
 
                 if (!blendIndices.empty())
                 {
-                    bufferDesc.ByteWidth = numVertices * sizeof(DirectX::XMUINT4);
+                    bufferDesc = CD3D11_BUFFER_DESC(numVertices * sizeof(DirectX::XMUINT4), D3D11_BIND_VERTEX_BUFFER);
                     initData.pSysMem = blendIndices.data();
                     device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBlendIndices.GetAddressOf());
 
-                    bufferDesc.ByteWidth = numVertices * sizeof(DirectX::XMFLOAT4);
+                    bufferDesc = CD3D11_BUFFER_DESC(numVertices * sizeof(DirectX::XMFLOAT4), D3D11_BIND_VERTEX_BUFFER);
                     initData.pSysMem = blendWeights.data();
                     device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBlendWeights.GetAddressOf());
                 }
@@ -273,101 +291,41 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
             mesh.m_MaterialIndex = pAiMesh->mMaterialIndex;
         }
 
-        // 骨骼
-        //遍历所有 mesh，收集所有骨骼名、offset 矩阵
-        for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i)
+        // 骨骼收集及层级构建
+        std::function<void(aiNode*, int)> processNode = [&](aiNode* node, int parent)
         {
-            auto pAiMesh = pAssimpScene->mMeshes[i];
-            for (uint32_t b = 0; b < pAiMesh->mNumBones; ++b)
-            {
-                aiBone* ai_bone = pAiMesh->mBones[b];
-                std::string boneName = ai_bone->mName.C_Str();
-                // 没记录过才插入
-                if (model.boneNameToIndex.count(boneName) == 0)
-                {
-                    int boneIndex = (int)model.bones.size();
-                    model.boneNameToIndex[boneName] = boneIndex;
-                    BoneInfo info;
-                    info.name = boneName;
-                    DirectX::XMFLOAT4X4 temp;
-                    memcpy(&temp, &ai_bone->mOffsetMatrix, sizeof(ai_bone->mOffsetMatrix));
-                    DirectX::XMMATRIX offset = DirectX::XMLoadFloat4x4(&temp);
-                    offset = DirectX::XMMatrixTranspose(offset); // Convert from Assimp column-major
-                    DirectX::XMStoreFloat4x4(&info.offsetMatrix, offset);
-                    info.nodeTransform = DirectX::XMFLOAT4X4(
-                        1,0,0,0,
-                        0,1,0,0,
-                        0,0,1,0,
-                        0,0,0,1
-                    );
-                    model.bones.push_back(info);
-                }
-            }
-        }
-
-        std::function<void(aiNode*)> collectAllBones = [&](aiNode* node) {
             std::string name = node->mName.C_Str();
-            if (model.boneNameToIndex.count(name) == 0) {
-                int idx = (int)model.bones.size();
-                model.boneNameToIndex[name] = idx;
+            int index;
+            auto it = model.boneNameToIndex.find(name);
+            if (it == model.boneNameToIndex.end())
+            {
+                index = static_cast<int>(model.bones.size());
+                model.boneNameToIndex[name] = index;
                 BoneInfo info;
                 info.name = name;
-                // 单位矩阵
-                info.offsetMatrix = DirectX::XMFLOAT4X4(
-                    1,0,0,0,
-                    0,1,0,0,
-                    0,0,1,0,
-                    0,0,0,1
-                );
-                info.nodeTransform = info.offsetMatrix;
+                DirectX::XMStoreFloat4x4(&info.offsetMatrix, DirectX::XMMatrixIdentity());
                 model.bones.push_back(info);
             }
+            else
+            {
+                index = it->second;
+            }
+
+            model.bones[index].parentIndex = parent;
+            if (parent >= 0)
+                model.bones[parent].children.push_back(index);
+
+            DirectX::XMFLOAT4X4 temp;
+            memcpy(&temp, &node->mTransformation, sizeof(node->mTransformation));
+            DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&temp);
+            m = DirectX::XMMatrixTranspose(m);
+            DirectX::XMStoreFloat4x4(&model.bones[index].nodeTransform, m);
+
             for (uint32_t c = 0; c < node->mNumChildren; ++c) {
-                collectAllBones(node->mChildren[c]);
+                processNode(node->mChildren[c], index);
             }
         };
-        collectAllBones(pAssimpScene->mRootNode);
-
-        // 递归补全骨骼的 parentIndex 和 children
-        std::function<void(aiNode*, int)> buildBoneHierarchy = [&](aiNode* node, int parent) {
-            std::string name = node->mName.C_Str();
-            int curParent = parent;
-            if (model.boneNameToIndex.count(name)) {
-                int idx = model.boneNameToIndex[name];
-
-                // 修复 parentIndex 错误为自己的情况
-                if (parent == idx)
-                    model.bones[idx].parentIndex = -1;
-                else
-                    model.bones[idx].parentIndex = parent;
-
-                if (parent >= 0 && parent != idx)
-                    model.bones[parent].children.push_back(idx);
-
-                curParent = idx;
-            }
-            for (uint32_t c = 0; c < node->mNumChildren; ++c) {
-                buildBoneHierarchy(node->mChildren[c], curParent);
-            }
-        };
-        buildBoneHierarchy(pAssimpScene->mRootNode, -1);
-
-        // 记录每个骨骼默认的节点变换
-        std::function<void(aiNode*)> fillNodeTransform = [&](aiNode* node) {
-            std::string name = node->mName.C_Str();
-            if (model.boneNameToIndex.count(name)) {
-                int idx = model.boneNameToIndex[name];
-                DirectX::XMFLOAT4X4 temp;
-                memcpy(&temp, &node->mTransformation, sizeof(node->mTransformation));
-                DirectX::XMMATRIX m = DirectX::XMLoadFloat4x4(&temp);
-                m = DirectX::XMMatrixTranspose(m); // Convert from Assimp column-major
-                DirectX::XMStoreFloat4x4(&model.bones[idx].nodeTransform, m);
-            }
-            for (uint32_t c = 0; c < node->mNumChildren; ++c) {
-                fillNodeTransform(node->mChildren[c]);
-            }
-        };
-        fillNodeTransform(pAssimpScene->mRootNode);
+        processNode(pAssimpScene->mRootNode, -1);
 
         // 输出骨骼信息
         // 打印骨骼结构调试输出

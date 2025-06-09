@@ -18,6 +18,9 @@ private:
     double m_currentTime = 0.0;
     const Model *m_model = nullptr;
     std::vector<DirectX::XMFLOAT4X4> m_finalBoneMatrices;
+    std::vector<DirectX::XMMATRIX> m_cachedOffset;
+    std::vector<DirectX::XMMATRIX> m_cachedNode;
+    std::vector<int> m_rootBones;
     UID m_modelHandle = -1;
     ModelObject* m_modelObject = nullptr;
 public:
