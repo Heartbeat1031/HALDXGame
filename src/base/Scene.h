@@ -40,6 +40,8 @@ public:
     template<typename T>
     T &GetGameObjectRef(UID handle);
 
+    template<class T>
+    T *GetGameObject(UID handle);
 
     // ゲームオブジェクトを削除
     void RemoveGameObject(UID handle);
@@ -51,6 +53,9 @@ public:
     // コンポーネントを取得
     template<typename T>
     T &GetComponentRef(UID handle);
+
+    template<class T>
+    T *GetComponent(UID handle);
 
     // コンポーネントを削除
     void RemoveComponent(UID handle);
@@ -76,6 +81,16 @@ T &Scene::GetGameObjectRef(UID handle) {
     return dynamic_cast<T&>(base);
 }
 
+template<typename T>
+T *Scene::GetGameObject(UID handle) {
+    static_assert(std::is_base_of<GameObject, T>::value, "T は GameObject を継承する必要があります。");
+    if (!m_GameObjectStorage.Has(handle)) {
+        return nullptr;
+    }
+    GameObject &base = m_GameObjectStorage.Get(handle);
+    return dynamic_cast<T*>(&base);
+}
+
 template<typename T, typename... Args>
 T &Scene::AddComponent(GameObject *parent, Args&&... args) {
     static_assert(std::is_base_of<Component, T>::value, "T は Component を継承する必要があります。");
@@ -93,4 +108,14 @@ T &Scene::GetComponentRef(UID handle) {
     static_assert(std::is_base_of<Component, T>::value, "T は Component を継承する必要があります。");
     Component &base = m_ComponentStorage.Get(handle);
     return dynamic_cast<T&>(base);
+}
+
+template<typename T>
+T *Scene::GetComponent(UID handle) {
+    static_assert(std::is_base_of<Component, T>::value, "T は Component を継承する必要があります。");
+    if (!m_ComponentStorage.Has(handle)) {
+        return nullptr;
+    }
+    Component &base = m_ComponentStorage.Get(handle);
+    return dynamic_cast<T*>(&base);
 }
