@@ -62,6 +62,8 @@ public:
     DirectX::SimpleMath::Vector3 GetLocalRotationEuler() const;
     // ローカルスケールの取得
     DirectX::SimpleMath::Vector3 GetLocalScale() const;
+    //ローカル変換行列の取得
+    DirectX::SimpleMath::Matrix GetLocalMatrix();
 
     // ワールドの変換行列を取得
     DirectX::SimpleMath::Matrix GetWorldMatrix();
@@ -83,4 +85,10 @@ public:
     TransformC* GetParent() const { return m_parent; }
     // 子TransformCを追加 keepWorldはワールド座標を保持するかどうか
     void AddChild(TransformC* child, bool keepWorld = true);
+
+    void ForChilds(const std::function<void(TransformC*)>& func) {
+        for (auto& child : m_Childs) {
+            func(child);
+        }
+    }
 };

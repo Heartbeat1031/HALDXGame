@@ -3,6 +3,9 @@
 //
 #include "Scene.h"
 
+#include "Component.h"
+#include "GameObject.h"
+
 Scene::Scene() = default;
 
 Scene::~Scene() = default;

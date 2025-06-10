@@ -1,6 +1,7 @@
 #pragma once
 #include <stdexcept>
 
+#include "BoneObj.h"
 #include "SoAStorage.h"
 
 //------------------------------------------------------//
@@ -15,13 +16,15 @@ private:
 	UID uid = -1;
 protected:
 	// 所属するGameObject
-	class  GameObject* m_gameObject = nullptr;
+	GameObject* m_gameObject = nullptr;
 
 public:
 	Component();
 	virtual ~Component();
 	// コンポーネントの所属するGameObjectを設定
 	void SetGameObject(GameObject* gameObject);
+
+	GameObject *GetGameObject() const;
 	// コンポーネントのUIDを設定
 	void SetUID(UID uuid);
 	// コンポーネントのUIDを取得

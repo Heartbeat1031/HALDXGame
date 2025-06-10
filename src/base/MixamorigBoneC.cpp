@@ -4,8 +4,6 @@
 #include "MixamorigBoneC.h"
 
 #include <set>
-
-#include "BoneObj.h"
 #include "Global.h"
 #include "ModelC.h"
 #include "ModelManager.h"
@@ -29,12 +27,15 @@ void MixamorigBoneC::Init() {
 
     int hipsIndex = it->second;
     const BoneInfo &hipsBone = model->bones[hipsIndex];
-    const BoneInfo &rootBone = model->bones[hipsBone.parentIndex];
-    std::function<void (const BoneInfo &boneInfo, const GameObject &gameObject, std::set<int>& visited)> addBone =  [&](const BoneInfo& boneInfo, const GameObject &gameObject, std::set<int>& visited) {
+    std::function<void (const BoneInfo &boneInfo, const GameObject &gameObject, std::set<int> &visited)> addBone = [&
+            ](const BoneInfo &boneInfo, const GameObject &gameObject, std::set<int> &visited) {
         std::string boneName = boneInfo.name;
         TransformC &transform_c = gameObject.GetComponent<TransformC>();
         // 新しいBoneObjを作成
         BoneObj &boneObj = halgame->GetScene()->AddGameObject<BoneObj>();
+        if (m_hipsBone == nullptr) {
+            m_hipsBone = &boneObj; // 最初の骨骼を保存
+        }
         boneObj.SetName(boneName);
         TransformC &boneTransform = boneObj.GetComponent<TransformC>();
         transform_c.AddChild(&boneTransform);
@@ -54,7 +55,7 @@ void MixamorigBoneC::Init() {
         boneTransform.SetLocalScale(DirectX::SimpleMath::Vector3(scale.x, scale.y, scale.z));
 
         //  子骨骼を再帰的に追加
-        for (int index : boneInfo.children) {
+        for (int index: boneInfo.children) {
             if (visited.find(index) != visited.end()) {
                 continue; // 既に訪問済みの骨骼はスキップ
             }
@@ -66,13 +67,34 @@ void MixamorigBoneC::Init() {
     std::set<int> visited;
     visited.insert(hipsIndex);
     addBone(hipsBone, *m_gameObject, visited);
+
+    DirectX::XMFLOAT4X4 identity;
+    DirectX::XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+    m_finalBoneMatrices.assign(model->bones.size(), identity);
 }
 
 void MixamorigBoneC::Update(float dt) {
     Component::Update(dt);
+    std::function<void (BoneObj *boneObj, DirectX::XMMATRIX parentMat)> updateBone = [&](BoneObj *boneObj, DirectX::XMMATRIX parentMat) {
+        std::string boneName = boneObj->GetName();
+        const Model *model = halgame->GetModelObject(GetComponent<ModelC>().GetHandle()).GetModel();
+        int boneIndex = model->boneNameToIndex.at(boneName);
+        const BoneInfo &boneInfo = model->bones[boneIndex];
+        TransformC &boneTransform = boneObj->GetComponent<TransformC>();
+        DirectX::SimpleMath::Matrix global = boneTransform.GetLocalMatrix() * parentMat;
+        DirectX::XMMATRIX finalMat = boneInfo.offsetMatrix *  global;
+        DirectX::XMStoreFloat4x4(&m_finalBoneMatrices[boneIndex], finalMat);
+        boneTransform.ForChilds([&](TransformC *child) {
+            updateBone(dynamic_cast<BoneObj *>(child->GetGameObject()), global);
+        });
+    };
+    updateBone(m_hipsBone, DirectX::XMMatrixIdentity());
 }
 
 void MixamorigBoneC::Uninit() {
     Component::Uninit();
 }
 
+std::vector<DirectX::XMFLOAT4X4> &MixamorigBoneC::GetFinalBoneMatrices() {
+    return m_finalBoneMatrices;
+}

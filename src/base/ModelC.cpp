@@ -9,7 +9,7 @@
 #include "AnimatorC.h"
 #include "GameObject.h"
 #include "Global.h"
-#include "MixamoRagdollC.h"
+#include "MixamorigBoneC.h"
 #include "SimpleMath.h"
 #include "TransformC.h"
 
@@ -44,8 +44,8 @@ void ModelC::CheckTransform() {
     ModelObject &modelObject = halgame->GetModelObject(handle);
     Transform &modelTransform = modelObject.GetTransform();
     TransformC &transformComponent = GetComponent<TransformC>();
-    if (HasComponent<MixamoRagdollC>()) {
-        auto &ragdollC = GetComponent<MixamoRagdollC>();
+    if (HasComponent<MixamorigBoneC>()) {
+        auto &ragdollC = GetComponent<MixamorigBoneC>();
         modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
         // 更新模型Transform以跟随ragdoll根节点
         // RVec3 outPosition;

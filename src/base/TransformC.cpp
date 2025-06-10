@@ -151,6 +151,11 @@ Vector3 TransformC::GetLocalScale() const {
     return m_localScale;
 }
 
+DirectX::SimpleMath::Matrix TransformC::GetLocalMatrix() {
+    RecalculateLocalMatrix();
+    return m_localMatrix;
+}
+
 void TransformC::RecalculateLocalMatrix() {
     m_localMatrix = DirectX::SimpleMath::Matrix::CreateScale(m_localScale) *
                     DirectX::SimpleMath::Matrix::CreateFromQuaternion(m_localRotation) *

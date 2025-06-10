@@ -13,6 +13,10 @@ void Component::SetGameObject(GameObject *gameObject) {
     m_gameObject = gameObject;
 }
 
+GameObject *Component::GetGameObject() const {
+    return m_gameObject;
+}
+
 void Component::SetUID(UID uuid) {
     uid = uuid;
 }

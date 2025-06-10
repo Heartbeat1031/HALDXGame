@@ -1,8 +1,8 @@
 ﻿#pragma once
+#include "SoAStorage.h"
 
-#include "Component.h"
-#include "GameObject.h"
-
+class  GameObject;
+class  Component;
 //---------------------------------------------------------------//
 // Scene是游戏当前所有GameObject和Component的容器, 负责管理GameObject和Component的生命周期和更新。
 // Sceneは現在のゲームのすべてのGameObjectとComponentのコンテナであり、GameObjectとComponentのライフサイクルと更新を管理します。

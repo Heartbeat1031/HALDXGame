@@ -27,5 +27,5 @@ void HalDebugRenderer::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH:
 
 
 void HalDebugRenderer::DrawText3D(JPH::RVec3Arg inPosition, const std::string_view &inString, JPH::ColorArg inColor, float inHeight) {
-    // Text rendering not implemented
+
 }
