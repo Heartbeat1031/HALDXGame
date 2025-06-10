@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <string>
+
 #include "SceneHierarchy.h"
 #include "SoAStorage.h"
 
@@ -70,6 +72,7 @@ T &Scene::AddGameObject(Args&&... args) {
     T *rawPtr = gameObject.get();
     UID handle = m_GameObjectStorage.Add(std::unique_ptr<GameObject>(std::move(gameObject)));
     rawPtr->SetUID(handle);
+    rawPtr->SetName(rawPtr->GetName() + ":" +  std::to_string(handle));
     rawPtr->InitBase();
     return *rawPtr;
 }

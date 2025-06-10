@@ -52,7 +52,7 @@ void SceneHierarchy::DrawSceneNode(const UID rootid, UID& selectedid)
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
     std::string m_Name =  root->GetGameObject()->GetName();
-    bool nodeOpen = ImGui::TreeNodeEx(reinterpret_cast<void *>(static_cast<uint32_t>(rootid)), flags, m_Name.c_str());
+    bool nodeOpen = ImGui::TreeNodeEx(reinterpret_cast<void *>(static_cast<uintptr_t>(rootid)), flags, m_Name.c_str());
     if (ImGui::IsItemClicked()) {
         selectedid = rootid;
     }
