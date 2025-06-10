@@ -47,15 +47,6 @@ void ModelC::CheckTransform() {
     if (HasComponent<MixamorigBoneC>()) {
         auto &ragdollC = GetComponent<MixamorigBoneC>();
         modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
-        // 更新模型Transform以跟随ragdoll根节点
-        // RVec3 outPosition;
-        // Quat outRotation;
-        // ragdollC.mRagdoll->GetRootTransform(outPosition, outRotation);
-        // transformComponent.SetWorldPosition(Vector3(outPosition.GetX(), outPosition.GetY(), outPosition.GetZ()));
-        // transformComponent.SetWorldRotation(
-        //     DirectX::SimpleMath::Quaternion(outRotation.GetX(), outRotation.GetY(), outRotation.GetZ(),
-        //                                     outRotation.GetW()));
-        // transformComponent.SetLocalRotationEuler(transformComponent.GetLocalRotationEuler());
     } else if (HasComponent<AnimatorC>()) {
         auto &animC = GetComponent<AnimatorC>();
         modelObject.SetBoneMatrices(&animC.GetFinalBoneMatrices());
