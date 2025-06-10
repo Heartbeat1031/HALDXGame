@@ -21,6 +21,7 @@ protected:
 public:
 	Component();
 	virtual ~Component();
+	bool operator==(const Component * selected) const;
 	// コンポーネントの所属するGameObjectを設定
 	void SetGameObject(GameObject* gameObject);
 

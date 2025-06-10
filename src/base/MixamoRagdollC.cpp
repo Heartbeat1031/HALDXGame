@@ -7,17 +7,10 @@
 #include <iostream>
 #include <Jolt/Jolt.h>
 
-#include "Global.h"
-#include "Layers.h"
 #include "MixamorigBoneC.h"
-#include "ModelC.h"
 #include "TransformC.h"
-#include "Jolt/Core/Reference.h"
 #include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
-#include "Jolt/Physics/Collision/Shape/Shape.h"
 #include "Jolt/Physics/Constraints/SwingTwistConstraint.h"
-#include "Jolt/Physics/Ragdoll/Ragdoll.h"
-#include "Jolt/Skeleton/Skeleton.h"
 
 MixamoRagdollC::MixamoRagdollC() {
 }

@@ -9,7 +9,7 @@ endif()
 # C++17 標準
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
-add_definitions(-D_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
+#add_definitions(-D_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
 if (WIN7_SYSTEM_SUPPORT MATCHES ON)
   add_compile_definitions(_WIN32_WINNT=0x601)
 endif()

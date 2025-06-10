@@ -9,6 +9,17 @@ Component::Component() = default;
 
 Component::~Component() = default;
 
+bool Component::operator==(const Component *selected) const {
+    if (uid == -1 || selected == nullptr) {
+        return false; // UIDが-1またはselectedがnullptrの場合はfalseを返す
+    }
+    if (selected->GetUID() == -1) {
+        return false; // selectedのUIDが-1の場合はfalseを返す
+    }
+    // uidとselectedのUIDが一致するかどうかを比較
+    return uid == selected->GetUID();
+}
+
 void Component::SetGameObject(GameObject *gameObject) {
     m_gameObject = gameObject;
 }

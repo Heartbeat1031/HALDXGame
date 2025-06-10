@@ -3,13 +3,8 @@
 //
 
 #pragma once
-#include <complex.h>
-#include <DirectXMath.h>
-#include <vector>
 
 #include "Component.h"
-#include <Jolt/Jolt.h>
-#include "Jolt/Core/Reference.h"
 #include "Jolt/Physics/Ragdoll/Ragdoll.h"
 
 class MixamoRagdollC: public Component {

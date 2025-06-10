@@ -6,8 +6,6 @@
 
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
-#include "MixamoRagdollC.h"
-#include "MixamorigBoneC.h"
 #include "ModelC.h"
 #include "TransformC.h"
 

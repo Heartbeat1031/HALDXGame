@@ -24,8 +24,9 @@ void TransformC::Uninit() {
         m_parent = nullptr; // 親子関係を解除する
     }
     // 子ノードをクリアする
-    for (TransformC *child : m_Childs) {
-        child->SetParent(nullptr); // 親子関係を解除する
+    for (TransformC *child: m_Childs) {
+        // 子TransformCの親子関係を解除
+        child->SetParent(nullptr);
         UID childgameuid = child->m_gameObject->GetUID();
         halgame->GetScene()->RemoveGameObject(childgameuid);
     }
@@ -64,7 +65,7 @@ void TransformC::SetLocalRotation(const Quaternion &rotation) {
     m_localEuler = Vector3(pitch, yaw, roll);
 }
 
-void TransformC::SetLocalRotationEuler(const Vector3& eulerRadians) {
+void TransformC::SetLocalRotationEuler(const Vector3 &eulerRadians) {
     m_localEuler = eulerRadians;
     m_localRotation = Quaternion::CreateFromYawPitchRoll(eulerRadians.y, eulerRadians.x, eulerRadians.z);
     m_dirty = true;
@@ -175,7 +176,7 @@ void TransformC::UpdateTransform() {
             m_worldMatrix = m_localMatrix;
         }
         // 子TransformCのワールド変換行列を更新
-        for (TransformC * transformChild : m_Childs) {
+        for (TransformC *transformChild: m_Childs) {
             transformChild->m_dirty = true;
             transformChild->UpdateTransform();
         }
@@ -245,6 +246,10 @@ void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
     if (keepWorld) {
         // 現在のワールド変換行列を取得
         DirectX::SimpleMath::Matrix oldWorld = GetWorldMatrix();
+        if (m_parent != nullptr) {
+            // 既存の親ノードから自分自身を削除
+            m_parent ->RemoveChild(this);
+        }
         // 新しい親ノードを設定
         m_parent = newParent;
 
@@ -273,6 +278,12 @@ void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
 void TransformC::AddChild(TransformC *child, bool keepWorld) {
     child->SetParent(this, keepWorld);
     m_Childs.push_back(child);
+}
+
+void TransformC::ForChilds(const std::function<void(TransformC *)> &func) const {
+    for (auto &child: m_Childs) {
+        func(child);
+    }
 }
 
 void TransformC::RemoveChild(TransformC *child) {
