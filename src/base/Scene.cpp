@@ -5,6 +5,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "TransformC.h"
 
 Scene::Scene() = default;
 
@@ -25,15 +26,20 @@ void Scene::UninitBase() {
 }
 
 void Scene::UpdateBase(float dt) {
+    m_SceneHierarchy.Begin();
     // 先更新所有的Component, 再更新所有GameObject
     // すべてのComponentを先に更新し、その後にすべてのGameObjectを更新します。
     m_ComponentStorage.ForEachActive([this, dt](UID id, Component &component) {
         component.Update(dt);
+        if (auto* trans = dynamic_cast<TransformC*>(&component)) {
+            m_SceneHierarchy.AddRoot(id);
+        }
     });
     m_GameObjectStorage.ForEachActive([this, dt](UID id, GameObject &game_object) {
         game_object.UpdateBase(dt);
     });
     Update();
+    m_SceneHierarchy.Draw();
 }
 
 void Scene::RemoveGameObject(UID handle) {

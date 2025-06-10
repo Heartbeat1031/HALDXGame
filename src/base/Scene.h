@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "SceneHierarchy.h"
 #include "SoAStorage.h"
 
 class  GameObject;
@@ -14,6 +15,7 @@ protected:
     SoAStorage<GameObject> m_GameObjectStorage;
     // Componentのコンテナ
     SoAStorage<Component> m_ComponentStorage;
+    SceneHierarchy m_SceneHierarchy;
 
 public:
     Scene();

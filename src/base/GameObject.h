@@ -37,7 +37,7 @@ protected:
     // GameObjectの更新
     virtual void Update(float dt){};
     // ゲームオブジェクトの名前
-    std::string m_Name;
+    std::string m_Name = "GameObject";
 
 public:
     GameObject();

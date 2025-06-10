@@ -3,7 +3,6 @@
 //
 
 #include "SceneHierarchy.h"
-
 #include "imgui.h"
 #include "TransformC.h"
 
@@ -28,13 +27,13 @@ void SceneHierarchy::AddRoot(UID rootid) {
 
 void SceneHierarchy::Draw() {
     ImGui::Begin("Scene Hierarchy");
-    // for (int i = 0; i < m_rootids.size(); i++) {
-    //     UID rootid = m_rootids[i];
-    //     TransformC* root = halgame->GetScene()->GetComponent<TransformC>(rootid);
-    //     if (root != nullptr) {
-    //         DrawSceneNode(rootid, m_selectedid);
-    //     }
-    // }
+    for (int i = 0; i < m_rootids.size(); i++) {
+        UID rootid = m_rootids[i];
+        TransformC* root = halgame->GetScene()->GetComponent<TransformC>(rootid);
+        if (root != nullptr) {
+            DrawSceneNode(rootid, m_selectedid);
+        }
+    }
     ImGui::End();
 }
 
@@ -52,7 +51,8 @@ void SceneHierarchy::DrawSceneNode(const UID rootid, UID& selectedid)
     if (childrens.empty()) {
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
-    bool nodeOpen = ImGui::TreeNodeEx((const TransformC*)root, flags, "%s", root->GetGameObject()->GetName());
+    std::string m_Name =  root->GetGameObject()->GetName();
+    bool nodeOpen = ImGui::TreeNodeEx(reinterpret_cast<void *>(static_cast<uint32_t>(rootid)), flags, m_Name.c_str());
     if (ImGui::IsItemClicked()) {
         selectedid = rootid;
     }
