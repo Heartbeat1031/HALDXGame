@@ -297,7 +297,7 @@ void MixamoRagdollC::Uninit() {
 }
 
 void MixamoRagdollC::UpdateFinalBoneMatrices() {
-    MixamorigBoneC &mixamorigBoneC = m_gameObject->GetComponent<MixamorigBoneC>();
+    MixamorigBoneC &mixamorigBoneC = m_gameObject->GetComponentRef<MixamorigBoneC>();
     mRagdoll->GetPose(mRagdollPose);
     auto ragdollskeleton = mRagdoll->GetRagdollSettings()->GetSkeleton();
     for (int i = 0; i < ragdollskeleton->GetJointCount(); ++i) {
@@ -311,7 +311,7 @@ void MixamoRagdollC::UpdateFinalBoneMatrices() {
         Vector3 position = Vector3(translation.GetX(), translation.GetY(), translation.GetZ());
         Quat quat = jointMat.GetQuaternion();
         Quaternion rotation = Quaternion(quat.GetX(), quat.GetY(), quat.GetZ(), quat.GetW());
-        TransformC &transformC = boneObj->GetComponent<TransformC>();
+        TransformC &transformC = boneObj->GetComponentRef<TransformC>();
         transformC.SetLocalPosition(position);
         transformC.SetLocalRotation(rotation);
     }

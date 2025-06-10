@@ -17,7 +17,7 @@ MixamorigBoneC::~MixamorigBoneC() {
 
 void MixamorigBoneC::Init() {
     Component::Init();
-    ModelC &modelC = GetComponent<ModelC>();
+    ModelC &modelC = GetComponentRef<ModelC>();
     ModelObject &modelObject = halgame->GetModelObject(modelC.GetHandle());
     const Model *model = modelObject.GetModel();
     auto it = model->boneNameToIndex.find("mixamorig:Hips");
@@ -30,14 +30,14 @@ void MixamorigBoneC::Init() {
     std::function<void (const BoneInfo &boneInfo, const GameObject &gameObject, std::set<int> &visited)> addBone = [&
             ](const BoneInfo &boneInfo, const GameObject &gameObject, std::set<int> &visited) {
         std::string boneName = boneInfo.name;
-        TransformC &transform_c = gameObject.GetComponent<TransformC>();
+        TransformC &transform_c = gameObject.GetComponentRef<TransformC>();
         // 新しいBoneObjを作成
         BoneObj &boneObj = halgame->GetScene()->AddGameObject<BoneObj>();
         if (m_hipsBone == nullptr) {
             m_hipsBone = &boneObj; // 最初の骨骼を保存
         }
         boneObj.SetName(boneName);
-        TransformC &boneTransform = boneObj.GetComponent<TransformC>();
+        TransformC &boneTransform = boneObj.GetComponentRef<TransformC>();
         transform_c.AddChild(&boneTransform);
         // 骨骼のUIDを保存
         m_boneNameToUID[boneName] = boneObj.GetUID();
@@ -78,10 +78,10 @@ void MixamorigBoneC::Update(float dt) {
     Component::Update(dt);
     std::function<void (BoneObj *boneObj, DirectX::XMMATRIX parentMat)> updateBone = [&](BoneObj *boneObj, DirectX::XMMATRIX parentMat) {
         std::string boneName = boneObj->GetName();
-        const Model *model = halgame->GetModelObject(GetComponent<ModelC>().GetHandle()).GetModel();
+        const Model *model = halgame->GetModelObject(GetComponentRef<ModelC>().GetHandle()).GetModel();
         int boneIndex = model->boneNameToIndex.at(boneName);
         const BoneInfo &boneInfo = model->bones[boneIndex];
-        TransformC &boneTransform = boneObj->GetComponent<TransformC>();
+        TransformC &boneTransform = boneObj->GetComponentRef<TransformC>();
         // ローカル行列を取得し、親の行列と組み合わせてグローバル行列を計算
         DirectX::SimpleMath::Matrix global = boneTransform.GetLocalMatrix() * parentMat;
         DirectX::XMMATRIX finalMat = boneInfo.offsetMatrix *  global;
@@ -107,6 +107,6 @@ const BoneObj *MixamorigBoneC::GetBone(const std::string &boneName) const {
         return nullptr; // 骨骼が見つからない場合はnullptrを返す
     }
     UID uid = it->second;
-    BoneObj &boneObj = halgame->GetScene()->GetGameObject<BoneObj>(uid);
+    BoneObj &boneObj = halgame->GetScene()->GetGameObjectRef<BoneObj>(uid);
     return &boneObj;
 }

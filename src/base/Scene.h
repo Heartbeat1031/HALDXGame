@@ -38,7 +38,7 @@ public:
 
     // ゲームオブジェクトを取得
     template<typename T>
-    T &GetGameObject(UID handle);
+    T &GetGameObjectRef(UID handle);
 
 
     // ゲームオブジェクトを削除
@@ -50,7 +50,7 @@ public:
 
     // コンポーネントを取得
     template<typename T>
-    T &GetComponent(UID handle);
+    T &GetComponentRef(UID handle);
 
     // コンポーネントを削除
     void RemoveComponent(UID handle);
@@ -68,7 +68,7 @@ T &Scene::AddGameObject(Args&&... args) {
 }
 
 template<typename T>
-T &Scene::GetGameObject(UID handle) {
+T &Scene::GetGameObjectRef(UID handle) {
     static_assert(std::is_base_of<GameObject, T>::value, "T は GameObject を継承する必要があります。");
     GameObject &base = m_GameObjectStorage.Get(handle);
     // 这里使用的强制转换, 虽然有点费效率, 但是优化费劲,调用频率不高, 所以暂时放弃优化. 懒!!
@@ -89,7 +89,7 @@ T &Scene::AddComponent(GameObject *parent, Args&&... args) {
 }
 
 template<typename T>
-T &Scene::GetComponent(UID handle) {
+T &Scene::GetComponentRef(UID handle) {
     static_assert(std::is_base_of<Component, T>::value, "T は Component を継承する必要があります。");
     Component &base = m_ComponentStorage.Get(handle);
     return dynamic_cast<T&>(base);

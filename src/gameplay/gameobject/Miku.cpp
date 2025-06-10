@@ -23,7 +23,7 @@ void Miku::Init() {
 
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
-    GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
+    GetComponentRef<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
      BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
      boxCollision.SetOffset(Vector3(0, 2, 0));
     //AddComponent<MixamoRagdollC>();
@@ -64,7 +64,7 @@ void Miku::Update(float dt) {
         moveDir.Normalize();
         //物理オブジェクトの移動は BoxCollisionC コンポーネントを通じて行います
         if (HasComponent<BoxCollisionC>()) {
-            auto &boxCollision = GetComponent<BoxCollisionC>();
+            auto &boxCollision = GetComponentRef<BoxCollisionC>();
             Vector3 targetPos = boxCollision.GetPosition() + moveDir * 5 * dt;
             boxCollision.SetPosition(targetPos);
             boxCollision.SetRotation(
@@ -75,7 +75,7 @@ void Miku::Update(float dt) {
                 )
             );
         }else {
-            auto &transform = GetComponent<TransformC>();
+            auto &transform = GetComponentRef<TransformC>();
             Vector3 targetPos = transform.GetWorldPosition() + moveDir * 5 * dt;
             transform.SetWorldPosition(targetPos);
             transform.SetWorldRotation(
@@ -89,19 +89,19 @@ void Miku::Update(float dt) {
 
         // 移動時のアニメーション
         if (HasComponent<AnimatorC>()) {
-            GetComponent<AnimatorC>().Play("Walking");
+            GetComponentRef<AnimatorC>().Play("Walking");
         }
     } else {
         // 停止時のアニメーション
         if (HasComponent<AnimatorC>()) {
-            GetComponent<AnimatorC>().Play("Idle");
+            GetComponentRef<AnimatorC>().Play("Idle");
         }
     }
 
     // 落下したら位置をリセット
     if (HasComponent<BoxCollisionC>()) {
-        if (GetComponent<TransformC>().GetWorldPosition().y < -10.0f) {
-            GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
+        if (GetComponentRef<TransformC>().GetWorldPosition().y < -10.0f) {
+            GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
         }
     }
 

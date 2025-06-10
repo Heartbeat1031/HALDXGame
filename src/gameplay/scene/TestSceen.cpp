@@ -19,21 +19,21 @@ void TestSceen::Init() {
     // 地面のモデルコンポーネントを追加します
     ground.AddComponent<ModelC>("assets\\models\\ground_19.obj");
     // 地面の座標を設定します
-    ground.GetComponent<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
+    ground.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
     ground.AddComponent<BoxCollisionC>(
         Vector3(10, 1, 10), // サイズを設定します
         JPH::EMotionType::Static // 静的な物体
     );
-    ground.GetComponent<BoxCollisionC>().SetOffset(Vector3(0, -2, 0));
-    ground.GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 1, 0));
+    ground.GetComponentRef<BoxCollisionC>().SetOffset(Vector3(0, -2, 0));
+    ground.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 1, 0));
 
     // ゲームオブジェクトを追加します
     miku = &AddGameObject<Miku>();
     if (miku->HasComponent<BoxCollisionC>()) {
-        miku->GetComponent<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
+        miku->GetComponentRef<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
     }
     auto &house = AddGameObject<House>();
-    house.GetComponent<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
+    house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 }
 
 void TestSceen::Update() {
@@ -47,7 +47,7 @@ void TestSceen::Update() {
     // 三人称カメラの操作
     ImGuiIO &io = ImGui::GetIO();
     // カメラのターゲットをミクの位置に設定します
-    halgame->m_pCamera->SetTarget(miku->GetComponent<TransformC>().GetWorldPosition() + Vector3(0, 2, 0));
+    halgame->m_pCamera->SetTarget(miku->GetComponentRef<TransformC>().GetWorldPosition() + Vector3(0, 2, 0));
     // オブジェクトの周りを回転する
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
         halgame->m_pCamera->RotateX(io.MouseDelta.y * 0.01f);

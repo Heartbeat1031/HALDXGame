@@ -25,7 +25,7 @@ void BoxCollisionC::Init() {
     JPH::BodyInterface &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
     // 形状を作成
     RefConst<JPH::Shape> shape = new JPH::BoxShape(Vec3(m_size.x, m_size.y, m_size.z));
-    auto &myTransform = m_gameObject->GetComponent<TransformC>();
+    auto &myTransform = m_gameObject->GetComponentRef<TransformC>();
     Vector3 myPos = myTransform.GetWorldPosition();
 
     // 初期位置を設定
@@ -128,7 +128,7 @@ void BoxCollisionC::Update(float dt) {
     Vector3 worldOffset = Vector3::Transform(m_offset, dxRot);
 
     // TransformC コンポーネントを正しく設定
-    auto &myTransform = m_gameObject->GetComponent<TransformC>();
+    auto &myTransform = m_gameObject->GetComponentRef<TransformC>();
     myTransform.SetWorldPosition(Vector3(newPos.GetX(), newPos.GetY(), newPos.GetZ()) - worldOffset);
     myTransform.SetWorldRotation(dxRot);
 }

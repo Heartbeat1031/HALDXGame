@@ -18,7 +18,7 @@ void BoneObj::Init() {
 
 void BoneObj::Update(float dt) {
     GameObject::Update(dt);
-    TransformC &transform = GetComponent<TransformC>();
+    TransformC &transform = GetComponentRef<TransformC>();
     TransformC *parentTransform = transform.GetParent();
     if (parentTransform != nullptr) {
         // 親TransformCが存在する場合、親のワールド位置を取得

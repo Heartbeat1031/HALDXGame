@@ -65,7 +65,7 @@ AnimatorC::AnimatorC(std::string defaultAnim) {
 void AnimatorC::Init() {
     Component::Init();
     // 获取模型组件
-    m_modelHandle = m_gameObject->GetComponent<ModelC>().GetHandle();
+    m_modelHandle = m_gameObject->GetComponentRef<ModelC>().GetHandle();
     if (m_modelHandle == -1) {
         throw std::runtime_error("ゲームオブジェクトにモデルコンポーネントがありません");
     }

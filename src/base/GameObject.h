@@ -63,7 +63,7 @@ public:
 
     // コンポーネントを取得する
     template<typename T>
-    T &GetComponent() const;
+    T &GetComponentRef() const;
 
     // コンポーネントが存在するか確認する
     template<class T>
@@ -80,7 +80,7 @@ T &GameObject::AddComponent(Args&&... args) {
     if (it != m_ComponentMap.end()) {
         // すでに同じタイプのコンポーネントが存在する場合はエラーを出す
         assert(false && "ゲームオブジェクトに重複コンポーネントが追加されました");
-        return GetComponent<T>();
+        return GetComponentRef<T>();
     }
     // 今はSceneを取得して、コンポーネントを追加する
     Scene *scene = halgame->GetScene();
@@ -92,12 +92,12 @@ T &GameObject::AddComponent(Args&&... args) {
 }
 
 template<typename T>
-T &GameObject::GetComponent() const {
+T &GameObject::GetComponentRef() const {
     auto it = m_ComponentMap.find(std::type_index(typeid(T)));
     if (it == m_ComponentMap.end()) {
         throw std::runtime_error("ゲームオブジェクトにコンポーネントが見つかりません");
     }
-    return halgame->GetScene()->GetComponent<T>(it->second);
+    return halgame->GetScene()->GetComponentRef<T>(it->second);
 }
 
 template<typename T>

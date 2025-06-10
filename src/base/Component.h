@@ -36,18 +36,18 @@ public:
 	virtual void Update(float dt);
 
 	template<class T>
-	T &GetComponent();
+	T &GetComponentRef();
 
 	template<class T>
 	bool HasComponent() const;
 };
 
 template<typename T>
-T &Component::GetComponent() {
+T &Component::GetComponentRef() {
 	if (m_gameObject == nullptr) {
 		throw std::runtime_error("GameObjectが設定されていません"); // GameObjectが設定されていない場合は例外を投げる
 	}
-	return m_gameObject->GetComponent<T>();
+	return m_gameObject->GetComponentRef<T>();
 }
 
 template<typename T>
