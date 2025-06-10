@@ -14,9 +14,6 @@
 
 class MixamoRagdollC: public Component {
 private:
-    // ragdoll骨骼 -> model骨骼下标
-    std::vector<int> ragdollToModelBone;
-    std::vector<DirectX::XMFLOAT4X4> m_finalBoneMatrices;
     JPH::RagdollSettings *mRagdollSettings;
 public:
     MixamoRagdollC();
@@ -27,8 +24,6 @@ public:
 
     JPH::Ref<JPH::Ragdoll> mRagdoll ; // ragdoll本体
     JPH::SkeletonPose			mRagdollPose;
-
-    const std::vector<DirectX::XMFLOAT4X4>& GetFinalBoneMatrices() const;
 
     void UpdateFinalBoneMatrices();
 };

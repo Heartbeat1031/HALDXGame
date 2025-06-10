@@ -9,6 +9,7 @@
 
 #include "Global.h"
 #include "Layers.h"
+#include "MixamorigBoneC.h"
 #include "ModelC.h"
 #include "TransformC.h"
 #include "Jolt/Core/Reference.h"
@@ -286,62 +287,9 @@ void MixamoRagdollC::Init() {
     mRagdollSettings->CalculateBodyIndexToConstraintIndex();
 
     mRagdoll = mRagdollSettings->CreateRagdoll(0, 0, halgame->GetPhysicsSystem());
-    mRagdoll->AddToPhysicsSystem(JPH::EActivation::DontActivate);
-
-    // 构建ragdollToModelBone
-    ModelC &modelC = GetComponent<ModelC>();
-    auto model = halgame->GetModelObject(modelC.GetHandle()).GetModel();
-    //PrintBoneWorldPositions(model->bones, 0, DirectX::XMMatrixIdentity());
-    auto& bones = model->bones;
-    auto ragdollskeleton = mRagdoll->GetRagdollSettings()->GetSkeleton();
-    ragdollToModelBone.clear();
-    for (int i = 0; i < ragdollskeleton->GetJointCount(); ++i) {
-        std::string jointName = ragdollskeleton->GetJoint(i).mName.c_str();
-        int boneIdx = -1;
-        for (int b = 0; b < bones.size(); ++b) {
-            if (bones[b].name == jointName) {
-                boneIdx = b;
-                break;
-            }
-        }
-        ragdollToModelBone.push_back(boneIdx); // -1 表示找不到对应骨骼
-    }
+    mRagdoll->AddToPhysicsSystem(JPH::EActivation::Activate);
 
     mRagdollPose.SetSkeleton(mRagdollSettings->GetSkeleton());
-
-    TransformC &transformComponent = m_gameObject->GetComponent<TransformC>();
-    Vector3 position = transformComponent.GetWorldPosition();
-    mRagdollPose.GetJoints()[0].mTranslation = JPH::RVec3(position.x, position.y, position.z);
-    mRagdollPose.GetJoints()[0].mRotation = JPH::Quat::sIdentity(); // 根节点旋转为单位四元数
-
-    // 初始化 ragdoll pose
-    for (int i = 1; i < mRagdollPose.GetJointCount(); ++i) {
-        int boneIdx = ragdollToModelBone[i];
-
-        DirectX::XMFLOAT4X4 m4x4 = model->bones[boneIdx].nodeTransform;
-        std::cout << "Bone name : " << model->bones[boneIdx].name << std::endl;
-        DirectX::XMMATRIX dxMat = DirectX::XMLoadFloat4x4(&m4x4);
-
-        // 分解矩阵
-        DirectX::XMVECTOR scale, rot, trans;
-        DirectX::XMMatrixDecompose(&scale, &rot, &trans, dxMat);
-
-        // 提取平移
-        JPH::RVec3 translation;
-        DirectX::XMStoreFloat3(reinterpret_cast<DirectX::XMFLOAT3*>(&translation), trans);
-        std::cout <<  "position : " << translation << std::endl;
-        // 提取旋转（四元数）
-        DirectX::XMFLOAT4 rotQuat;
-        DirectX::XMStoreFloat4(&rotQuat, rot);
-        JPH::Quat mRotation(rotQuat.x, rotQuat.y, rotQuat.z, rotQuat.w);
-        std::cout << "rotation : (" << mRotation.GetX() << ", "
-            << mRotation.GetY() << ", "
-            << mRotation.GetZ() << ", "
-            << mRotation.GetW() << ")" << std::endl;
-        //赋值给pose
-        mRagdollPose.GetJoints()[i].mTranslation = translation;
-        mRagdollPose.GetJoints()[i].mRotation = mRotation.Normalized();
-    }
     mRagdollPose.CalculateJointMatrices();
     mRagdoll->SetPose(mRagdollPose);
 }
@@ -349,50 +297,29 @@ void MixamoRagdollC::Init() {
 void MixamoRagdollC::Update(float dt) {
     Component::Update(dt);
     UpdateFinalBoneMatrices();
-    mRagdollPose.Draw(
-        JPH::SkeletonPose::DrawSettings{true, true, false},
-        halgame->GetDebugRenderer()
-    );
 }
 
 void MixamoRagdollC::Uninit() {
     Component::Uninit();
 }
 
-const std::vector<DirectX::XMFLOAT4X4> &MixamoRagdollC::GetFinalBoneMatrices() const {
-    return m_finalBoneMatrices;
-}
-
 void MixamoRagdollC::UpdateFinalBoneMatrices() {
-    UID m_modelHandle = m_gameObject->GetComponent<ModelC>().GetHandle();
-    if (m_modelHandle == -1) {
-        return;
-    }
-    ModelObject &modelObject = halgame->GetModelObject(m_modelHandle);
-    const auto& bones = modelObject.GetModel()->bones;
-    size_t boneCount = bones.size();
-
-    if (m_finalBoneMatrices.size() != boneCount) {
-        DirectX::XMFLOAT4X4 identity;
-        DirectX::XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
-        m_finalBoneMatrices.resize(boneCount, identity);
-    }
-
+    MixamorigBoneC &mixamorigBoneC = m_gameObject->GetComponent<MixamorigBoneC>();
     mRagdoll->GetPose(mRagdollPose);
-    const auto& jointMats = mRagdollPose.GetJointMatrices();
-
-    // ragdollToModelBone[i] = model骨骼索引
-    for (size_t i = 0; i < ragdollToModelBone.size(); ++i) {
-        int modelBoneIdx = ragdollToModelBone[i];
-        const Mat44& mat44 = jointMats[i];
-        Float4* inV = reinterpret_cast<Float4*>((void*)&mat44);
-        DirectX::XMFLOAT4X4 mat(
-            inV[0].x, inV[0].y, inV[0].z, inV[0].w,
-            inV[1].x, inV[1].y, inV[1].z, inV[1].w,
-            inV[2].x, inV[2].y, inV[2].z, inV[2].w,
-            inV[3].x, inV[3].y, inV[3].z, inV[3].w
-        );
-        m_finalBoneMatrices[modelBoneIdx] = mat;
+    auto ragdollskeleton = mRagdoll->GetRagdollSettings()->GetSkeleton();
+    for (int i = 0; i < ragdollskeleton->GetJointCount(); ++i) {
+        std::string jointName = ragdollskeleton->GetJoint(i).mName.c_str();
+        const BoneObj *boneObj = mixamorigBoneC.GetBone(jointName);
+        if (boneObj == nullptr) {
+            continue;
+        }
+        const auto &jointMat = mRagdollPose.GetJointMatrix(i);
+        Vec3 translation = jointMat.GetTranslation();
+        Vector3 position = Vector3(translation.GetX(), translation.GetY(), translation.GetZ());
+        Quat quat = jointMat.GetQuaternion();
+        Quaternion rotation = Quaternion(quat.GetX(), quat.GetY(), quat.GetZ(), quat.GetW());
+        TransformC &transformC = boneObj->GetComponent<TransformC>();
+        transformC.SetLocalPosition(position);
+        transformC.SetLocalRotation(rotation);
     }
 }
-

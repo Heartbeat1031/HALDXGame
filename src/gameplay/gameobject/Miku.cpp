@@ -28,8 +28,7 @@ void Miku::Init() {
     GetComponent<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
      BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
      boxCollision.SetOffset(Vector3(0, 2, 0));
-
-   // AddComponent<MixamoRagdollC>();
+    //AddComponent<MixamoRagdollC>();
 }
 
 void Miku::Update(float dt) {
