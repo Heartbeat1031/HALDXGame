@@ -3,13 +3,18 @@
 //
 
 #pragma once
-#include "TransformC.h"
+#include "SoAStorage.h"
 
 class SceneHierarchy {
 private:
-    TransformC *m_selected = nullptr;
-    std::vector<TransformC *> m_roots; // 存储场景中的根节点
+     UID m_selectedid = -1;
+    std::vector<UID> m_rootids;
+    int m_rawindex = 0;
 public:
+    SceneHierarchy();
+    ~SceneHierarchy() = default;
+    void Begin();
+    void AddRoot(UID rootid);
     void Draw();
-    void DrawSceneNode(const TransformC *root, const TransformC *&selected);
+    void DrawSceneNode(UID rootid, UID &selectedid);
 };
