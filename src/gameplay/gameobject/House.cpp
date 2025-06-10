@@ -29,19 +29,6 @@ void House::Uninit() {
 
 void House::Update(float dt) {
     GameObject::Update(dt);
-    ImGuiIO &io = ImGui::GetIO();
-    auto &boxCollision = GetComponent<BoxCollisionC>();
-    if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-        boxCollision.SetRotationEuler(
-            boxCollision.GetRotationEuler() +
-            Vector3(
-                io.MouseDelta.y * -1.0f,
-                io.MouseDelta.x * -1.0f,
-                0.0f
-            ) * dt
-        );
-    }
-
     if (GetComponent<TransformC>().GetWorldPosition().y < -10.0f) {
         GetComponent<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
     }

@@ -113,7 +113,6 @@ DirectX::SimpleMath::Vector3 BoxCollisionC::GetRotationEuler() const {
     return DirectX::SimpleMath::Vector3(pitch, yaw, roll);
 }
 
-
 void BoxCollisionC::Update(float dt) {
     Component::Update(dt);
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();

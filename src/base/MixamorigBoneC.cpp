@@ -81,6 +81,7 @@ void MixamorigBoneC::Update(float dt) {
         int boneIndex = model->boneNameToIndex.at(boneName);
         const BoneInfo &boneInfo = model->bones[boneIndex];
         TransformC &boneTransform = boneObj->GetComponent<TransformC>();
+        // ローカル行列を取得し、親の行列と組み合わせてグローバル行列を計算
         DirectX::SimpleMath::Matrix global = boneTransform.GetLocalMatrix() * parentMat;
         DirectX::XMMATRIX finalMat = boneInfo.offsetMatrix *  global;
         DirectX::XMStoreFloat4x4(&m_finalBoneMatrices[boneIndex], finalMat);
