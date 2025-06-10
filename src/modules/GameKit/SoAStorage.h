@@ -46,6 +46,12 @@ public:
         dataColumn[handle].reset();
         freeIndices.push_back(handle);
     }
+    
+    // 检查节点是否存在
+    // コンポーネントが存在するかどうかを確認します
+    bool Has(UID handle) const {
+        return handle < actives.size() && actives[handle];
+    }
 
     // 获取节点的引用
     // コンポーネントを取得します
