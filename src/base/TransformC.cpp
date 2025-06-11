@@ -4,17 +4,34 @@
 
 #include "TransformC.h"
 
+#include "GameObject.h"
 #include "Global.h"
 #include "Scene.h"
 
 TransformC::TransformC()
-    : m_localPosition(Vector3::Zero),
-      m_localRotation(Quaternion::Identity),
-      m_localScale(Vector3::One),
+    : m_localPosition(DirectX::SimpleMath::Vector3::Zero),
+      m_localRotation(DirectX::SimpleMath::Quaternion::Identity),
+      m_localScale(DirectX::SimpleMath::Vector3::One),
       m_localMatrix(DirectX::SimpleMath::Matrix::Identity),
       m_worldMatrix(DirectX::SimpleMath::Matrix::Identity),
       m_dirty(true),
       m_parent(nullptr) {
+}
+
+void TransformC::OnInspectorGUI() {
+    Component::OnInspectorGUI();
+    float posArr[3] = { m_localPosition.x, m_localPosition.y, m_localPosition.z };
+    if (ImGui::InputFloat3("Position", posArr)) {
+        SetLocalPosition(DirectX::SimpleMath::Vector3(posArr[0], posArr[1], posArr[2]));
+    }
+    float rotArr[3] = { m_localEuler.x, m_localEuler.y, m_localEuler.z };
+    if (ImGui::InputFloat3("Rotation", rotArr)) {
+        SetLocalRotationEuler(DirectX::SimpleMath::Vector3(rotArr[0], rotArr[1], rotArr[2]));
+    }
+    float scaleArr[3] = { m_localScale.x, m_localScale.y, m_localScale.z };
+    if (ImGui::InputFloat3("Scale", scaleArr)) {
+        SetLocalScale(DirectX::SimpleMath::Vector3(scaleArr[0], scaleArr[1], scaleArr[2]));
+    }
 }
 
 void TransformC::Uninit() {

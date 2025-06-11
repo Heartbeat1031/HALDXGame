@@ -3,6 +3,8 @@
 //
 #include <Jolt/Jolt.h>
 #include "BoxCollisionC.h"
+
+#include "GameObject.h"
 #include "Global.h"
 #include "TransformC.h"
 #include "Jolt/Physics/Body/BodyCreationSettings.h"

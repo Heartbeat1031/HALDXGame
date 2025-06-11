@@ -3,43 +3,34 @@
 //
 
 #include "SceneHierarchy.h"
+
+#include "GameObject.h"
+#include "Global.h"
 #include "imgui.h"
 #include "TransformC.h"
 
 SceneHierarchy::SceneHierarchy() {
     m_selectedid = -1;
-    m_rootids = {};
-    m_rawindex = 0;
-}
-
-void SceneHierarchy::Begin() {
-    m_rawindex = 0;
-}
-
-void SceneHierarchy::AddRoot(UID rootid) {
-    if (m_rootids.size() <= m_rawindex) {
-        m_rootids.push_back(rootid);
-    } else {
-        m_rootids[m_rawindex] = rootid;
-    }
-    m_rawindex++;
 }
 
 void SceneHierarchy::Draw() {
-    ImGui::Begin("Scene Hierarchy");
-    for (int i = 0; i < m_rootids.size(); i++) {
-        UID rootid = m_rootids[i];
-        TransformC* root = halgame->GetScene()->GetComponent<TransformC>(rootid);
-        if (root != nullptr) {
-            DrawSceneNode(rootid, m_selectedid);
-        }
+    ImGui::Begin("Hierarchy");
+    GameObject *root = halgame->GetScene()->GetRoot();
+    if (root != nullptr) {
+        UID rootid = root->GetUID();
+        DrawSceneNode(rootid, m_selectedid);
+    } else {
+        ImGui::Text("No Scene Loaded");
     }
+    ImGui::End();
+    // 选中节点的详细信息
+    ImGui::Begin("Inspector");
+    DrawInspector(m_selectedid);
     ImGui::End();
 }
 
-void SceneHierarchy::DrawSceneNode(const UID rootid, UID& selectedid)
-{
-    TransformC* root = halgame->GetScene()->GetComponent<TransformC>(rootid);
+void SceneHierarchy::DrawSceneNode(const UID rootid, UID &selectedid) {
+    TransformC *root = halgame->GetScene()->GetComponent<TransformC>(rootid);
     if (root == nullptr) {
         return;
     }
@@ -51,15 +42,31 @@ void SceneHierarchy::DrawSceneNode(const UID rootid, UID& selectedid)
     if (childrens.empty()) {
         flags |= ImGuiTreeNodeFlags_Leaf;
     }
-    std::string m_Name =  root->GetGameObject()->GetName() + " (" + std::to_string(rootid) + ")";
+    std::string m_Name = root->GetGameObject()->GetName() + " (" + std::to_string(rootid) + ")";
     bool nodeOpen = ImGui::TreeNodeEx(reinterpret_cast<void *>(static_cast<uintptr_t>(rootid)), flags, m_Name.c_str());
     if (ImGui::IsItemClicked()) {
         selectedid = rootid;
     }
     if (nodeOpen) {
-        for (TransformC* child : childrens) {
+        for (TransformC *child: childrens) {
             DrawSceneNode(child->GetUID(), selectedid);
         }
         ImGui::TreePop();
     }
+}
+
+void SceneHierarchy::DrawInspector(UID selectedid) {
+    if (selectedid == -1) {
+        ImGui::Text("No Object Selected");
+        return;
+    }
+    GameObject *go = halgame->GetScene()->GetGameObject<GameObject>(selectedid);
+    if (!go) {
+        ImGui::Text("GameObject not found.");
+        return;
+    }
+    ImGui::Text("名前 : %s (%d)", go->GetName().c_str(), selectedid);
+    // ------ Transform ------
+    TransformC &tf = go->GetComponentRef<TransformC>();
+    tf.OnInspectorGUI();
 }

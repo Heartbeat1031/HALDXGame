@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <Jolt/Jolt.h>
 #include "Component.h"
 #include "Jolt/Physics/Ragdoll/Ragdoll.h"
 

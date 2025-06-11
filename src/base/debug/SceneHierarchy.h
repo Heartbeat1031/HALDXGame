@@ -8,13 +8,12 @@
 class SceneHierarchy {
 private:
      UID m_selectedid = -1;
-    std::vector<UID> m_rootids;
-    int m_rawindex = 0;
+    void DrawSceneNode(UID rootid, UID &selectedid);
 public:
     SceneHierarchy();
     ~SceneHierarchy() = default;
-    void Begin();
-    void AddRoot(UID rootid);
+
+     void DrawInspector(UID selectedid);
+
     void Draw();
-    void DrawSceneNode(UID rootid, UID &selectedid);
 };

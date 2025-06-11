@@ -5,10 +5,12 @@
 #include "MixamoRagdollC.h"
 
 #include <iostream>
+#include <map>
 #include <Jolt/Jolt.h>
 
+#include "Global.h"
 #include "MixamorigBoneC.h"
-#include "TransformC.h"
+#include "ModelManager.h"
 #include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
 #include "Jolt/Physics/Constraints/SwingTwistConstraint.h"
 
@@ -78,7 +80,7 @@ void MixamoRagdollC::Init() {
     JPH::uint lower_leg_r = skeleton->AddJoint("mixamorig:RightLeg", upper_leg_r); // 12
 
     // Ragdoll Settings
-    RagdollSettings *mRagdollSettings = new JPH::RagdollSettings;
+    JPH::RagdollSettings *mRagdollSettings = new JPH::RagdollSettings;
     mRagdollSettings->mSkeleton = skeleton;
     mRagdollSettings->mParts.resize(skeleton->GetJointCount());
 
@@ -86,23 +88,23 @@ void MixamoRagdollC::Init() {
 
     // Capsule Shapes，参数可再调优
     JPH::Ref<JPH::Shape> shapes[] = {
-        new CapsuleShape(0.13f * scale, 0.11f * scale), // Hips
-        new CapsuleShape(0.12f * scale, 0.09f * scale), // Spine
-        new CapsuleShape(0.12f * scale, 0.09f * scale), // Spine1
-        new CapsuleShape(0.13f * scale, 0.10f * scale), // Spine2
-        new CapsuleShape(0.08f * scale, 0.10f * scale), // Head
+        new JPH::CapsuleShape(0.13f * scale, 0.11f * scale), // Hips
+        new JPH::CapsuleShape(0.12f * scale, 0.09f * scale), // Spine
+        new JPH::CapsuleShape(0.12f * scale, 0.09f * scale), // Spine1
+        new JPH::CapsuleShape(0.13f * scale, 0.10f * scale), // Spine2
+        new JPH::CapsuleShape(0.08f * scale, 0.10f * scale), // Head
 
-        new CapsuleShape(0.13f * scale, 0.06f * scale), // LeftArm
-        new CapsuleShape(0.13f * scale, 0.05f * scale), // LeftForeArm
+        new JPH::CapsuleShape(0.13f * scale, 0.06f * scale), // LeftArm
+        new JPH::CapsuleShape(0.13f * scale, 0.05f * scale), // LeftForeArm
 
-        new CapsuleShape(0.13f * scale, 0.06f * scale), // RightArm
-        new CapsuleShape(0.13f * scale, 0.05f * scale), // RightForeArm
+        new JPH::CapsuleShape(0.13f * scale, 0.06f * scale), // RightArm
+        new JPH::CapsuleShape(0.13f * scale, 0.05f * scale), // RightForeArm
 
-        new CapsuleShape(0.16f * scale, 0.08f * scale), // LeftUpLeg
-        new CapsuleShape(0.16f * scale, 0.06f * scale), // LeftLeg
+        new JPH::CapsuleShape(0.16f * scale, 0.08f * scale), // LeftUpLeg
+        new JPH::CapsuleShape(0.16f * scale, 0.06f * scale), // LeftLeg
 
-        new CapsuleShape(0.16f * scale, 0.08f * scale), // RightUpLeg
-        new CapsuleShape(0.16f * scale, 0.06f * scale), // RightLeg
+        new JPH::CapsuleShape(0.16f * scale, 0.08f * scale), // RightUpLeg
+        new JPH::CapsuleShape(0.16f * scale, 0.06f * scale), // RightLeg
     };
 
     // World空间的初始位置
@@ -128,17 +130,17 @@ void MixamoRagdollC::Init() {
 
     // 旋转
     JPH::Quat rotations[] = {
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // Hips
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // Spine
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // Spine1
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // Spine2
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // Hips
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // Spine
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // Spine1
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // Spine2
         JPH::Quat::sIdentity(), // Head
 
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // LeftArm
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // LeftForeArm
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // LeftArm
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // LeftForeArm
 
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // RightArm
-        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH_PI), // RightForeArm
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // RightArm
+        JPH::Quat::sRotation(JPH::Vec3::sAxisZ(), 0.5f * JPH::JPH_PI), // RightForeArm
 
         JPH::Quat::sIdentity(), // LeftUpLeg
         JPH::Quat::sIdentity(), // LeftLeg
@@ -266,10 +268,10 @@ void MixamoRagdollC::Init() {
             constraint->mPosition1 = constraint->mPosition2 = constraint_positions[p];
             constraint->mTwistAxis1 = constraint->mTwistAxis2 = twist_axis[p];
             constraint->mPlaneAxis1 = constraint->mPlaneAxis2 = JPH::Vec3::sAxisZ();
-            constraint->mTwistMinAngle = -DegreesToRadians(twist_angle[p]);
-            constraint->mTwistMaxAngle = DegreesToRadians(twist_angle[p]);
-            constraint->mNormalHalfConeAngle = DegreesToRadians(normal_angle[p]);
-            constraint->mPlaneHalfConeAngle = DegreesToRadians(plane_angle[p]);
+            constraint->mTwistMinAngle = -JPH::DegreesToRadians(twist_angle[p]);
+            constraint->mTwistMaxAngle = JPH::DegreesToRadians(twist_angle[p]);
+            constraint->mNormalHalfConeAngle = JPH::DegreesToRadians(normal_angle[p]);
+            constraint->mPlaneHalfConeAngle = JPH::DegreesToRadians(plane_angle[p]);
             part.mToParent = constraint;
         }
     }

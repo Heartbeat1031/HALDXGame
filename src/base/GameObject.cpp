@@ -6,7 +6,10 @@
 #include "Scene.h"
 #include "TransformC.h"
 
-GameObject::GameObject() = default;
+GameObject::GameObject() {
+    // デフォルトでTransformComponentを追加
+    AddComponent<TransformC>();
+};
 
 GameObject::~GameObject() = default;
 
@@ -19,8 +22,6 @@ UID GameObject::GetUID() const {
 }
 
 void GameObject::InitBase() {
-    // デフォルトでTransformComponentを追加
-    AddComponent<TransformC>();
     // ユーザー定義の初期化
     Init();
 }

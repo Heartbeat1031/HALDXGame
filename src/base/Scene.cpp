@@ -12,6 +12,16 @@ Scene::Scene() = default;
 Scene::~Scene() = default;
 
 void Scene::InitBase() {
+    // rootを初期化
+    root = new GameObject();
+    UID handle = m_GameObjectStorage.Add(std::unique_ptr<GameObject>(std::move(root)));
+    root->SetUID(handle);
+    root->SetName("root");
+    root->InitBase();
+    rootTransform = root->GetComponent<TransformC>();
+    rootTransform->SetLocalPosition(Vector3::Zero);
+    rootTransform->SetLocalRotation(Quaternion::Identity);
+    rootTransform->SetLocalScale(Vector3(1, 1, 1));
     Init();
 }
 
@@ -26,14 +36,10 @@ void Scene::UninitBase() {
 }
 
 void Scene::UpdateBase(float dt) {
-    m_SceneHierarchy.Begin();
     // 先更新所有的Component, 再更新所有GameObject
     // すべてのComponentを先に更新し、その後にすべてのGameObjectを更新します。
     m_ComponentStorage.ForEachActive([this, dt](UID id, Component &component) {
         component.Update(dt);
-        if (auto* trans = dynamic_cast<TransformC*>(&component)) {
-            m_SceneHierarchy.AddRoot(id);
-        }
     });
     m_GameObjectStorage.ForEachActive([this, dt](UID id, GameObject &game_object) {
         game_object.UpdateBase(dt);

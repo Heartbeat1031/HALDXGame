@@ -21,6 +21,8 @@ bool Game::Init() {
 
     // ImGuiを初期化
     ImGuiIO &io = ImGui::GetIO();
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.IndentSpacing = 5.0f;
     ImFontConfig config;
     config.OversampleH = 1;
     config.OversampleV = 1;

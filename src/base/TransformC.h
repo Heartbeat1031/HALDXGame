@@ -90,6 +90,7 @@ public:
     // ワールドスケールの取得
     DirectX::SimpleMath::Vector3 GetWorldScale();
 
+    void OnInspectorGUI() override;
 private:
     // 親TransformCを設定
     void SetParent(TransformC *newParent, bool keepWorld = true);

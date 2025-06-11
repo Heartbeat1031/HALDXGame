@@ -44,3 +44,6 @@ void Component::Uninit() {
 
 void Component::Update(float dt) {
 }
+
+void Component::OnInspectorGUI() {
+}

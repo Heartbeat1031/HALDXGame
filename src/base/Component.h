@@ -1,13 +1,14 @@
 #pragma once
 #include <stdexcept>
 
-#include "BoneObj.h"
 #include "SoAStorage.h"
 
 //------------------------------------------------------//
 // 这个文件用来定义组件基类 负责实现GameObject的附属功能
 // このファイルはコンポーネントの基底クラスを定義し、GameObjectの付属機能を実装します
 //------------------------------------------------------//
+
+class GameObject;
 
 class Component
 {
@@ -45,6 +46,8 @@ public:
 
 	template<class T>
 	bool HasComponent() const;
+
+	virtual void OnInspectorGUI();
 };
 
 template<typename T>

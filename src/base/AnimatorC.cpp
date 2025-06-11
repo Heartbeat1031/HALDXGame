@@ -4,9 +4,8 @@
 
 #include "AnimatorC.h"
 
-#include <iostream>
-
 #include "AnimationManager.h"
+#include "GameObject.h"
 #include "Global.h"
 #include "ModelC.h"
 

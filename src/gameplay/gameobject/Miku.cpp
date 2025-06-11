@@ -6,6 +6,7 @@
 
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
+#include "MixamorigBoneC.h"
 #include "ModelC.h"
 #include "TransformC.h"
 
@@ -19,7 +20,7 @@ void Miku::Init() {
     GameObject::Init();
     // モデルコンポーネントを追加し、モデルをロードします
     AddComponent<ModelC>("assets/models/Ch46_nonPBR.fbx");
-    //AddComponent<MixamorigBoneC>();
+    AddComponent<MixamorigBoneC>();
 
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
