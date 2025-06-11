@@ -72,7 +72,9 @@ T &Scene::AddGameObject(Args&&... args) {
     T *rawPtr = gameObject.get();
     UID handle = m_GameObjectStorage.Add(std::unique_ptr<GameObject>(std::move(gameObject)));
     rawPtr->SetUID(handle);
-    rawPtr->SetName(rawPtr->GetName() + ":" +  std::to_string(handle));
+    // typeid(T).name() の先頭の "class " を削除
+    std::string name = static_cast<std::string>(typeid(T).name()).substr(6);
+    rawPtr->SetName(name);
     rawPtr->InitBase();
     return *rawPtr;
 }
@@ -104,6 +106,9 @@ T &Scene::AddComponent(GameObject *parent, Args&&... args) {
     UID uid = m_ComponentStorage.Add(std::unique_ptr<Component>(std::move(component)));
     rawPtr->SetGameObject(parent);
     rawPtr->SetUID(uid);
+    // typeid(T).name() の先頭の "class " を削除
+    std::string name = static_cast<std::string>(typeid(T).name()).substr(6);
+    rawPtr->SetName(name);
     rawPtr->Init();
     return *rawPtr;
 }

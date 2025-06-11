@@ -15,6 +15,7 @@ private:
 	// コンポーネントの一意の識別子
 	UID uid = -1;
 protected:
+	std::string m_Name = "Component"; // コンポーネントの名前
 	// 所属するGameObject
 	GameObject* m_gameObject = nullptr;
 
@@ -34,6 +35,10 @@ public:
 	virtual void Init();
 	virtual void Uninit();
 	virtual void Update(float dt);
+
+	// コンポーネントの名前を設定・取得
+	void SetName(std::string name){ m_Name = name; }
+	std::string GetName() const { return m_Name; }
 
 	template<class T>
 	T &GetComponentRef();
