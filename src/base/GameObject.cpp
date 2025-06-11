@@ -29,7 +29,7 @@ void GameObject::InitBase() {
 void GameObject::UninitBase() {
     Scene* scene = halgame->GetScene();
     // すべてのComponentを削除
-    for (const auto& [type, uid] : m_ComponentMap) {
+    for (const auto& [name, uid] : m_ComponentMap) {
         scene->RemoveComponent(uid);
     }
     Uninit();

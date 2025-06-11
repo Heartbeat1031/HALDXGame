@@ -28,7 +28,7 @@ class GameObject {
 private:
     // ゲームオブジェクトの一意の識別子
     UID uid = -1;
-    std::unordered_map<std::type_index, UID> m_ComponentMap;
+    std::unordered_map<std::string, UID> m_ComponentMap;
 
 protected:
     // GameObjectの初期化
@@ -81,15 +81,21 @@ public:
 
     template<class T>
     T *GetComponent() const;
-};
 
+    template<class T>
+    T *GetComponent(std::string name) const;
+    const std::unordered_map<std::string, unsigned> &GetComponentMap() const {
+        return m_ComponentMap;
+    }
+};
 
 template<typename T, typename... Args>
 T &GameObject::AddComponent(Args &&... args) {
     // TはComponentの派生クラスである必要があります
-    static_assert(std::is_base_of<Component, T>::value, "T は Component の派生クラスでなければなりません");
+    static_assert(std::is_base_of_v<Component, T>, "T は Component の派生クラスでなければなりません");
+    std::string name = static_cast<std::string>(typeid(T).name()).substr(6);
     // 同じタイプのコンポーネントがすでに存在するか確認
-    auto it = m_ComponentMap.find(std::type_index(typeid(T)));
+    auto it = m_ComponentMap.find(name);
     if (it != m_ComponentMap.end()) {
         // すでに同じタイプのコンポーネントが存在する場合はエラーを出す
         assert(false && "ゲームオブジェクトに重複コンポーネントが追加されました");
@@ -100,19 +106,19 @@ T &GameObject::AddComponent(Args &&... args) {
     // Tのインスタンスを作成し、GameObjectに追加する
     T &component = scene->AddComponent<T>(this, std::forward<Args>(args)...);
     // コンポーネントのUIDをキャッシュする
-    m_ComponentMap[std::type_index(typeid(T))] = component.GetUID();
+    m_ComponentMap[name] = component.GetUID();
     return component;
 }
 
 template<typename T>
 bool GameObject::HasComponent() const {
-    auto it = m_ComponentMap.find(std::type_index(typeid(T)));
+    auto it = m_ComponentMap.find(static_cast<std::string>(typeid(T).name()).substr(6));
     return it != m_ComponentMap.end();
 }
 
 template<typename T>
 T &GameObject::GetComponentRef() const {
-    auto it = m_ComponentMap.find(std::type_index(typeid(T)));
+    auto it = m_ComponentMap.find(static_cast<std::string>(typeid(T).name()).substr(6));
     if (it == m_ComponentMap.end()) {
         throw std::runtime_error("ゲームオブジェクトにコンポーネントが見つかりません");
     }
@@ -121,7 +127,16 @@ T &GameObject::GetComponentRef() const {
 
 template<typename T>
 T *GameObject::GetComponent() const {
-    auto it = m_ComponentMap.find(std::type_index(typeid(T)));
+    auto it = m_ComponentMap.find(static_cast<std::string>(typeid(T).name()).substr(6));
+    if (it == m_ComponentMap.end()) {
+        return nullptr; // コンポーネントが見つからない場合はnullptrを返す
+    }
+    return halgame->GetScene()->GetComponent<T>(it->second);
+}
+
+template<class T>
+T * GameObject::GetComponent(std::string name) const {
+    auto it = m_ComponentMap.find(name);
     if (it == m_ComponentMap.end()) {
         return nullptr; // コンポーネントが見つからない場合はnullptrを返す
     }
