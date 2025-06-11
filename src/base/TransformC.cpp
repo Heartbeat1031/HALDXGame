@@ -21,15 +21,15 @@ TransformC::TransformC()
 void TransformC::OnInspectorGUI() {
     Component::OnInspectorGUI();
     float posArr[3] = { m_localPosition.x, m_localPosition.y, m_localPosition.z };
-    if (ImGui::InputFloat3("Position", posArr)) {
+    if (ImGui::DragFloat3("Position", posArr, 0.1f)) {
         SetLocalPosition(DirectX::SimpleMath::Vector3(posArr[0], posArr[1], posArr[2]));
     }
     float rotArr[3] = { m_localEuler.x, m_localEuler.y, m_localEuler.z };
-    if (ImGui::InputFloat3("Rotation", rotArr)) {
+    if (ImGui::DragFloat3("Rotation", rotArr, 0.1f)) {
         SetLocalRotationEuler(DirectX::SimpleMath::Vector3(rotArr[0], rotArr[1], rotArr[2]));
     }
     float scaleArr[3] = { m_localScale.x, m_localScale.y, m_localScale.z };
-    if (ImGui::InputFloat3("Scale", scaleArr)) {
+    if (ImGui::DragFloat3("Scale", scaleArr, 0.1f)) {
         SetLocalScale(DirectX::SimpleMath::Vector3(scaleArr[0], scaleArr[1], scaleArr[2]));
     }
 }
