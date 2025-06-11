@@ -69,8 +69,8 @@ void SceneHierarchy::DrawInspector(UID selectedid) {
     }
     GameObject *go = transform_c->GetGameObject();
     ImGui::Text("名前 : %s (%d)", go->GetName().c_str(), go->GetUID());
+    if (ImGui::CollapsingHeader("TransformC", ImGuiTreeNodeFlags_DefaultOpen)) {
+        transform_c->OnInspectorGUI();
+    }
 
-    // ------ Transform ------
-    ImGui::Text("Transform");
-    transform_c->OnInspectorGUI();
 }
