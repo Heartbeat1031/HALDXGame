@@ -27,4 +27,6 @@ public:
     void SetRotationEuler(DirectX::SimpleMath::Vector3 eulerRadians);
     DirectX::SimpleMath::Vector3 GetPosition() const;
     DirectX::SimpleMath::Vector3 GetRotationEuler() const;
+
+    void OnInspectorGUI() override;
 };

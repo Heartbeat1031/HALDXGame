@@ -52,19 +52,9 @@ void BoxCollisionC::Uninit() {
 
 void BoxCollisionC::SetPosition(DirectX::SimpleMath::Vector3 position) {
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
-
-    // 現在の回転を取得
-    Quat newRotation = bodyInterface.GetRotation(m_bodyID);
-    Quaternion dxRot(newRotation.GetX(), newRotation.GetY(), newRotation.GetZ(), newRotation.GetW());
-
-    // オフセットをワールド空間に変換
-    Vector3 worldOffset = Vector3::Transform(m_offset, dxRot);
-
-    // 新しい位置を設定
-    Vector3 bodyPos = position + worldOffset;
     bodyInterface.SetPosition(
         m_bodyID,
-        RVec3(bodyPos.x, bodyPos.y, bodyPos.z),
+        RVec3(position.x, position.y, position.z),
         JPH::EActivation::Activate
     );
 }
@@ -86,16 +76,7 @@ void BoxCollisionC::SetRotationEuler(DirectX::SimpleMath::Vector3 eulerRadians) 
 DirectX::SimpleMath::Vector3 BoxCollisionC::GetPosition() const {
     auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
     RVec3 pos = bodyInterface.GetCenterOfMassPosition(m_bodyID);
-
-    // 現在の回転を取得
-    Quat rot = bodyInterface.GetRotation(m_bodyID);
-    Quaternion dxRot(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
-
-    // オフセットをワールド空間に変換
-    Vector3 worldOffset = Vector3::Transform(m_offset, dxRot);
-
-    // 修正された位置を返す
-    return Vector3(pos.GetX(), pos.GetY(), pos.GetZ()) - worldOffset;
+    return Vector3(pos.GetX(), pos.GetY(), pos.GetZ());
 }
 
 DirectX::SimpleMath::Vector3 BoxCollisionC::GetRotationEuler() const {
@@ -113,6 +94,26 @@ DirectX::SimpleMath::Vector3 BoxCollisionC::GetRotationEuler() const {
                             1.0f - 2.0f * (dxRot.y * dxRot.y + dxRot.z * dxRot.z));
 
     return DirectX::SimpleMath::Vector3(pitch, yaw, roll);
+}
+
+void BoxCollisionC::OnInspectorGUI() {
+    Component::OnInspectorGUI();
+    DirectX::SimpleMath::Vector3 postion = GetPosition();
+    float posArr[3] = {postion.x, postion.y, postion.z};
+    if (ImGui::DragFloat3("Position", posArr, 0.1f)) {
+        SetPosition(DirectX::SimpleMath::Vector3(posArr[0], posArr[1], posArr[2]));
+    }
+
+    DirectX::SimpleMath::Vector3 rotation = GetRotationEuler();
+    float rotArr[3] = {rotation.x, rotation.y, rotation.z};
+    if (ImGui::DragFloat3("Rotation", rotArr, 0.1f)) {
+        SetRotationEuler(DirectX::SimpleMath::Vector3(rotArr[0], rotArr[1], rotArr[2]));
+    }
+
+    float offsetArr[3] = {m_offset.x, m_offset.y, m_offset.z};
+    if (ImGui::DragFloat3("Offset", offsetArr, 0.1f)) {
+        SetOffset(DirectX::SimpleMath::Vector3(offsetArr[0], offsetArr[1], offsetArr[2]));
+    }
 }
 
 void BoxCollisionC::Update(float dt) {

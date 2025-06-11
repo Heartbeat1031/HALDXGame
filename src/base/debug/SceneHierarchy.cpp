@@ -67,6 +67,7 @@ void SceneHierarchy::DrawInspector(UID selectedid) {
         ImGui::Text("GameObject not found.");
         return;
     }
+
     GameObject *go = transform_c->GetGameObject();
     ImGui::Text("名前 : %s (%d)", go->GetName().c_str(), go->GetUID());
     const std::unordered_map<std::string, UID>& mymap = go->GetComponentMap();
