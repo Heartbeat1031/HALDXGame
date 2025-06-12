@@ -15,7 +15,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
     // ゲームインスタンスを作成します
-    halgame = new Game(hInstance, L"Meshes", 1280, 720);
+    halgame = new Game(hInstance, L"HalGame", 1280, 720);
     // ゲームインスタンスを初期化します
     if( !halgame->Init() ) {
         return 0;

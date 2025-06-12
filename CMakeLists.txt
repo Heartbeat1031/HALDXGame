@@ -3,62 +3,62 @@ cmake_minimum_required(VERSION 3.20)
 project(HALDXGame)
 
 if (WIN32)
-  add_definitions(-DUNICODE -D_UNICODE)
-endif()
+    add_definitions(-DUNICODE -D_UNICODE)
+endif ()
 
 # C++17 標準
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
 #add_definitions(-D_SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
 if (WIN7_SYSTEM_SUPPORT MATCHES ON)
-  add_compile_definitions(_WIN32_WINNT=0x601)
-endif()
+    add_compile_definitions(_WIN32_WINNT=0x601)
+endif ()
 
 # 编译器の設定
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # MSVC デバッグ情報の設定
-if(POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
+if (POLICY CMP0141)
+    cmake_policy(SET CMP0141 NEW)
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+endif ()
 
 # CMake のバージョンを指定
 set(BUILD_DIRECTXTK_WERROR OFF CACHE BOOL "" FORCE)
 set(USE_DIRECTX_MATH TRUE CACHE BOOL "" FORCE)
 
 file(GLOB HLSL_FILES shaders/*.hlsl shaders/*.hlsli)
-foreach(HLSL_FILE ${HLSL_FILES})
-  get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
-  get_filename_component(HLSL_FBASENAME_WE ${HLSL_FILE} NAME_WE)
-  string(CONCAT HLSL_FNAME_WE ${HLSL_FDIR} / ${HLSL_FBASENAME_WE})
+foreach (HLSL_FILE ${HLSL_FILES})
+    get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)
+    get_filename_component(HLSL_FBASENAME_WE ${HLSL_FILE} NAME_WE)
+    string(CONCAT HLSL_FNAME_WE ${HLSL_FDIR} / ${HLSL_FBASENAME_WE})
 
-  string(LENGTH ${HLSL_FBASENAME_WE} LEN_FNAME_WE)
-  math(EXPR LEN_FNAME_WE "${LEN_FNAME_WE}-2")
-  string(SUBSTRING ${HLSL_FBASENAME_WE} ${LEN_FNAME_WE} 2 ENTRY_POINT)
-  string(TOLOWER ${ENTRY_POINT} SHADER_TYPE)
+    string(LENGTH ${HLSL_FBASENAME_WE} LEN_FNAME_WE)
+    math(EXPR LEN_FNAME_WE "${LEN_FNAME_WE}-2")
+    string(SUBSTRING ${HLSL_FBASENAME_WE} ${LEN_FNAME_WE} 2 ENTRY_POINT)
+    string(TOLOWER ${ENTRY_POINT} SHADER_TYPE)
 
-  if ("${SHADER_TYPE}" STREQUAL "vs")
-    set(SHADER_TYPE "Vertex")
-  elseif("${SHADER_TYPE}" STREQUAL "hs")
-    set(SHADER_TYPE "Hull")
-  elseif("${SHADER_TYPE}" STREQUAL "ds")
-    set(SHADER_TYPE "Domain")
-  elseif("${SHADER_TYPE}" STREQUAL "gs")
-    set(SHADER_TYPE "Geometry")
-  elseif("${SHADER_TYPE}" STREQUAL "ps")
-    set(SHADER_TYPE "Pixel")
-  elseif("${SHADER_TYPE}" STREQUAL "cs")
-    set(SHADER_TYPE "Compute")
-  endif()
-  set_source_files_properties(${HLSL_FILE} PROPERTIES
-          VS_SHADER_OBJECT_FILE_NAME shaders/${HLSL_FBASENAME_WE}.cso
-          VS_SHADER_TYPE ${SHADER_TYPE}
-          VS_SHADER_MODEL 5.0
-          VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
-          VS_SHADER_DISABLE_OPTIMIZATIONS $<$<CONFIG:Debug>:true>
-          VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
-endforeach()
+    if ("${SHADER_TYPE}" STREQUAL "vs")
+        set(SHADER_TYPE "Vertex")
+    elseif ("${SHADER_TYPE}" STREQUAL "hs")
+        set(SHADER_TYPE "Hull")
+    elseif ("${SHADER_TYPE}" STREQUAL "ds")
+        set(SHADER_TYPE "Domain")
+    elseif ("${SHADER_TYPE}" STREQUAL "gs")
+        set(SHADER_TYPE "Geometry")
+    elseif ("${SHADER_TYPE}" STREQUAL "ps")
+        set(SHADER_TYPE "Pixel")
+    elseif ("${SHADER_TYPE}" STREQUAL "cs")
+        set(SHADER_TYPE "Compute")
+    endif ()
+    set_source_files_properties(${HLSL_FILE} PROPERTIES
+            VS_SHADER_OBJECT_FILE_NAME shaders/${HLSL_FBASENAME_WE}.cso
+            VS_SHADER_TYPE ${SHADER_TYPE}
+            VS_SHADER_MODEL 5.0
+            VS_SHADER_ENTRYPOINT ${ENTRY_POINT}
+            VS_SHADER_DISABLE_OPTIMIZATIONS $<$<CONFIG:Debug>:true>
+            VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
+endforeach ()
 
 # 每次构建时都复制 assets 文件夹
 set(ASSETS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
@@ -124,11 +124,11 @@ target_include_directories(HALDXGame PRIVATE
 )
 
 file(GLOB_RECURSE ALL_INCLUDE_DIRS LIST_DIRECTORIES true "${PROJECT_SOURCE_DIR}/src/*")
-foreach(dir ${ALL_INCLUDE_DIRS})
-  if(IS_DIRECTORY ${dir})
-    target_include_directories(HALDXGame PRIVATE ${dir})
-  endif()
-endforeach()
+foreach (dir ${ALL_INCLUDE_DIRS})
+    if (IS_DIRECTORY ${dir})
+        target_include_directories(HALDXGame PRIVATE ${dir})
+    endif ()
+endforeach ()
 
 add_dependencies(HALDXGame copy_assets)
 set_target_properties(HALDXGame PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
