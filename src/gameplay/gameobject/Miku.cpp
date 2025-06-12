@@ -19,7 +19,7 @@ Miku::~Miku() {
 void Miku::Init() {
     GameObject::Init();
     // モデルコンポーネントを追加し、モデルをロードします
-    AddComponent<ModelC>("assets/models/Ch46_nonPBR.fbx");
+    AddComponent<ModelC>("assets/models/Player/Ch46_nonPBR.fbx");
     AddComponent<MixamorigBoneC>();
 
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
