@@ -14,7 +14,11 @@ SceneHierarchy::SceneHierarchy() {
 }
 
 void SceneHierarchy::Draw() {
-    ImGui::Begin("Hierarchy");
+    if (inited == false) {
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y));
+    }
+    ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoMove);
     GameObject *root = halgame->GetScene()->GetRoot();
     if (root != nullptr) {
         UID rootid = root->GetUID();
@@ -23,10 +27,15 @@ void SceneHierarchy::Draw() {
         ImGui::Text("No Scene Loaded");
     }
     ImGui::End();
+    if (inited == false) {
+        ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 300, 0));
+        ImGui::SetNextWindowSize(ImVec2(300, ImGui::GetIO().DisplaySize.y));
+    }
     // 选中节点的详细信息
-    ImGui::Begin("Inspector");
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoMove);
     DrawInspector(m_selectedid);
     ImGui::End();
+    inited = true;
 }
 
 void SceneHierarchy::DrawSceneNode(const UID rootid, UID &selectedid) {

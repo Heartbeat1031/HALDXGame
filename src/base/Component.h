@@ -38,7 +38,7 @@ public:
 	virtual void Update(float dt);
 
 	// コンポーネントの名前を設定・取得
-	void SetName(std::string name){ m_Name = name; }
+	void SetName(const std::string &name){ m_Name = name; }
 	std::string GetName() const { return m_Name; }
 
 	template<class T>

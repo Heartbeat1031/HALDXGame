@@ -3,7 +3,7 @@
 //
 
 #include "Game.h"
-#include "TestSceen.h"
+#include "TestScene.h"
 #include "Jolt/RegisterTypes.h"
 
 // 游戏实例
@@ -68,7 +68,7 @@ bool Game::Init() {
     animationManager.LoadAnimationClips("assets/animation/Walking.fbx", {"Walking"});
 
     // テストシーンを読み込む
-    SetScene<TestSceen>();
+    SetScene<TestScene>();
     return true;
 }
 

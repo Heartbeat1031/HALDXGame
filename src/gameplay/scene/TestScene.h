@@ -11,7 +11,7 @@
 //----------------------------------------------------------------//
 
 // サンプルのテストシーン
-class TestSceen : public Scene{
+class TestScene : public Scene{
 public:
     Miku *miku = nullptr;
 

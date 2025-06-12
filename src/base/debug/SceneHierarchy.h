@@ -7,6 +7,7 @@
 
 class SceneHierarchy {
 private:
+    bool inited = false;
      UID m_selectedid = -1;
     void DrawSceneNode(UID rootid, UID &selectedid);
 public:

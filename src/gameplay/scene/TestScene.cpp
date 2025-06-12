@@ -2,7 +2,7 @@
 // Created by lclcl on 25-5-22.
 //
 
-#include "TestSceen.h"
+#include "TestScene.h"
 
 #include "BoxCollisionC.h"
 #include "Global.h"
@@ -13,7 +13,7 @@
 #include "TransformC.h"
 #include <DirectXMath.h>
 
-void TestSceen::Init() {
+void TestScene::Init() {
     // 地面を追加するサンプル
     auto &ground = AddGameObject<GameObject>();
     // 地面のモデルコンポーネントを追加します
@@ -25,7 +25,7 @@ void TestSceen::Init() {
         JPH::EMotionType::Static // 静的な物体
     );
     ground.GetComponentRef<BoxCollisionC>().SetOffset(Vector3(0, -2, 0));
-    ground.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 1, 0));
+    ground.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, -1, 0));
 
     // ゲームオブジェクトを追加します
     miku = &AddGameObject<Miku>();
@@ -36,7 +36,7 @@ void TestSceen::Init() {
     house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 }
 
-void TestSceen::Update() {
+void TestScene::Update() {
     if (ImGui::Begin("メッシュ")) {
         ImGui::Text("三人称モード");
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
@@ -72,5 +72,5 @@ void TestSceen::Update() {
     }
 }
 
-void TestSceen::Uninit() {
+void TestScene::Uninit() {
 }
