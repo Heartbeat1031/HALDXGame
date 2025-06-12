@@ -47,9 +47,9 @@ DirectX::XMMATRIX CalcInterpolatedBoneMatrix(
         DirectX::XMStoreFloat4(&out, vout);
         return out;
     };
-    DirectX::XMFLOAT3 trans = lerp3(prev->translation, next->translation, (float) t);
-    DirectX::XMFLOAT3 scale = lerp3(prev->scaling, next->scaling, (float) t);
-    DirectX::XMFLOAT4 rot = slerp4(prev->rotation, next->rotation, (float) t);
+    DirectX::XMFLOAT3 trans = lerp3(prev->translation, next->translation, static_cast<float>(t));
+    DirectX::XMFLOAT3 scale = lerp3(prev->scaling, next->scaling, static_cast<float>(t));
+    DirectX::XMFLOAT4 rot = slerp4(prev->rotation, next->rotation, static_cast<float>(t));
 
     // 组装为变换矩阵
     return DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
@@ -57,7 +57,7 @@ DirectX::XMMATRIX CalcInterpolatedBoneMatrix(
            DirectX::XMMatrixTranslation(trans.x, trans.y, trans.z);
 }
 
-AnimatorC::AnimatorC(std::string defaultAnim) {
+AnimatorC::AnimatorC(const std::string &defaultAnim) {
     m_animatorName = defaultAnim;
 }
 

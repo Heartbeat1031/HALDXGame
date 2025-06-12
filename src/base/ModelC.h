@@ -28,6 +28,6 @@ public:
     void Uninit() override;
     UID GetHandle() const { return handle; }
     // 获取模型对象
-    ModelObject &GetModelObject();
+    ModelObject &GetModelObject() const;
 
 };

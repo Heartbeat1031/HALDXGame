@@ -3,12 +3,10 @@
 //
 
 #pragma once
-#include <DirectXMath.h>
 #include <Jolt/Jolt.h>
 #include <wrl/client.h>
 
 #include "Buffer.h"
-#include "PrimitiveBatch.h"
 #include "Jolt/Renderer/DebugRendererSimple.h"
 
 

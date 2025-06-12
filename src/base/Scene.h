@@ -73,12 +73,12 @@ public:
 
 template<typename T, typename... Args>
 T &Scene::AddGameObject(Args &&... args) {
-    static_assert(std::is_base_of<GameObject, T>::value, "T は GameObject を継承する必要があります。");
+    static_assert(std::is_base_of_v<GameObject, T>, "T は GameObject を継承する必要があります。");
     std::unique_ptr<T> gameObject = std::make_unique<T>(std::forward<Args>(args)...);
     T *rawPtr = gameObject.get();
     UID handle = m_GameObjectStorage.Add(std::unique_ptr<GameObject>(std::move(gameObject)));
     rawPtr->SetUID(handle);
-    rootTransform->AddChild(rawPtr->GetComponent<TransformC>());
+    rootTransform->AddChild(rawPtr->template GetComponent<TransformC>());
     // typeid(T).name() の先頭の "class " を削除
     std::string name = static_cast<std::string>(typeid(T).name()).substr(6);
     rawPtr->SetName(name);
@@ -88,7 +88,7 @@ T &Scene::AddGameObject(Args &&... args) {
 
 template<typename T>
 T &Scene::GetGameObjectRef(UID handle) {
-    static_assert(std::is_base_of<GameObject, T>::value, "T は GameObject を継承する必要があります。");
+    static_assert(std::is_base_of_v<GameObject, T>, "T は GameObject を継承する必要があります。");
     GameObject &base = m_GameObjectStorage.Get(handle);
     // 这里使用的强制转换, 虽然有点费效率, 但是优化费劲,调用频率不高, 所以暂时放弃优化. 懒!!
     // ここでは強制キャストを使用しています。効率は少し低下しますが、最適化は面倒で、呼び出し頻度も高くないため、今のところ最適化は行いません。

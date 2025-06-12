@@ -24,7 +24,7 @@ private:
     UID m_modelHandle = -1;
     ModelObject* m_modelObject = nullptr;
 public:
-    explicit AnimatorC(std::string defaultAnim = "Idle");
+    explicit AnimatorC(const std::string &defaultAnim = "Idle");
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;

@@ -4,8 +4,6 @@
 
 #include "ModelC.h"
 
-#include <iostream>
-
 #include "AnimatorC.h"
 #include "GameObject.h"
 #include "Global.h"
@@ -33,7 +31,7 @@ void ModelC::Uninit() {
     halgame->RemoveModel(handle);
 }
 
-ModelObject &ModelC::GetModelObject() {
+ModelObject &ModelC::GetModelObject() const {
     return halgame->GetModelObject(handle);
 }
 
