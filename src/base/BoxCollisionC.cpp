@@ -100,13 +100,13 @@ void BoxCollisionC::OnInspectorGUI() {
     Component::OnInspectorGUI();
     DirectX::SimpleMath::Vector3 postion = GetPosition();
     float posArr[3] = {postion.x, postion.y, postion.z};
-    if (ImGui::DragFloat3("Pos", posArr, 0.1f)) {
+    if (ImGui::DragFloat3("BoxPos", posArr, 0.1f)) {
         SetPosition(DirectX::SimpleMath::Vector3(posArr[0], posArr[1], posArr[2]));
     }
 
     DirectX::SimpleMath::Vector3 rotation = GetRotationEuler();
     float rotArr[3] = {rotation.x, rotation.y, rotation.z};
-    if (ImGui::DragFloat3("Rot", rotArr, 0.1f)) {
+    if (ImGui::DragFloat3("BoxRot", rotArr, 0.1f)) {
         SetRotationEuler(DirectX::SimpleMath::Vector3(rotArr[0], rotArr[1], rotArr[2]));
     }
 
