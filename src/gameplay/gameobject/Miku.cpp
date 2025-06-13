@@ -20,7 +20,7 @@ void Miku::Init() {
     GameObject::Init();
     // モデルコンポーネントを追加し、モデルをロードします
     AddComponent<ModelC>("assets/models/player/man.fbx");
-    //AddComponent<MixamorigBoneC>();
+    AddComponent<MixamorigBoneC>();
 
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
