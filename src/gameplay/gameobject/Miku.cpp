@@ -19,12 +19,12 @@ Miku::~Miku() {
 void Miku::Init() {
     GameObject::Init();
     // モデルコンポーネントを追加し、モデルをロードします
-    AddComponent<ModelC>("assets/models/Player/Ch46_nonPBR.fbx");
-    AddComponent<MixamorigBoneC>();
+    AddComponent<ModelC>("assets/models/player/man.fbx");
+    //AddComponent<MixamorigBoneC>();
 
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
-    GetComponentRef<TransformC>().SetLocalScale(Vector3(0.03f, 0.03f, 0.03f));
+    GetComponentRef<TransformC>().SetLocalScale(Vector3(0.025f, 0.025f, 0.025f));
      BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
      boxCollision.SetOffset(Vector3(0, 2, 0));
     //AddComponent<MixamoRagdollC>();
