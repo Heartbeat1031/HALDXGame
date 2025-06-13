@@ -4,6 +4,7 @@
 
 #include "House.h"
 
+#include "AnimatorC.h"
 #include "BoxCollisionC.h"
 #include "ModelC.h"
 #include "TransformC.h"
@@ -17,10 +18,12 @@ House::~House() {
 void House::Init() {
     GameObject::Init();
     // ModelC コンポーネントを追加し、モデルをロードします
-    AddComponent<ModelC>("assets\\models\\house.obj");
+    AddComponent<ModelC>("assets/models/player/Idol.fbx");
     // TransformC コンポーネントを取得し、ローカル位置を設定します
-    GetComponentRef<TransformC>().SetLocalScale(Vector3(0.015f, 0.015f, 0.015f));
-    AddComponent<BoxCollisionC>(Vector3(2, 2, 2), JPH::EMotionType::Dynamic).SetOffset(Vector3(0, 2, 0));
+    AddComponent<AnimatorC>("Singing");
+    GetComponentRef<TransformC>().SetLocalScale(Vector3(0.025f, 0.025f, 0.025f));
+    BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
+    boxCollision.SetOffset(Vector3(0, 2, 0));
 }
 
 void House::Uninit() {

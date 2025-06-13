@@ -66,6 +66,7 @@ bool Game::Init() {
     // アニメを追加
     animationManager.LoadAnimationClips("assets/animation/Idle.fbx", {"Idle"});
     animationManager.LoadAnimationClips("assets/animation/Walking.fbx", {"Walking"});
+    animationManager.LoadAnimationClips("assets/animation/Singing.fbx", {"Singing"});
 
     // テストシーンを読み込む
     SetScene<TestScene>();
