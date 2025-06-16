@@ -11,18 +11,18 @@
 #include <LightHelper.h>
 #include <vector>
 
-class BasicEffect : public IEffect, public IEffectTransform,
+class BaseEffect : public IEffect, public IEffectTransform,
     public IEffectMaterial, public IEffectMeshData
 {
 public:
-    BasicEffect();
-    ~BasicEffect() override;
+    BaseEffect();
+    ~BaseEffect() override;
 
-    BasicEffect(BasicEffect&& moveFrom) noexcept;
-    BasicEffect& operator=(BasicEffect&& moveFrom) noexcept;
+    BaseEffect(BaseEffect&& moveFrom) noexcept;
+    BaseEffect& operator=(BaseEffect&& moveFrom) noexcept;
 
     // シングルトンの取得
-    static BasicEffect& Get();
+    static BaseEffect& Get();
 
     // 必要なリソースの初期化
     bool InitAll(ID3D11Device* device);

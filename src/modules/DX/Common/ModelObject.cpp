@@ -148,7 +148,7 @@ void ModelObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
         if (pEffectTransform)
             pEffectTransform->SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
 
-        if (auto pBasic = dynamic_cast<BasicEffect*>(&effect))
+        if (auto pBasic = dynamic_cast<BaseEffect*>(&effect))
         {
             if (m_pBoneMatrices)
             {

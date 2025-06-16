@@ -29,7 +29,7 @@ bool GameApp::Init() {
     // 必ず最初にすべてのレンダリングステートを初期化し、以下のエフェクトで使用できるようにする
     RenderStates::InitAll(m_pd3dDevice.Get());
 
-    if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
+    if (!m_BaseEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
     // Primitive batch for simple geometry
@@ -59,10 +59,10 @@ bool GameApp::Init() {
     camera->SetRotationX(XM_PIDIV4);
     camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
-    m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
-    m_BasicEffect.SetViewMatrix(camera->GetViewMatrixXM());
-    m_BasicEffect.SetProjMatrix(camera->GetProjMatrixXM());
-    m_BasicEffect.SetEyePos(camera->GetPosition());
+    m_BaseEffect.SetWorldMatrix(XMMatrixIdentity());
+    m_BaseEffect.SetViewMatrix(camera->GetViewMatrixXM());
+    m_BaseEffect.SetProjMatrix(camera->GetProjMatrixXM());
+    m_BaseEffect.SetEyePos(camera->GetPosition());
 
     // ******************
     // 変更されない値の初期化
@@ -74,7 +74,7 @@ bool GameApp::Init() {
     dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     dirLight.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
-    m_BasicEffect.SetDirLight(0, dirLight);
+    m_BaseEffect.SetDirLight(0, dirLight);
 
     // ポイントライト（点光源）
     PointLight pointLight{};
@@ -84,7 +84,7 @@ bool GameApp::Init() {
     pointLight.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     pointLight.att = XMFLOAT3(0.0f, 0.1f, 0.0f);
     pointLight.range = 30.0f;
-    m_BasicEffect.SetPointLight(0, pointLight);
+    m_BaseEffect.SetPointLight(0, pointLight);
 
     // ******************
     // ゲームオブジェクトの初期化（サブクラスに委ねる）
@@ -103,8 +103,8 @@ void GameApp::Update(float dt) {
 
 void GameApp::PostUpdate(float dt) {
     // フレーム更新後にビュー行列とカメラ位置を更新
-    m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
-    m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
+    m_BaseEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
+    m_BaseEffect.SetEyePos(m_pCamera->GetPosition());
 }
 
 void GameApp::Draw() {
@@ -128,11 +128,11 @@ void GameApp::Draw() {
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
     // 描画設定の適用
-    m_BasicEffect.SetRenderDefault();
+    m_BaseEffect.SetRenderDefault();
 
     // モデル描画キュー
     m_ModelObjectStorage.ForEachActive([this](UID id, ModelObject &modelObject) {
-        modelObject.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
+        modelObject.Draw(m_pd3dImmediateContext.Get(), m_BaseEffect);
     });
 
     // プリミティブ描画
@@ -177,7 +177,7 @@ void GameApp::OnResize() {
     if (m_pCamera != nullptr) {
         m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
         m_pCamera->SetViewPort(0.0f, 0.0f, (float) m_ClientWidth, (float) m_ClientHeight);
-        m_BasicEffect.SetProjMatrix(m_pCamera->GetProjMatrixXM());
+        m_BaseEffect.SetProjMatrix(m_pCamera->GetProjMatrixXM());
     }
 }
 

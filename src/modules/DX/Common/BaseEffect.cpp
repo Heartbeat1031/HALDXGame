@@ -18,7 +18,7 @@ static constexpr size_t MAX_BONES = 256;
 //
 // BasicEffect::Impl は BasicEffect の定義よりも先に必要
 //
-class BasicEffect::Impl
+class BaseEffect::Impl
 {
 public:
     // 明示的に指定が必要
@@ -47,38 +47,38 @@ public:
 namespace
 {
     // BasicEffect シングルトンインスタンス
-    BasicEffect* g_pInstance = nullptr;
+    BaseEffect* g_pInstance = nullptr;
 }
 
-BasicEffect::BasicEffect()
+BaseEffect::BaseEffect()
 {
     if (g_pInstance)
         throw std::exception("BasicEffect is a singleton!");
     g_pInstance = this;
-    pImpl = std::make_unique<BasicEffect::Impl>();
+    pImpl = std::make_unique<BaseEffect::Impl>();
 }
 
-BasicEffect::~BasicEffect() = default;
+BaseEffect::~BaseEffect() = default;
 
-BasicEffect::BasicEffect(BasicEffect&& moveFrom) noexcept
+BaseEffect::BaseEffect(BaseEffect&& moveFrom) noexcept
 {
     pImpl.swap(moveFrom.pImpl);
 }
 
-BasicEffect& BasicEffect::operator=(BasicEffect&& moveFrom) noexcept
+BaseEffect& BaseEffect::operator=(BaseEffect&& moveFrom) noexcept
 {
     pImpl.swap(moveFrom.pImpl);
     return *this;
 }
 
-BasicEffect& BasicEffect::Get()
+BaseEffect& BaseEffect::Get()
 {
     if (!g_pInstance)
         throw std::exception("BasicEffect needs an instance!");
     return *g_pInstance;
 }
 
-bool BasicEffect::InitAll(ID3D11Device* device)
+bool BaseEffect::InitAll(ID3D11Device* device)
 {
     if (!device)
         return false;
@@ -131,22 +131,22 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     return true;
 }
 
-void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
+void XM_CALLCONV BaseEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
     XMStoreFloat4x4(&pImpl->m_World, W);
 }
 
-void XM_CALLCONV BasicEffect::SetViewMatrix(DirectX::FXMMATRIX V)
+void XM_CALLCONV BaseEffect::SetViewMatrix(DirectX::FXMMATRIX V)
 {
     XMStoreFloat4x4(&pImpl->m_View, V);
 }
 
-void XM_CALLCONV BasicEffect::SetProjMatrix(DirectX::FXMMATRIX P)
+void XM_CALLCONV BaseEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 {
     XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void BasicEffect::SetMaterial(const Material& material)
+void BaseEffect::SetMaterial(const Material& material)
 {
     TextureManager& tm = TextureManager::Get();
 
@@ -162,7 +162,7 @@ void BasicEffect::SetMaterial(const Material& material)
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
-MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
+MeshDataInput BaseEffect::GetInputData(const MeshData& meshData)
 {
     MeshDataInput input;
     input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
@@ -197,31 +197,31 @@ MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
     return input;
 }
 
-void BasicEffect::SetDirLight(uint32_t pos, const DirectionalLight& dirLight)
+void BaseEffect::SetDirLight(uint32_t pos, const DirectionalLight& dirLight)
 {
     // 指定位置にディレクショナルライトを設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_DirLight")->SetRaw(&dirLight, (sizeof dirLight) * pos, sizeof dirLight);
 }
 
-void BasicEffect::SetPointLight(uint32_t pos, const PointLight& pointLight)
+void BaseEffect::SetPointLight(uint32_t pos, const PointLight& pointLight)
 {
     // 指定位置にポイントライトを設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_PointLight")->SetRaw(&pointLight, (sizeof pointLight) * pos, sizeof pointLight);
 }
 
-void BasicEffect::SetSpotLight(uint32_t pos, const SpotLight& spotLight)
+void BaseEffect::SetSpotLight(uint32_t pos, const SpotLight& spotLight)
 {
     // 指定位置にスポットライトを設定
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_SpotLight")->SetRaw(&spotLight, (sizeof spotLight) * pos, sizeof spotLight);
 }
 
-void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
+void BaseEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
     // 視点位置（カメラ）をシェーダーに渡す
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, reinterpret_cast<const float*>(&eyePos));
 }
 
-void BasicEffect::SetRenderDefault()
+void BaseEffect::SetRenderDefault()
 {
     // デフォルトの描画パスを選択
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Basic");
@@ -229,14 +229,14 @@ void BasicEffect::SetRenderDefault()
     pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
-void BasicEffect::SetRenderSkinned()
+void BaseEffect::SetRenderSkinned()
 {
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Skinned");
     pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexSkinnedLayout;
     pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
-void BasicEffect::SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>& boneMatrices)
+void BaseEffect::SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>& boneMatrices)
 {
     if (!boneMatrices.empty())
     {
@@ -253,7 +253,7 @@ void BasicEffect::SetBoneMatrices(const std::vector<DirectX::XMFLOAT4X4>& boneMa
     }
 }
 
-void BasicEffect::Apply(ID3D11DeviceContext* deviceContext)
+void BaseEffect::Apply(ID3D11DeviceContext* deviceContext)
 {
     // 各種行列の読み込みとトランスポーズ
     XMMATRIX W = XMLoadFloat4x4(&pImpl->m_World);

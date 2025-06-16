@@ -6,7 +6,6 @@
 
 #include "BoxCollisionC.h"
 #include "Global.h"
-#include "ModelObject.h"
 #include "House.h"
 #include "Miku.h"
 #include "ModelC.h"

@@ -22,7 +22,7 @@ class GameApp : public D3DApp
 private:
     TextureManager m_TextureManager;                     // テクスチャマネージャー
     ModelManager m_ModelManager;                         // モデルマネージャー
-    BasicEffect m_BasicEffect;                           // オブジェクト描画用エフェクト管理
+    BaseEffect m_BaseEffect;                           // オブジェクト描画用エフェクト管理
     std::unique_ptr<Depth2D> m_pDepthTexture;            // デプスバッファ
     SoAStorage<ModelObject> m_ModelObjectStorage;        // モデルオブジェクトのストレージ
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_PrimitiveBatch; // プリミティブ描画用
