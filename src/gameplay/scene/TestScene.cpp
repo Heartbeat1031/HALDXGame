@@ -20,10 +20,15 @@ void TestScene::Init() {
     // 地面の座標を設定します
     ground.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
     ground.AddComponent<BoxCollisionC>(
-        Vector3(10, 1, 10), // サイズを設定します
-        JPH::EMotionType::Static // 静的な物体
+        JPH::EMotionType::Static, // 静的な物体
+        Vector3(10, 1, 10) // サイズを設定します
     );
-    ground.GetComponentRef<BoxCollisionC>().SetOffset(Vector3(0, -2, 0));
+    ground.GetComponentRef<BoxCollisionC>().SetOffsetTransform(
+        OffsetTransform{
+            Vector3(0, -2, 0), // 地面の位置オフセット
+            Vector3(0, 0, 0)   // 回転オフセットはなし
+        }
+    );
     ground.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, -1, 0));
 
     // ゲームオブジェクトを追加します

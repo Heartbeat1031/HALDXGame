@@ -25,8 +25,11 @@ void Miku::Init() {
     // アニメーションコンポーネントを追加し、初期アニメーションを設定します
     AddComponent<AnimatorC>("Idle");
     GetComponentRef<TransformC>().SetLocalScale(Vector3(0.025f, 0.025f, 0.025f));
-     BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
-     boxCollision.SetOffset(Vector3(0, 2, 0));
+    BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(JPH::EMotionType::Dynamic, Vector3(1, 2, 1));
+    boxCollision.SetOffsetTransform(OffsetTransform{
+        DirectX::SimpleMath::Vector3(0, 2, 0),
+        DirectX::SimpleMath::Vector3(0, 0, 0)
+    });
     //AddComponent<MixamoRagdollC>();
 }
 
@@ -75,7 +78,7 @@ void Miku::Update(float dt) {
                     0.0f
                 )
             );
-        }else {
+        } else {
             auto &transform = GetComponentRef<TransformC>();
             Vector3 targetPos = transform.GetWorldPosition() + moveDir * 5 * dt;
             transform.SetWorldPosition(targetPos);
@@ -105,7 +108,6 @@ void Miku::Update(float dt) {
             GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
         }
     }
-
 }
 
 void Miku::Uninit() {

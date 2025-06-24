@@ -22,8 +22,11 @@ void House::Init() {
     // TransformC コンポーネントを取得し、ローカル位置を設定します
     AddComponent<AnimatorC>("Singing");
     GetComponentRef<TransformC>().SetLocalScale(Vector3(0.025f, 0.025f, 0.025f));
-    BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>(Vector3(1, 2, 1), JPH::EMotionType::Dynamic);
-    boxCollision.SetOffset(Vector3(0, 2, 0));
+    BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>( JPH::EMotionType::Dynamic, Vector3(1, 2, 1));
+    boxCollision.SetOffsetTransform(OffsetTransform{
+        DirectX::SimpleMath::Vector3(0, 2, 0),
+        DirectX::SimpleMath::Vector3(0, 0, 0)
+    });
 }
 
 void House::Uninit() {
@@ -36,4 +39,3 @@ void House::Update(float dt) {
         GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
     }
 }
-
