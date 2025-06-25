@@ -45,9 +45,6 @@ void ModelC::CheckTransform() {
     if (HasComponent<MixamorigBoneC>()) {
         auto &ragdollC = GetComponentRef<MixamorigBoneC>();
         modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
-    } else if (HasComponent<AnimatorC>()) {
-        auto &animC = GetComponentRef<AnimatorC>();
-        modelObject.SetBoneMatrices(&animC.GetFinalBoneMatrices());
     }
     modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
 }

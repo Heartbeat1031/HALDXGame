@@ -41,6 +41,7 @@ void MixamorigBoneC::Init() {
         transform_c.AddChild(&boneTransform);
         // 骨骼のUIDを保存
         m_boneNameToUID[boneName] = boneObj.GetUID();
+        m_boneNames.push_back(boneName);
         // 骨骼のnodeTransform から位置、回転、スケールを抽出
         DirectX::XMMATRIX mat = DirectX::XMLoadFloat4x4(&boneInfo.nodeTransform);
         DirectX::XMVECTOR scaleVec, rotQuat, transVec;
@@ -76,9 +77,9 @@ void MixamorigBoneC::Init() {
 
 void MixamorigBoneC::Update(float dt) {
     Component::Update(dt);
+    const Model *model = halgame->GetModelObject(GetComponentRef<ModelC>().GetHandle()).GetModel();
     std::function<void (BoneObj *boneObj, DirectX::XMMATRIX parentMat)> updateBone = [&](BoneObj *boneObj, DirectX::XMMATRIX parentMat) {
         std::string boneName = boneObj->GetName();
-        const Model *model = halgame->GetModelObject(GetComponentRef<ModelC>().GetHandle()).GetModel();
         int boneIndex = model->boneNameToIndex.at(boneName);
         const BoneInfo &boneInfo = model->bones[boneIndex];
         TransformC &boneTransform = boneObj->GetComponentRef<TransformC>();
@@ -109,4 +110,8 @@ const BoneObj *MixamorigBoneC::GetBone(const std::string &boneName) const {
     UID uid = it->second;
     BoneObj &boneObj = halgame->GetScene()->GetGameObjectRef<BoneObj>(uid);
     return &boneObj;
+}
+
+const std::vector<std::string> *MixamorigBoneC::GetBoneNames() const {
+    return &m_boneNames;
 }

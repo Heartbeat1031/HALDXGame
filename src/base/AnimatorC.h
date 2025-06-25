@@ -16,13 +16,6 @@ private:
     std::string m_animatorName;
     // 动画播放时间
     double m_currentTime = 0.0;
-    const Model *m_model = nullptr;
-    std::vector<DirectX::XMFLOAT4X4> m_finalBoneMatrices;
-    std::vector<DirectX::XMMATRIX> m_cachedOffset;
-    std::vector<DirectX::XMMATRIX> m_cachedNode;
-    std::vector<int> m_rootBones;
-    UID m_modelHandle = -1;
-    ModelObject* m_modelObject = nullptr;
 public:
     explicit AnimatorC(const std::string &defaultAnim = "Idle");
     void Init() override;
@@ -30,5 +23,4 @@ public:
     void Uninit() override;
 
     void Play(const std::string& animName);
-    std::vector<DirectX::XMFLOAT4X4>& GetFinalBoneMatrices();
 };
