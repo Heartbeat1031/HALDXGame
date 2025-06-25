@@ -69,6 +69,7 @@ public:
     PhysicsSystem *GetPhysicsSystem() const { return mPhysicsSystem; }
 
     HalDebugRenderer *GetDebugRenderer() const { return gHalDebugRenderer; }
+    JoltContactListener &GetContactListener() { return mContactListener; }
 };
 
 // シーンを設定する

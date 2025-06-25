@@ -4,6 +4,8 @@
 
 #include "House.h"
 
+#include <iostream>
+
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
 #include "MixamorigBoneC.h"
@@ -40,4 +42,11 @@ void House::Update(float dt) {
     if (GetComponentRef<TransformC>().GetWorldPosition().y < -10.0f) {
         GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
     }
+}
+void House::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
+    JPH::ContactSettings &ioSettings) {
+    GameObject::OnContactAdded(my, other, inManifold, ioSettings);
+
+    std::cout << "物理オブジェクト " << my.GetGameObject()->GetName() << " が "
+              << other.GetGameObject()->GetName() << " と接触しました。" << std::endl;
 }

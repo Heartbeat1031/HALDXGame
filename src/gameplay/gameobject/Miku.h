@@ -13,4 +13,6 @@ public:
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;
+
+    void OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override;
 };

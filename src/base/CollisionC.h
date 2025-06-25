@@ -10,6 +10,7 @@
 #include "Component.h"
 #include "SimpleMath.h"
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
+#include "Jolt/Physics/Collision/ContactListener.h"
 
 struct OffsetTransform {
     DirectX::SimpleMath::Vector3 positionOffset;

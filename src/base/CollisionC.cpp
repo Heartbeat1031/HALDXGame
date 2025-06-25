@@ -19,11 +19,13 @@ void CollisionC::Init() {
     JPH::BodyCreationSettings settings = GetBodyCreationSettings();
     m_bodyID = bodyInterface.CreateBody(settings)->GetID();
     bodyInterface.AddBody(m_bodyID, JPH::EActivation::Activate);
+    halgame->GetContactListener().AddBodyToUIDMap(m_bodyID, GetUID());
 }
 
 void CollisionC::Uninit() {
     Component::Uninit();
     halgame->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_bodyID);
+    halgame->GetContactListener().RemoveBodyFromUIDMap(m_bodyID);
 }
 
 void CollisionC::Update(float dt) {

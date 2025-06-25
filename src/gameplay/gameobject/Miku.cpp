@@ -4,6 +4,8 @@
 
 #include "Miku.h"
 
+#include <iostream>
+
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
 #include "MixamorigBoneC.h"
@@ -112,4 +114,12 @@ void Miku::Update(float dt) {
 
 void Miku::Uninit() {
     GameObject::Uninit();
+}
+
+void Miku::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
+    JPH::ContactSettings &ioSettings) {
+    GameObject::OnContactAdded(my, other, inManifold, ioSettings);
+
+    std::cout << "物理オブジェクト " << my.GetGameObject()->GetName() << " が "
+              << other.GetGameObject()->GetName() << " と接触しました。" << std::endl;
 }
