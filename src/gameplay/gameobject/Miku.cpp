@@ -8,6 +8,7 @@
 
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
+#include "Bullet.h"
 #include "MixamorigBoneC.h"
 #include "ModelC.h"
 #include "TransformC.h"
@@ -63,6 +64,11 @@ void Miku::Update(float dt) {
     }
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
         moveDir += cameraHorizontal;
+    }
+    if (ImGui::IsKeyDown(ImGuiKey_F)) {
+        Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>(Vector3(1, 0, 0), 1.0f);
+        // TransformC &myTransformC= GetComponentRef<TransformC>();
+        // bullet.GetComponentRef<TransformC>().SetWorldPosition(myTransformC.);
     }
 
     // moveDir がゼロでない場合、移動方向を正規化し、位置を更新

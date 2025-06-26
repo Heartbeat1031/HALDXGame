@@ -12,6 +12,8 @@
 #include "TransformC.h"
 #include <DirectXMath.h>
 
+#include "Bullet.h"
+
 void TestScene::Init() {
     // 地面を追加するサンプル
     auto &ground = AddGameObject<GameObject>();
@@ -39,13 +41,9 @@ void TestScene::Init() {
     auto &house = AddGameObject<House>();
     house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 
-
-    // 地面を追加するサンプル
-    auto& tama = AddGameObject<GameObject>();
-    // 地面のモデルコンポーネントを追加します
-    tama.AddComponent<ModelC>("assets\\models\\Bullet.fbx");
-    tama.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 5, 0));
-    tama.GetComponentRef<TransformC>().SetLocalScale(Vector3(3, 3, 3));
+    // カメラを初期化します
+    Bullet &bullet = AddGameObject<Bullet>(Vector3(1, 0, 0), 1.0f);
+    bullet.GetComponentRef<TransformC>().SetLocalPosition(Vector3(0, 5, 0));
 }
 
 void TestScene::Update() {

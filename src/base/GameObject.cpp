@@ -40,5 +40,10 @@ void GameObject::UpdateBase(float dt) {
     Update(dt);
 }
 
+void GameObject::Destroy() {
+    // ゲームオブジェクトを削除する
+    halgame->GetScene()->RemoveGameObject(uid);
+}
+
 void GameObject::OnInspectorGUI() {
 }
