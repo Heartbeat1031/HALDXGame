@@ -24,7 +24,7 @@ void House::Init() {
     AddComponent<ModelC>("assets/models/player/Idol.fbx");
     AddComponent<MixamorigBoneC>();
     // TransformC コンポーネントを取得し、ローカル位置を設定します
-    AddComponent<AnimatorC>("Singing");
+    AddComponent<AnimatorC>("Dance");
     GetComponentRef<TransformC>().SetLocalScale(Vector3(0.025f, 0.025f, 0.025f));
     BoxCollisionC &boxCollision = AddComponent<BoxCollisionC>( JPH::EMotionType::Dynamic, Vector3(1, 2, 1));
     boxCollision.SetOffsetTransform(OffsetTransform{
