@@ -94,6 +94,9 @@ public:
     virtual void OnContactPersisted(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) {};
     // 以前のフレームで接触していた物体同士が、現在は接触していない場合に呼び出される。
     virtual void OnContactRemoved(CollisionC &my, CollisionC &other) {};
+
+    // インスペクターGUIを描画する
+    virtual void OnInspectorGUI();
 };
 
 template<typename T, typename... Args>

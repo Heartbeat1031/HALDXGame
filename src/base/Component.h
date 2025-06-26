@@ -47,6 +47,7 @@ public:
 	template<class T>
 	bool HasComponent() const;
 
+	// インスペクターGUIを描画する
 	virtual void OnInspectorGUI();
 };
 

@@ -39,3 +39,6 @@ void GameObject::UpdateBase(float dt) {
     // 子クラスのUpdateを呼び出す
     Update(dt);
 }
+
+void GameObject::OnInspectorGUI() {
+}

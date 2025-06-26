@@ -130,7 +130,8 @@ void GameApp::Draw() {
     // 描画設定の適用
     m_BaseEffect.SetRenderDefault();
 
-    // モデル描画キュー
+    // 使用刷新队列管理游戏所有的模型对象
+    // リフレッシュキューを使用してゲーム内のすべてのモデルオブジェクトを管理します
     m_ModelObjectStorage.ForEachActive([this](UID id, ModelObject &modelObject) {
         modelObject.Draw(m_pd3dImmediateContext.Get(), m_BaseEffect);
     });
