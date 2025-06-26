@@ -79,7 +79,7 @@ void SceneHierarchy::DrawInspector(UID selectedid) {
 
     GameObject *go = transform_c->GetGameObject();
     ImGui::Text("名前 : %s (%d)", go->GetName().c_str(), go->GetUID());
-    ImGui::CollapsingHeader(go->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::CollapsingHeader(go->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
         go->OnInspectorGUI();
     }
     const std::unordered_map<std::string, UID>& mymap = go->GetComponentMap();
