@@ -47,6 +47,7 @@ void TestScene::Update() {
         ImGui::Text("三人称モード");
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
         ImGui::Text("WASDキーで移動します");
+        ImGui::Text("FキーはBulletを発射します");
     }
     ImGui::End();
 
