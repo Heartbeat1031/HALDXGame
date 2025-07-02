@@ -24,7 +24,6 @@ void Bullet::Init() {
     transform.SetLocalScale(Vector3(0.2f, 0.2f, 0.2f)); // 弾丸のサイズを調整
     CapsuleCollisionC &boxC = AddComponent<CapsuleCollisionC>(JPH::EMotionType::Dynamic, 0.08f, 0.1f);
     boxC.SetGravityFactor(0);
-    boxC.SetOffsetPosition(Vector3(0.0f, 0.05f, 0.0f)); // オフセット位置を設定
     boxC.SetOffsetRotation(Vector3(DirectX::XM_PI / 2, 0.0f, 0.0f));
 }
 

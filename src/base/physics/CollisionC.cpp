@@ -35,21 +35,24 @@ void CollisionC::Update(float dt) {
     JPH::Quat rot = m_bodyInterface.GetRotation(m_bodyID);
     Quaternion dxRot(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
 
-    // 应用位置偏移
-    Vector3 worldOffset = Vector3::Transform(m_offsetTransform.positionOffset, dxRot);
-
-    // 应用旋转偏移（将欧拉角偏移转为四元数后叠加到物理旋转上）
+    // 局部旋转偏移
     Quaternion offsetRot = Quaternion::CreateFromYawPitchRoll(
         m_offsetTransform.rotationOffset.y,
         m_offsetTransform.rotationOffset.x,
         m_offsetTransform.rotationOffset.z
     );
-    Quaternion finalRot = dxRot * offsetRot;
+
+    // 注意这里换乘顺序
+    Quaternion finalRot = offsetRot * dxRot;
+
+    // 位移也基于偏移旋转后的方向
+    Vector3 worldOffset = Vector3::Transform(m_offsetTransform.positionOffset, finalRot);
 
     auto &myTransform = m_gameObject->GetComponentRef<TransformC>();
     myTransform.SetWorldPosition(Vector3(pos.GetX(), pos.GetY(), pos.GetZ()) - worldOffset);
     myTransform.SetWorldRotation(finalRot);
 }
+
 
 void CollisionC::SetOffsetPosition(const DirectX::SimpleMath::Vector3 &position) {
     m_offsetTransform.positionOffset = position;
