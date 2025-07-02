@@ -6,13 +6,8 @@
 #include "GameObject.h"
 
 class Bullet : public GameObject {
-private:
-    // 弾丸の速度
-    float m_speed = 10.0f; // m/s
-    // 弾丸の方向
-    DirectX::SimpleMath::Vector3 m_direction = DirectX::SimpleMath::Vector3(0, 0, 1); // 前方方向
 public:
-    Bullet(DirectX::SimpleMath::Vector3 direction, float speed = 10.0f);
+    Bullet();
 
     ~Bullet() override;
 
@@ -24,4 +19,6 @@ public:
                         JPH::ContactSettings &ioSettings) override;
 
     void Uninit() override;
+
+    void Fire(DirectX::SimpleMath::Vector3 direction, float speed = 10.0f);
 };

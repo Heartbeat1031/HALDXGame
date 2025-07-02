@@ -259,6 +259,12 @@ Vector3 TransformC::GetWorldScale() {
     return scale;
 }
 
+DirectX::SimpleMath::Vector3 TransformC::GetForward() {
+    UpdateTransform();
+    Quaternion rot = GetWorldRotation();
+    return Vector3::Transform(Vector3::UnitZ, rot);
+}
+
 void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
     if (keepWorld) {
         // 現在のワールド変換行列を取得

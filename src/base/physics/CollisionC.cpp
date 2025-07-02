@@ -66,6 +66,11 @@ void CollisionC::SetGravityFactor(float inGravityFactor) const {
     m_bodyInterface.SetGravityFactor(m_bodyID, inGravityFactor);
 }
 
+void CollisionC::SetLinearVelocity(const DirectX::SimpleMath::Vector3 &inLinearVelocity) const {
+    JPH::RVec3 velocity(inLinearVelocity.x, inLinearVelocity.y, inLinearVelocity.z);
+    m_bodyInterface.SetLinearVelocity(m_bodyID, velocity);
+}
+
 void CollisionC::SetPosition(Vector3 position) {
     m_bodyInterface.SetPosition(
         m_bodyID, JPH::RVec3(position.x, position.y, position.z), JPH::EActivation::Activate);

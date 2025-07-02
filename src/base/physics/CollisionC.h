@@ -41,8 +41,10 @@ public:
     OffsetTransform GetOffsetTransform() const { return m_offsetTransform; }
     void SetOffsetPosition(const DirectX::SimpleMath::Vector3& position);
     void SetOffsetRotation(const DirectX::SimpleMath::Vector3& rotation);
+    // 重力係数を設定
     void SetGravityFactor(float inGravityFactor) const;
-
+    // 物理ボディの線形速度を設定
+    void SetLinearVelocity(const DirectX::SimpleMath::Vector3& inLinearVelocity) const;
     virtual void SetPosition(DirectX::SimpleMath::Vector3 position);
     virtual void SetRotation(DirectX::SimpleMath::Quaternion rotation);
     virtual void SetRotationEuler(DirectX::SimpleMath::Vector3 eulerRadians);

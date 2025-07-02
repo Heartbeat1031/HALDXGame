@@ -9,6 +9,7 @@
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
 #include "Bullet.h"
+#include "CapsuleCollisionC.h"
 #include "MixamorigBoneC.h"
 #include "ModelC.h"
 #include "TransformC.h"
@@ -65,10 +66,11 @@ void Miku::Update(float dt) {
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
         moveDir += cameraHorizontal;
     }
-    if (ImGui::IsKeyDown(ImGuiKey_F)) {
-        Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>(Vector3(1, 0, 0), 1.0f);
-        // TransformC &myTransformC= GetComponentRef<TransformC>();
-        // bullet.GetComponentRef<TransformC>().SetWorldPosition(myTransformC.);
+    if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
+        Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>();
+        TransformC &myTransformC= GetComponentRef<TransformC>();
+        bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(myTransformC.GetWorldPosition() + myTransformC.GetForward() * - 2.0f + Vector3(0, 4.0f, 0));
+        bullet.Fire(myTransformC.GetForward() *-1, 20.0f);
     }
 
     // moveDir がゼロでない場合、移動方向を正規化し、位置を更新

@@ -40,10 +40,6 @@ void TestScene::Init() {
     }
     auto &house = AddGameObject<House>();
     house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
-
-    // カメラを初期化します
-    Bullet &bullet = AddGameObject<Bullet>(Vector3(1, 0, 0), 1.0f);
-    bullet.GetComponentRef<TransformC>().SetLocalPosition(Vector3(0, 5, 0));
 }
 
 void TestScene::Update() {
