@@ -18,6 +18,7 @@ private:
     // 缓存模型句柄
     // モデルハンドルをキャッシュします
     UID handle = -1;
+    bool visible = true;
     // 检查并且更新模型的Transform
     // モデルのTransformをチェックして更新します
     void CheckTransform();
@@ -28,6 +29,10 @@ public:
     void Uninit() override;
     UID GetHandle() const { return handle; }
     // 获取模型对象
+    // モデルオブジェクトを取得します
     ModelObject &GetModelObject() const;
+    // 设置模型是否可见
+    // モデルの可視性を設定します
+    void SetVisible(bool v) { visible = v; }
 
 };

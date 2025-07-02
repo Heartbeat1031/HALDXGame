@@ -49,5 +49,5 @@ void ModelC::CheckTransform() {
         modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
     }
     modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
-    modelObject.SetVisible(true);
+    modelObject.SetVisible(visible);
 }
