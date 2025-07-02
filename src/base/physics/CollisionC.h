@@ -6,11 +6,11 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Body/BodyID.h>
 #include <Jolt/Physics/Body/MotionType.h>
-#include <DirectXMath.h>
 #include "Component.h"
 #include "SimpleMath.h"
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
-#include "Jolt/Physics/Collision/ContactListener.h"
+#include "Jolt/Physics/Body/BodyInterface.h"
+
 
 struct OffsetTransform {
     DirectX::SimpleMath::Vector3 positionOffset;
@@ -28,6 +28,7 @@ struct OffsetTransform {
 class CollisionC : public Component {
 protected:
     JPH::BodyID m_bodyID;
+    JPH::BodyInterface& m_bodyInterface; // ボディロックインターフェース
     JPH::EMotionType m_MotionType; // デフォルトは動的
     OffsetTransform m_offsetTransform = OffsetTransform(); // 位置と回転のオフセット
     virtual JPH::BodyCreationSettings GetBodyCreationSettings() = 0; // 子クラスで実装する必要があります
@@ -38,6 +39,9 @@ public:
     void Uninit() override;
     void SetOffsetTransform(const OffsetTransform& offset) { m_offsetTransform = offset; }
     OffsetTransform GetOffsetTransform() const { return m_offsetTransform; }
+    void SetOffsetPosition(const DirectX::SimpleMath::Vector3& position);
+    void SetOffsetRotation(const DirectX::SimpleMath::Vector3& rotation);
+    void SetGravityFactor(float inGravityFactor) const;
 
     virtual void SetPosition(DirectX::SimpleMath::Vector3 position);
     virtual void SetRotation(DirectX::SimpleMath::Quaternion rotation);

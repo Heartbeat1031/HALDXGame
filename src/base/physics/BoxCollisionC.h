@@ -3,13 +3,6 @@
 //
 
 #pragma once
-#include <Jolt/Jolt.h>
-
-#include "CollisionC.h"
-#include "SimpleMath.h"
-
-#pragma once
-#include <Jolt/Physics/Body/MotionType.h>
 #include "CollisionC.h"
 
 class BoxCollisionC : public CollisionC {
