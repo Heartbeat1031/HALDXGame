@@ -88,7 +88,6 @@ void TransformC::SetLocalRotationEuler(const Vector3 &eulerRadians) {
     m_dirty = true;
 }
 
-
 void TransformC::SetLocalScale(const Vector3 &scale) {
     m_localScale = scale;
     m_dirty = true;

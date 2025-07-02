@@ -13,6 +13,8 @@
 
 ModelC::ModelC(std::string_view filename) {
     handle = halgame->AddModel(filename);
+    ModelObject &modelObject = halgame->GetModelObject(handle);
+    modelObject.SetVisible(false);
 }
 
 void ModelC::Init() {
@@ -47,4 +49,5 @@ void ModelC::CheckTransform() {
         modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
     }
     modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
+    modelObject.SetVisible(true);
 }

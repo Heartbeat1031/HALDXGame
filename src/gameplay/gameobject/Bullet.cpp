@@ -28,7 +28,11 @@ void Bullet::Init() {
 
 void Bullet::Update(float dt) {
     GameObject::Update(dt);
-
+    timeAlive += dt;
+    // 弾丸の生存時間が一定時間を超えたら、弾丸を削除します
+    if (timeAlive > 10.0f) { // 5秒後に弾丸を削除
+        Destroy();
+    }
 }
 
 void Bullet::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
