@@ -16,12 +16,6 @@ endif ()
 
 # 编译器の設定
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-if (MSVC)
-    set(CMAKE_CXX_FLAGS_DEBUG "/Od /Zi /Ob0 /RTC1 /MDd")
-else()
-    # 针对 GCC/Clang 设置 Debug 标志
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fno-omit-frame-pointer -fno-elide-constructors")
-endif()
 
 # MSVC デバッグ情報の設定
 if (POLICY CMP0141)
