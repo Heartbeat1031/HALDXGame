@@ -13,8 +13,8 @@
 
 ModelC::ModelC(std::string_view filename) {
     handle = halgame->AddModel(filename);
-    ModelObject &modelObject = halgame->GetModelObject(handle);
-    modelObject.SetVisible(false);
+    ModelObject *modelObject = halgame->GetModelObject(handle);
+    modelObject->SetVisible(false);
 }
 
 void ModelC::Init() {
@@ -33,7 +33,7 @@ void ModelC::Uninit() {
     halgame->RemoveModel(handle);
 }
 
-ModelObject &ModelC::GetModelObject() const {
+ModelObject *ModelC::GetModelObject() const {
     return halgame->GetModelObject(handle);
 }
 
@@ -41,13 +41,13 @@ void ModelC::CheckTransform() {
     if (handle == -1) {
         return;
     }
-    ModelObject &modelObject = halgame->GetModelObject(handle);
-    Transform &modelTransform = modelObject.GetTransform();
+    ModelObject *modelObject = halgame->GetModelObject(handle);
+    Transform &modelTransform = modelObject->GetTransform();
     TransformC &transformComponent = GetComponentRef<TransformC>();
     if (HasComponent<MixamorigBoneC>()) {
         auto &ragdollC = GetComponentRef<MixamorigBoneC>();
-        modelObject.SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
+        modelObject->SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
     }
     modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
-    modelObject.SetVisible(visible);
+    modelObject->SetVisible(visible);
 }

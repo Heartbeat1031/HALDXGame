@@ -30,7 +30,7 @@ public:
     UID GetHandle() const { return handle; }
     // 获取模型对象
     // モデルオブジェクトを取得します
-    ModelObject &GetModelObject() const;
+    ModelObject *GetModelObject() const;
     // 设置模型是否可见
     // モデルの可視性を設定します
     void SetVisible(bool v) { visible = v; }
