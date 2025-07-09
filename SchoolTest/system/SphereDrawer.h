@@ -1,7 +1,7 @@
 #pragma once
 
 #include	"CommonTypes.h"
-#include	"transform.h"
+#include    "renderer.h"
 
 void SphereDrawerInit();
 void SphereDrawerDraw(float radius, Color col, float ex, float ey, float ez);

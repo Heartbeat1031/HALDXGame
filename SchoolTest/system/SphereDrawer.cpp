@@ -1,6 +1,5 @@
-#include <filesystem>
-#include	<iostream>
 #include   "CommonTypes.h"
+#include	<iostream>
 
 #include	"CMeshRenderer.h"
 #include	"CMaterial.h"
@@ -28,14 +27,9 @@ void SphereDrawerInit()
 
 	g_material.Create(mtrl);
 
-	char buffer[MAX_PATH];
-	GetModuleFileNameA(NULL, buffer, MAX_PATH);
-	std::string fullPath(buffer);
-	std::string path = std::filesystem::path(fullPath).parent_path().string();
-
 	// シェーダーの初期化
 	g_shader.Create(
-		"shader/unlitTextureVS.hlsl",			// 頂点シェーダー
+		"shader/unlitTextureVS.hlsl",				// 頂点シェーダー
 		"shader/unlitTexturePS.hlsl");			// ピクセルシェーダー
 
 }
@@ -58,9 +52,9 @@ void SphereDrawerDraw(float radius,Color col,float ex, float ey, float ez)
 	g_renderer.Draw();
 }
 
-void SphereDrawerDraw(SRT srt ,Color col)
+void SphereDrawerDraw(SRT rts ,Color col)
 {
-	Matrix4x4 mtx = srt.GetMatrix();
+	Matrix4x4 mtx = rts.GetMatrix();
 
 	Renderer::SetWorldMatrix(&mtx);
 	g_material.SetDiffuse(col);

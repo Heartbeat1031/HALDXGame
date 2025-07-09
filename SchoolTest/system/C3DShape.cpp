@@ -1,6 +1,6 @@
 #include <iostream>
 #include "C3DShape.h"
-#include "commontypes.h"
+#include "CommonTypes.h"
 #include "SphereDrawer.h"
 #include "BoxDrawer.h"
 #include "CylinderDrawer.h"
@@ -8,18 +8,18 @@
 #include "LineDrawer.h"
 #include "CapsuleDrawer.h"
 
-bool C3DShape::m_first = true;
+static bool g_first = true;
 
 C3DShape::C3DShape() {
 
-    if (m_first) {
+    if (g_first) {
           SphereDrawerInit();
           BoxDrawerInit();
           CylinderDrawerInit();
           ConeDrawerInit(true);
           LineDrawerInit();
           CapsuleDrawerInit();
-          m_first = false;
+          g_first = false;
     }
 }
 
@@ -68,27 +68,22 @@ void Cylinder::Draw(Matrix4x4 mtx, Color col) {
      CylinderDrawerDraw(mtx, col);
 }
 
-void Segment::Draw(Matrix4x4 mtx, Color col)
+void CSegment::Draw(Matrix4x4 mtx, Color col)
 {
-	Vector3 start = Vector3::Transform(m_start, mtx);
-    Vector3 end = Vector3::Transform(m_end, mtx);
-
-    Vector3 dir = end-start;
-
-    LineDrawerDraw(m_length,start,dir,col);
+    LineDrawerDraw(m_length,m_start,m_direction,col);
 }
 
-void Segment::Draw(SRT srt, Color col)
+void CSegment::Draw(SRT srt, Color col)
 {
     LineDrawerDraw(m_length, m_start, m_direction, col);
 }
 
-void Capsule::Draw(SRT srt, Color col) {
+void CCapusule::Draw(SRT srt, Color col) {
     srt.scale = Vector3(m_radius, m_height, m_radius);
     CylinderDrawerDraw(srt, col);
 }
 
-void Capsule::Draw(Matrix4x4 mtx, Color col) 
+void CCapusule::Draw(Matrix4x4 mtx, Color col) 
 {
     Matrix4x4 scale = Matrix4x4::CreateScale(m_radius, m_height, m_radius);
     Matrix4x4 cmtx = scale * mtx;

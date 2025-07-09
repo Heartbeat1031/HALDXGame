@@ -5,7 +5,7 @@
 class CMesh {
 protected:
 	std::vector<VERTEX_3D>		m_vertices;		// 頂点座標群
-	std::vector<uint32_t>	m_indices;		// インデックスデータ群
+	std::vector<unsigned int>	m_indices;		// インデックスデータ群
 public:
 	// 頂点データ取得
 	const std::vector<VERTEX_3D>& GetVertices() {

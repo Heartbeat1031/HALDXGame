@@ -2,181 +2,322 @@
 
 /**
  * @file Renderer.h
- * @brief DirectXƒŒƒ“ƒ_ƒŠƒ“ƒO‚Åg—p‚·‚éŠeí\‘¢‘Ì‚ÆRendererƒNƒ‰ƒX‚ÌéŒ¾
+ * @brief DirectXï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Ågï¿½pï¿½ï¿½ï¿½ï¿½eï¿½ï¿½\ï¿½ï¿½ï¿½Ì‚ï¿½Rendererï¿½Nï¿½ï¿½ï¿½Xï¿½ÌéŒ¾
  */
 
 #include "CommonTypes.h"
-#include "Transform.h"
-#include "NonCopyable.h"
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include <io.h>
 #include <string>
 #include <vector>
 #include <wrl/client.h>
+#include "NonCopyable.h"
+#include "Transform.h"
 
- // ƒŠƒ“ƒN‚·‚×‚«ŠO•”ƒ‰ƒCƒuƒ‰ƒŠ
-// #pragma comment(lib,"directxtk.lib")
-// #pragma comment(lib,"d3d11.lib")
 
 /**
  * @struct WEIGHT
- * @brief ƒ{[ƒ“‚Ì‰e‹¿î•ñ‚ğ•Û‚·‚é\‘¢‘Ì
- * @date 20231225 ’Ç‰Á
+ * @brief ï¿½{ï¿½[ï¿½ï¿½ï¿½Ì‰eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ûï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
+ * @date 20231225 ï¿½Ç‰ï¿½
  */
 struct WEIGHT {
-    std::string bonename;   ///< ƒ{[ƒ“–¼
-    std::string meshname;   ///< ƒƒbƒVƒ…–¼
-    float weight;           ///< ƒEƒFƒCƒg’l
-    int vertexindex;        ///< ’¸“_ƒCƒ“ƒfƒbƒNƒX
+    std::string bonename;   ///< ï¿½{ï¿½[ï¿½ï¿½ï¿½ï¿½
+    std::string meshname;   ///< ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½
+    float weight;           ///< ï¿½Eï¿½Fï¿½Cï¿½gï¿½l
+    int vertexindex;        ///< ï¿½ï¿½ï¿½_ï¿½Cï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
 };
 
 /**
  * @struct BONE
- * @brief ƒ{[ƒ“\‘¢‘ÌiDX‘Î‰”Åj
- * @date 20231231 C³iDX‰»j
+ * @brief ï¿½{ï¿½[ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ÌiDXï¿½Î‰ï¿½ï¿½Åj
+ * @date 20231231 ï¿½Cï¿½ï¿½ï¿½iDXï¿½ï¿½ï¿½j
  */
 struct BONE
 {
-    std::string bonename;          ///< ƒ{[ƒ“–¼
-    std::string meshname;          ///< ƒƒbƒVƒ…–¼
-    std::string armaturename;      ///< ƒA[ƒ}ƒ`ƒ…ƒA–¼
-    Matrix4x4 Matrix{};            ///< eqŠÖŒW‚ğl—¶‚µ‚½s—ñ
-    Matrix4x4 AnimationMatrix{};   ///< ©•ª‚Ì•ÏŒ`‚Ì‚İ‚ğl—¶‚µ‚½s—ñ
-    Matrix4x4 OffsetMatrix{};      ///< ƒ{[ƒ“ƒIƒtƒZƒbƒgs—ñ
-    int idx;                       ///< ”z—ñ’†‚ÌƒCƒ“ƒfƒbƒNƒX
-    std::vector<WEIGHT> weights;   ///< ‚±‚Ìƒ{[ƒ“‚ª‰e‹¿‚ğ—^‚¦‚é’¸“_‚ÆƒEƒFƒCƒg’l‚ÌƒŠƒXƒg
+    std::string bonename;          ///< ï¿½{ï¿½[ï¿½ï¿½ï¿½ï¿½
+    std::string meshname;          ///< ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½
+    std::string armaturename;      ///< ï¿½Aï¿½[ï¿½}ï¿½`ï¿½ï¿½ï¿½Aï¿½ï¿½
+    Matrix4x4 Matrix{};            ///< ï¿½eï¿½qï¿½ÖŒWï¿½ï¿½ï¿½lï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+    Matrix4x4 AnimationMatrix{};   ///< ï¿½ï¿½ï¿½ï¿½ï¿½Ì•ÏŒ`ï¿½Ì‚İ‚ï¿½ï¿½lï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+    Matrix4x4 OffsetMatrix{};      ///< ï¿½{ï¿½[ï¿½ï¿½ï¿½Iï¿½tï¿½Zï¿½bï¿½gï¿½sï¿½ï¿½
+    int idx;                       ///< ï¿½zï¿½ñ’†‚ÌƒCï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
+    std::vector<WEIGHT> weights;   ///< ï¿½ï¿½ï¿½Ìƒ{ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½é’¸ï¿½_ï¿½ÆƒEï¿½Fï¿½Cï¿½gï¿½lï¿½Ìƒï¿½ï¿½Xï¿½g
 };
 
 /**
  * @struct VERTEX_3D
- * @brief ‚RŸŒ³’¸“_ƒf[ƒ^‚ğŠi”[‚·‚é\‘¢‘Ì
+ * @brief ï¿½Rï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
  */
 struct VERTEX_3D
 {
-    Vector3 Position;            ///< ’¸“_‚ÌÀ•W
-    Vector3 Normal;              ///< –@üƒxƒNƒgƒ‹
-    Color Diffuse;               ///< ŠgU”½ËF
-    Vector2 TexCoord;            ///< ƒeƒNƒXƒ`ƒƒÀ•W
-    int BoneIndex[4];            ///< ƒ{[ƒ“ƒCƒ“ƒfƒbƒNƒXiÅ‘å4‚Âj 20231225
-    float BoneWeight[4];         ///< Šeƒ{[ƒ“‚ÌƒEƒFƒCƒg’l 20231225
-    std::string BoneName[4];     ///< Šeƒ{[ƒ“‚Ì–¼‘O 20231226
-    int bonecnt = 0;             ///< ‰e‹¿‚ğ—^‚¦‚éƒ{[ƒ“” 20231226
+    Vector3 Position;            ///< ï¿½ï¿½ï¿½_ï¿½Ìï¿½ï¿½W
+    Vector3 Normal;              ///< ï¿½@ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½
+    Color Diffuse;               ///< ï¿½gï¿½Uï¿½ï¿½ï¿½ËF
+    Vector2 TexCoord;            ///< ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½W
+    int BoneIndex[4];            ///< ï¿½{ï¿½[ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½Xï¿½iï¿½Å‘ï¿½4ï¿½Âj 20231225
+    float BoneWeight[4];         ///< ï¿½eï¿½{ï¿½[ï¿½ï¿½ï¿½ÌƒEï¿½Fï¿½Cï¿½gï¿½l 20231225
+    std::string BoneName[4];     ///< ï¿½eï¿½{ï¿½[ï¿½ï¿½ï¿½Ì–ï¿½ï¿½O 20231226
+    int bonecnt = 0;             ///< ï¿½eï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½{ï¿½[ï¿½ï¿½ï¿½ï¿½ 20231226
 };
 
 /**
  * @struct MATERIAL
- * @brief ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğ•Û‚·‚é\‘¢‘Ì
+ * @brief ï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ûï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
  */
 struct MATERIAL
 {
-    Color Ambient;         ///< ƒAƒ“ƒrƒGƒ“ƒgF
-    Color Diffuse;         ///< ŠgUF
-    Color Specular;        ///< ‹¾–Ê”½ËF
-    Color Emission;        ///< ©ŒÈ”­ŒõF
-    float Shiness;         ///< Œõ‘ò“x
-    BOOL TextureEnable;    ///< ƒeƒNƒXƒ`ƒƒg—pƒtƒ‰ƒO
-    float Dummy[2]{};      ///< —\”õ—Ìˆæ
+    Color Ambient;         ///< ï¿½Aï¿½ï¿½ï¿½rï¿½Gï¿½ï¿½ï¿½gï¿½F
+    Color Diffuse;         ///< ï¿½gï¿½Uï¿½F
+    Color Specular;        ///< ï¿½ï¿½ï¿½Ê”ï¿½ï¿½ËF
+    Color Emission;        ///< ï¿½ï¿½ï¿½È”ï¿½ï¿½ï¿½ï¿½F
+    float Shiness;         ///< ï¿½ï¿½ï¿½ï¿½x
+    BOOL  TextureEnable;    ///< ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½gï¿½pï¿½tï¿½ï¿½ï¿½O
+    float Dummy[2]{};      ///< ï¿½\ï¿½ï¿½ï¿½Ìˆï¿½
 };
 
 /**
  * @struct LIGHT
- * @brief •½sŒõŒ¹‚Ìî•ñ‚ğ•Û‚·‚é\‘¢‘Ì
+ * @brief ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½Ûï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
  */
 struct LIGHT
 {
-    BOOL Enable;           ///< ƒ‰ƒCƒg‚Ì—LŒø/–³Œøƒtƒ‰ƒO
-    BOOL Dummy[3];         ///< ƒpƒfƒBƒ“ƒO—piƒ_ƒ~[j
-    Vector4 Direction;     ///< Œõ‚Ì•ûŒü
-    Color Diffuse;         ///< ŠgUŒõ‚ÌF
-    Color Ambient;         ///< ŠÂ‹«Œõ‚ÌF
+    BOOL Enable;           ///< ï¿½ï¿½ï¿½Cï¿½gï¿½Ì—Lï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½tï¿½ï¿½ï¿½O
+    BOOL Dummy[3];         ///< ï¿½pï¿½fï¿½Bï¿½ï¿½ï¿½Oï¿½pï¿½iï¿½_ï¿½~ï¿½[ï¿½j
+    Vector4 Direction;     ///< ï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½
+    Color Diffuse;         ///< ï¿½gï¿½Uï¿½ï¿½ï¿½ÌF
+    Color Ambient;         ///< ï¿½Â‹ï¿½ï¿½ï¿½ï¿½ÌF
 };
 
 /**
  * @struct SUBSET
- * @brief ƒƒbƒVƒ…‚ÌƒTƒuƒZƒbƒgiƒ}ƒeƒŠƒAƒ‹–ˆjî•ñ‚ğ•Û‚·‚é\‘¢‘Ì
+ * @brief ï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ÌƒTï¿½uï¿½Zï¿½bï¿½gï¿½iï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½Ûï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
  */
 struct SUBSET {
-    std::string MtrlName;      ///< ƒ}ƒeƒŠƒAƒ‹–¼
-    unsigned int IndexNum = 0; ///< ƒCƒ“ƒfƒbƒNƒX”
-    unsigned int VertexNum = 0;///< ’¸“_”
-    unsigned int IndexBase = 0;///< ŠJnƒCƒ“ƒfƒbƒNƒX
-    unsigned int VertexBase = 0;///< ’¸“_ƒx[ƒX
-    unsigned int MaterialIdx = 0;///< ƒ}ƒeƒŠƒAƒ‹ƒCƒ“ƒfƒbƒNƒX
+    std::string MtrlName;      ///< ï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½
+    unsigned int IndexNum = 0; ///< ï¿½Cï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½Xï¿½ï¿½
+    unsigned int VertexNum = 0;///< ï¿½ï¿½ï¿½_ï¿½ï¿½
+    unsigned int IndexBase = 0;///< ï¿½Jï¿½nï¿½Cï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
+    unsigned int VertexBase = 0;///< ï¿½ï¿½ï¿½_ï¿½xï¿½[ï¿½X
+    unsigned int MaterialIdx = 0;///< ï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
 };
 
 /**
  * @enum EBlendState
- * @brief ƒuƒŒƒ“ƒhƒXƒe[ƒg‚Ìí—Ş
+ * @brief ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½hï¿½Xï¿½eï¿½[ï¿½gï¿½Ìï¿½ï¿½
  */
 enum EBlendState {
-    BS_NONE = 0,      ///< ”¼“§–¾‡¬–³‚µ
-    BS_ALPHABLEND,    ///< ”¼“§–¾‡¬
-    BS_ADDITIVE,      ///< ‰ÁZ‡¬
-    BS_SUBTRACTION,   ///< Œ¸Z‡¬
-    MAX_BLENDSTATE    ///< ƒuƒŒƒ“ƒhƒXƒe[ƒg‚ÌÅ‘å’l
+    BS_NONE = 0,      ///< ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    BS_ALPHABLEND,    ///< ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    BS_ADDITIVE,      ///< ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½
+    BS_SUBTRACTION,   ///< ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½
+    MAX_BLENDSTATE    ///< ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½hï¿½Xï¿½eï¿½[ï¿½gï¿½ÌÅ‘ï¿½l
 };
 
 /**
  * @struct CBBoneCombMatrix
- * @brief ƒ{[ƒ“ƒRƒ“ƒrƒl[ƒVƒ‡ƒ“s—ñ‚ğ•Û‚·‚é\‘¢‘Ì
+ * @brief ï¿½{ï¿½[ï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½rï¿½lï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Ûï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
  * @date 20240713
  */
 constexpr int MAX_BONE = 400;
 struct CBBoneCombMatrix {
-    DirectX::XMFLOAT4X4 BoneCombMtx[MAX_BONE];  ///< ƒ{[ƒ“ƒRƒ“ƒrƒl[ƒVƒ‡ƒ“s—ñ‚Ì”z—ñ
+    DirectX::XMFLOAT4X4 BoneCombMtx[MAX_BONE];  ///< ï¿½{ï¿½[ï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½rï¿½lï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½Ì”zï¿½ï¿½
 };
 
 /**
  * @class Renderer
- * @brief DirectXƒŒƒ“ƒ_ƒŠƒ“ƒOˆ—‚ğŠÇ—‚·‚éƒŒƒ“ƒ_ƒ‰ƒNƒ‰ƒX
+ * @brief DirectXï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç—ï¿½ï¿½ï¿½ï¿½éƒŒï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½X
  *
- * ‚±‚ÌƒNƒ‰ƒX‚ÍADirect3DƒfƒoƒCƒXAƒRƒ“ƒeƒLƒXƒgAƒXƒƒbƒvƒ`ƒF[ƒ“‚È‚Ç‚ÌŠÇ—‚ÆA
- * ƒŒƒ“ƒ_ƒŠƒ“ƒOˆ—‚Ì‰Šú‰»AŠJnAI—¹‚È‚Ç‚Ì‹@”\‚ğ’ñ‹Ÿ‚µ‚Ü‚·B
+ * ï¿½ï¿½ï¿½ÌƒNï¿½ï¿½ï¿½Xï¿½ÍADirect3Dï¿½fï¿½oï¿½Cï¿½Xï¿½Aï¿½Rï¿½ï¿½ï¿½eï¿½Lï¿½Xï¿½gï¿½Aï¿½Xï¿½ï¿½ï¿½bï¿½vï¿½`ï¿½Fï¿½[ï¿½ï¿½ï¿½È‚Ç‚ÌŠÇ—ï¿½ï¿½ÆA
+ * ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Jï¿½nï¿½Aï¿½Iï¿½ï¿½ï¿½È‚Ç‚Ì‹@ï¿½\ï¿½ï¿½ñ‹Ÿ‚ï¿½ï¿½Ü‚ï¿½ï¿½B
  */
 class Renderer : NonCopyable
 {
 private:
-    static D3D_FEATURE_LEVEL m_FeatureLevel;
+    static D3D_FEATURE_LEVEL       m_FeatureLevel;         ///< Direct3Dï¿½Ìƒtï¿½Bï¿½[ï¿½`ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½xï¿½ï¿½
 
-    static ComPtr<ID3D11Device> m_Device;
-    static ComPtr<ID3D11DeviceContext> m_DeviceContext;
-    static ComPtr<IDXGISwapChain> m_SwapChain;
-    static ComPtr<ID3D11RenderTargetView> m_RenderTargetView;
-    static ComPtr<ID3D11DepthStencilView> m_DepthStencilView;
+    static ID3D11Device* m_Device;               ///< Direct3Dï¿½fï¿½oï¿½Cï¿½X
+    static ID3D11DeviceContext* m_DeviceContext;        ///< Direct3Dï¿½fï¿½oï¿½Cï¿½Xï¿½Rï¿½ï¿½ï¿½eï¿½Lï¿½Xï¿½g
+    static IDXGISwapChain* m_SwapChain;            ///< ï¿½Xï¿½ï¿½ï¿½bï¿½vï¿½`ï¿½Fï¿½[ï¿½ï¿½
+    static ID3D11RenderTargetView* m_RenderTargetView;     ///< ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½[ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½rï¿½ï¿½ï¿½[
+    static ID3D11DepthStencilView* m_DepthStencilView;     ///< ï¿½[ï¿½x/ï¿½Xï¿½eï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½rï¿½ï¿½ï¿½[
 
-    static ComPtr<ID3D11Buffer> m_WorldBuffer;
-    static ComPtr<ID3D11Buffer> m_ViewBuffer;
-    static ComPtr<ID3D11Buffer> m_ProjectionBuffer;
-    static ComPtr<ID3D11Buffer> m_MaterialBuffer;
-    static ComPtr<ID3D11Buffer> m_LightBuffer;
+    static ID3D11Buffer* m_WorldBuffer;          ///< ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½sï¿½ï¿½pï¿½è”ï¿½oï¿½bï¿½tï¿½@
+    static ID3D11Buffer* m_ViewBuffer;           ///< ï¿½rï¿½ï¿½ï¿½[ï¿½sï¿½ï¿½pï¿½è”ï¿½oï¿½bï¿½tï¿½@
+    static ID3D11Buffer* m_ProjectionBuffer;     ///< ï¿½Ë‰eï¿½sï¿½ï¿½pï¿½è”ï¿½oï¿½bï¿½tï¿½@
+    static ID3D11Buffer* m_MaterialBuffer;       ///< ï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½pï¿½è”ï¿½oï¿½bï¿½tï¿½@
+    static ID3D11Buffer* m_LightBuffer;          ///< ï¿½ï¿½ï¿½Cï¿½gï¿½ï¿½ï¿½pï¿½è”ï¿½oï¿½bï¿½tï¿½@
 
-    static ComPtr<ID3D11DepthStencilState> m_DepthStateEnable;
-    static ComPtr<ID3D11DepthStencilState> m_DepthStateDisable;
+    static ID3D11DepthStencilState* m_DepthStateEnable;    ///< ï¿½[ï¿½xï¿½eï¿½Xï¿½gï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½Ì[ï¿½xï¿½Xï¿½eï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½
+    static ID3D11DepthStencilState* m_DepthStateDisable;   ///< ï¿½[ï¿½xï¿½eï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì[ï¿½xï¿½Xï¿½eï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½
 
-    static ComPtr<ID3D11BlendState> m_BlendState[MAX_BLENDSTATE];
-    static ComPtr<ID3D11BlendState> m_BlendStateATC;
+    static ID3D11BlendState* m_BlendState[MAX_BLENDSTATE]; ///< ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½hï¿½Xï¿½eï¿½[ï¿½gï¿½zï¿½ï¿½
+    static ID3D11BlendState* m_BlendStateATC;        ///< ATCï¿½pï¿½uï¿½ï¿½ï¿½ï¿½ï¿½hï¿½Xï¿½eï¿½[ï¿½g
 
 public:
+    /**
+     * @brief ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½[ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     */
     static void Init();
+
+    /**
+     * @brief ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½[ï¿½ÌIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½Aï¿½mï¿½Û‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½[ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     */
     static void Uninit();
+
+    /**
+     * @brief ï¿½`ï¿½æˆï¿½ï¿½ï¿½ÌŠJï¿½nï¿½ï¿½éŒ¾ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     */
     static void Begin();
+
+    /**
+     * @brief ï¿½`ï¿½æˆï¿½ï¿½ï¿½ÌIï¿½ï¿½ï¿½ï¿½éŒ¾ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     */
     static void End();
+
+    /**
+     * @brief ï¿½[ï¿½xï¿½eï¿½Xï¿½gï¿½Ì—Lï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param Enable trueï¿½Å—Lï¿½ï¿½ï¿½Afalseï¿½Å–ï¿½ï¿½ï¿½
+     */
     static void SetDepthEnable(bool Enable);
-    static void SetDepthAllwaysWrite();
-    static void SetATCEnable(bool Enable);
-    static void SetWorldViewProjection2D();
-    static void SetWorldMatrix(Matrix4x4* WorldMatrix);
-    static void SetViewMatrix(Matrix4x4* ViewMatrix);
-    static void SetProjectionMatrix(Matrix4x4* ProjectionMatrix);
-    static void SetMaterial(MATERIAL Material);
-    static void SetLight(LIGHT Light);
-    static ID3D11Device* GetDevice(void) { return m_Device.Get(); }
-    static ID3D11DeviceContext* GetDeviceContext(void) { return m_DeviceContext.Get(); }
-    static void SetBlendState(int nBlendState);
-    static IDXGISwapChain* GetSwapChain() { return m_SwapChain.Get(); }
-    static void ClearDepthBuffer() {
-        m_DeviceContext->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    /**
+     * @brief ï¿½[ï¿½xï¿½eï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½Éƒpï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ’ï¿½É•ÏXï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     *
+     * ï¿½[ï¿½xï¿½eï¿½Xï¿½gï¿½ï¿½Lï¿½ï¿½ï¿½É‚ï¿½ï¿½Aï¿½ï¿½rï¿½Öï¿½ï¿½ï¿½ALWAYSï¿½ÉAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İƒ}ï¿½Xï¿½Nï¿½ï¿½Sï¿½rï¿½bï¿½gï¿½Éİ’è‚µï¿½Ü‚ï¿½ï¿½B
+     */
+    static void SetDepthAllwaysWrite() {
+        D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+        ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+        // ï¿½[ï¿½xï¿½eï¿½Xï¿½gï¿½ï¿½Lï¿½ï¿½ï¿½É‚ï¿½ï¿½Aï¿½ï¿½É•`ï¿½æ‚·ï¿½ï¿½æ‚¤ï¿½Éİ’ï¿½
+        depthStencilDesc.DepthEnable = TRUE;
+        depthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+        depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+
+        // ï¿½Xï¿½eï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½eï¿½Xï¿½gï¿½ğ–³Œï¿½ï¿½ï¿½
+        depthStencilDesc.StencilEnable = FALSE;
+
+        ComPtr<ID3D11DepthStencilState> pDepthStencilState;
+        m_Device->CreateDepthStencilState(&depthStencilDesc, &pDepthStencilState);
+        m_DeviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), 0);
     }
-    static void DisableCulling(bool cullflag = false);
-    static void SetFillMode(D3D11_FILL_MODE FillMode);
+
+    /**
+     * @brief ATCï¿½iAlpha-to-Coverageï¿½jï¿½Ì—Lï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param Enable trueï¿½Å—Lï¿½ï¿½ï¿½Afalseï¿½Å–ï¿½ï¿½ï¿½
+     */
+    static void SetATCEnable(bool Enable);
+
+    /**
+     * @brief 2Dï¿½`ï¿½ï¿½pï¿½Ìƒï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½Eï¿½rï¿½ï¿½ï¿½[ï¿½Eï¿½Ë‰eï¿½sï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     */
+    static void SetWorldViewProjection2D();
+
+    /**
+     * @brief ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½sï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param WorldMatrix ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½hï¿½sï¿½ï¿½Ö‚Ìƒ|ï¿½Cï¿½ï¿½ï¿½^
+     */
+    static void SetWorldMatrix(Matrix4x4* WorldMatrix);
+
+    /**
+     * @brief ï¿½rï¿½ï¿½ï¿½[ï¿½sï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param ViewMatrix ï¿½rï¿½ï¿½ï¿½[ï¿½sï¿½ï¿½Ö‚Ìƒ|ï¿½Cï¿½ï¿½ï¿½^
+     */
+    static void SetViewMatrix(Matrix4x4* ViewMatrix);
+
+    /**
+     * @brief ï¿½Ë‰eï¿½sï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param ProjectionMatrix ï¿½Ë‰eï¿½sï¿½ï¿½Ö‚Ìƒ|ï¿½Cï¿½ï¿½ï¿½^
+     */
+    static void SetProjectionMatrix(Matrix4x4* ProjectionMatrix);
+
+    /**
+     * @brief ï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param Material ï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½
+     */
+    static void SetMaterial(MATERIAL Material);
+
+    /**
+     * @brief ï¿½ï¿½ï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param Light ï¿½ï¿½ï¿½Cï¿½gï¿½ï¿½ï¿½
+     */
+    static void SetLight(LIGHT Light);
+
+    /**
+     * @brief Direct3Dï¿½fï¿½oï¿½Cï¿½Xï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     * @return Direct3Dï¿½fï¿½oï¿½Cï¿½Xï¿½Ö‚Ìƒ|ï¿½Cï¿½ï¿½ï¿½^
+     */
+    static ID3D11Device* GetDevice(void) { return m_Device; }
+
+    /**
+     * @brief Direct3Dï¿½fï¿½oï¿½Cï¿½Xï¿½Rï¿½ï¿½ï¿½eï¿½Lï¿½Xï¿½gï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     * @return Direct3Dï¿½fï¿½oï¿½Cï¿½Xï¿½Rï¿½ï¿½ï¿½eï¿½Lï¿½Xï¿½gï¿½Ö‚Ìƒ|ï¿½Cï¿½ï¿½ï¿½^
+     */
+    static ID3D11DeviceContext* GetDeviceContext(void) { return m_DeviceContext; }
+
+    /**
+     * @brief ï¿½wï¿½è‚µï¿½ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½hï¿½Xï¿½eï¿½[ï¿½gï¿½ï¿½İ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param nBlendState ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½hï¿½Xï¿½eï¿½[ï¿½gï¿½ÌƒCï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
+     */
+    static void SetBlendState(int nBlendState)
+    {
+        if (nBlendState >= 0 && nBlendState < MAX_BLENDSTATE) {
+            float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+            m_DeviceContext->OMSetBlendState(m_BlendState[nBlendState], blendFactor, 0xffffffff);
+        }
+    }
+
+    /**
+     * @brief ï¿½Xï¿½ï¿½ï¿½bï¿½vï¿½`ï¿½Fï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     * @return IDXGISwapChainï¿½Ö‚Ìƒ|ï¿½Cï¿½ï¿½ï¿½^
+     */
+    static IDXGISwapChain* GetSwapChain() {
+        return m_SwapChain;
+    }
+
+    /**
+     * @brief ï¿½[ï¿½xï¿½oï¿½bï¿½tï¿½@ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
+     */
+    static void ClearDepthBuffer() {
+        m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    }
+
+    /**
+     * @brief ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½iï¿½Ê‚Ìï¿½ï¿½Oï¿½jï¿½ğ–³Œï¿½ï¿½Ü‚ï¿½ï¿½Í—Lï¿½ï¿½ï¿½Éİ’è‚µï¿½Ü‚ï¿½ï¿½B
+     * @param cullflag trueï¿½ÅƒJï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Lï¿½ï¿½ï¿½Afalseï¿½ÅƒJï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½iï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½ï¿½falseï¿½j
+     */
+    static void DisableCulling(bool cullflag = false)
+    {
+        // ï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Cï¿½Uï¿½Ìİ’ï¿½ï¿½ï¿½ì¬
+        D3D11_RASTERIZER_DESC rasterizerDesc;
+        ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;  // ï¿½\ï¿½ï¿½ï¿½bï¿½hï¿½hï¿½ï¿½Â‚Ô‚ï¿½
+
+        // cullflagï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½[ï¿½hï¿½Ìİ’ï¿½
+        rasterizerDesc.CullMode = cullflag ? D3D11_CULL_BACK : D3D11_CULL_NONE;
+
+        rasterizerDesc.FrontCounterClockwise = FALSE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì’ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½
+        rasterizerDesc.DepthBias = 0;
+        rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+        rasterizerDesc.DepthClipEnable = TRUE;  // ï¿½[ï¿½xï¿½Nï¿½ï¿½ï¿½bï¿½sï¿½ï¿½ï¿½Oï¿½Lï¿½ï¿½
+        rasterizerDesc.ScissorEnable = FALSE;   // ï¿½Vï¿½Uï¿½[ï¿½ï¿½ï¿½ï¿½
+        rasterizerDesc.MultisampleEnable = FALSE; // ï¿½}ï¿½ï¿½ï¿½`ï¿½Tï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        rasterizerDesc.AntialiasedLineEnable = FALSE; // ï¿½Aï¿½ï¿½ï¿½`ï¿½Gï¿½Cï¿½ï¿½ï¿½Aï¿½Xï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+        // ï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Cï¿½Uï¿½Xï¿½eï¿½[ï¿½gï¿½Ìì¬
+        ID3D11RasterizerState* pRasterizerState = nullptr;
+        HRESULT hr = m_Device->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
+        if (FAILED(hr))
+        {
+            return; // ï¿½ì¬ï¿½Éï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½
+        }
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½[ï¿½Rï¿½ï¿½ï¿½eï¿½Lï¿½Xï¿½gï¿½Öƒï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Cï¿½Uï¿½Xï¿½eï¿½[ï¿½gï¿½ï¿½İ’ï¿½
+        m_DeviceContext->RSSetState(pRasterizerState);
+
+        // ï¿½ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½eï¿½[ï¿½gï¿½Ì‰ï¿½ï¿½
+        pRasterizerState->Release();
+        return;
+    }
 };

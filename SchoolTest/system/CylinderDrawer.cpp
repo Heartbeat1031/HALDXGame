@@ -16,7 +16,7 @@ void CylinderDrawerDraw(float radius, float hieght, Color col, float posx, float
 
 void CylinderDrawerInit()
 {
-	g_mesh.Init(50,			// •ªŠ„”
+	g_mesh.Init(50,		// •ªŠ„”
 		1,					// ”¼Œa
 		1,					// ‚‚³
 		Color(1,1,1,1));

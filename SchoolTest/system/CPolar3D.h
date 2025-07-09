@@ -1,5 +1,5 @@
 #pragma once
-#include "commontypes.h"
+#include	"CommonTypes.h"
 
 // ÇRÇcã…ç¿ïWån
 class CPolor3D {
@@ -13,13 +13,13 @@ public:
 		float azimuth) : m_radius(radius), m_elevation(elevation), m_azimuth(azimuth) {}
 	~CPolor3D() {}
 
-	Vector3 ToCartesian() const{
-		Vector3 position;
+	Vector3 ToOyler() {
+		Vector3 euler;
 
-		position.x = m_radius * sinf(m_elevation) * cosf(m_azimuth);
-		position.y = m_radius * cosf(m_elevation);
-		position.z = m_radius * sinf(m_elevation) * sinf(m_azimuth);
+		euler.x = m_radius * sinf(m_elevation) * cosf(m_azimuth);
+		euler.y = m_radius * cosf(m_elevation);
+		euler.z = m_radius * sinf(m_elevation) * sinf(m_azimuth);
 
-		return position;
+		return euler;
 	}
 };
