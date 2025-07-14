@@ -71,6 +71,8 @@ void Miku::Update(float dt) {
         // bullet.GetComponentRef<TransformC>().SetWorldPosition(myTransformC.);
     }
 
+  
+
     // moveDir がゼロでない場合、移動方向を正規化し、位置を更新
     if (moveDir.LengthSquared() > 0.0001f) {
         moveDir.Normalize();
@@ -128,4 +130,7 @@ void Miku::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactM
 
     std::cout << "物理オブジェクト " << my.GetGameObject()->GetName() << " が "
               << other.GetGameObject()->GetName() << " と接触しました。" << std::endl;
+
+    //プレイヤーが弾を防ぐたびに、10ポイント加算
+    //if(){};
 }

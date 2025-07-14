@@ -7,6 +7,8 @@
 
 
 class Miku:public GameObject {
+private:
+    int m_score = 0;
 public:
     Miku();
     ~Miku() override;
