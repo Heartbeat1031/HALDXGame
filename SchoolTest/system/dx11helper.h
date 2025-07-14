@@ -1,7 +1,9 @@
 #pragma once
 #include	<d3dcompiler.h>
+#include	<directxmath.h>
 #include	<locale.h>
 #include	<d3d11.h>
+#include	<DirectXMath.h>
 #include	<memory>
 #include	<string>
 

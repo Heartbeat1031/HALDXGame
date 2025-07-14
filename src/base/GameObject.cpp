@@ -45,5 +45,9 @@ void GameObject::Destroy() {
     halgame->GetScene()->RemoveGameObject(uid);
 }
 
+std::unordered_map<std::string, UID> GameObject::GetComponentMap() const {
+    return m_ComponentMap;
+}
+
 void GameObject::OnInspectorGUI() {
 }

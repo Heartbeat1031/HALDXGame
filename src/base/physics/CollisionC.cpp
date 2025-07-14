@@ -10,55 +10,74 @@
 
 using namespace DirectX::SimpleMath;
 
-CollisionC::CollisionC(JPH::EMotionType motionType): m_MotionType(motionType) {
+CollisionC::CollisionC(JPH::EMotionType motionType): m_bodyInterface(halgame->GetPhysicsSystem()->GetBodyInterface()),
+                                                     m_MotionType(motionType) {
 }
 
 void CollisionC::Init() {
     Component::Init();
-    JPH::BodyInterface &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
     JPH::BodyCreationSettings settings = GetBodyCreationSettings();
-    m_bodyID = bodyInterface.CreateBody(settings)->GetID();
-    bodyInterface.AddBody(m_bodyID, JPH::EActivation::Activate);
+    m_bodyID = m_bodyInterface.CreateBody(settings)->GetID();
+    m_bodyInterface.AddBody(m_bodyID, JPH::EActivation::Activate);
     halgame->GetContactListener().AddBodyToUIDMap(m_bodyID, GetUID());
 }
 
 void CollisionC::Uninit() {
     Component::Uninit();
-    halgame->GetPhysicsSystem()->GetBodyInterface().RemoveBody(m_bodyID);
+    m_bodyInterface.RemoveBody(m_bodyID);
     halgame->GetContactListener().RemoveBodyFromUIDMap(m_bodyID);
 }
 
 void CollisionC::Update(float dt) {
     Component::Update(dt);
-    auto &bodyInterface = halgame->GetPhysicsSystem()->GetBodyInterface();
 
-    JPH::RVec3 pos = bodyInterface.GetCenterOfMassPosition(m_bodyID);
-    JPH::Quat rot = bodyInterface.GetRotation(m_bodyID);
+    JPH::RVec3 pos = m_bodyInterface.GetCenterOfMassPosition(m_bodyID);
+    JPH::Quat rot = m_bodyInterface.GetRotation(m_bodyID);
     Quaternion dxRot(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
 
-    // 应用位置偏移
-    Vector3 worldOffset = Vector3::Transform(m_offsetTransform.positionOffset, dxRot);
-
-    // 应用旋转偏移（将欧拉角偏移转为四元数后叠加到物理旋转上）
+    // 局部旋转偏移
     Quaternion offsetRot = Quaternion::CreateFromYawPitchRoll(
         m_offsetTransform.rotationOffset.y,
         m_offsetTransform.rotationOffset.x,
         m_offsetTransform.rotationOffset.z
     );
-    Quaternion finalRot = dxRot * offsetRot;
+
+    // 注意这里换乘顺序
+    Quaternion finalRot = offsetRot * dxRot;
+
+    // 位移也基于偏移旋转后的方向
+    Vector3 worldOffset = Vector3::Transform(m_offsetTransform.positionOffset, finalRot);
 
     auto &myTransform = m_gameObject->GetComponentRef<TransformC>();
     myTransform.SetWorldPosition(Vector3(pos.GetX(), pos.GetY(), pos.GetZ()) - worldOffset);
     myTransform.SetWorldRotation(finalRot);
 }
 
+
+void CollisionC::SetOffsetPosition(const DirectX::SimpleMath::Vector3 &position) {
+    m_offsetTransform.positionOffset = position;
+}
+
+void CollisionC::SetOffsetRotation(const DirectX::SimpleMath::Vector3 &rotation) {
+    m_offsetTransform.rotationOffset = rotation;
+}
+
+void CollisionC::SetGravityFactor(float inGravityFactor) const {
+    m_bodyInterface.SetGravityFactor(m_bodyID, inGravityFactor);
+}
+
+void CollisionC::SetLinearVelocity(const DirectX::SimpleMath::Vector3 &inLinearVelocity) const {
+    JPH::RVec3 velocity(inLinearVelocity.x, inLinearVelocity.y, inLinearVelocity.z);
+    m_bodyInterface.SetLinearVelocity(m_bodyID, velocity);
+}
+
 void CollisionC::SetPosition(Vector3 position) {
-    halgame->GetPhysicsSystem()->GetBodyInterface().SetPosition(
+    m_bodyInterface.SetPosition(
         m_bodyID, JPH::RVec3(position.x, position.y, position.z), JPH::EActivation::Activate);
 }
 
 void CollisionC::SetRotation(Quaternion rotation) {
-    halgame->GetPhysicsSystem()->GetBodyInterface().SetRotation(
+    m_bodyInterface.SetRotation(
         m_bodyID, JPH::Quat(rotation.x, rotation.y, rotation.z, rotation.w), JPH::EActivation::Activate);
 }
 
@@ -68,12 +87,12 @@ void CollisionC::SetRotationEuler(Vector3 eulerRadians) {
 }
 
 Vector3 CollisionC::GetPosition() const {
-    JPH::RVec3 pos = halgame->GetPhysicsSystem()->GetBodyInterface().GetCenterOfMassPosition(m_bodyID);
+    JPH::RVec3 pos = m_bodyInterface.GetCenterOfMassPosition(m_bodyID);
     return Vector3(pos.GetX(), pos.GetY(), pos.GetZ());
 }
 
 Vector3 CollisionC::GetRotationEuler() const {
-    JPH::Quat rot = halgame->GetPhysicsSystem()->GetBodyInterface().GetRotation(m_bodyID);
+    JPH::Quat rot = m_bodyInterface.GetRotation(m_bodyID);
     Quaternion q(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
 
     float pitch = std::atan2(2.0f * (q.y * q.z + q.w * q.x), 1.0f - 2.0f * (q.x * q.x + q.y * q.y));

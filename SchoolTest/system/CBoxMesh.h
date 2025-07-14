@@ -154,11 +154,11 @@ public:
 		}
 
 	}
-
-
 private:
 	Color m_color;
 	float m_lengthx = 0.0f;
 	float m_lengthy = 0.0f;
 	float m_lengthz = 0.0f;
 };
+
+

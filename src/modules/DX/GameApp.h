@@ -61,7 +61,7 @@ public:
     std::shared_ptr<ThirdPersonCamera> m_pCamera;        // サードパーソンカメラ
 
     UID AddModel(std::string_view filename);       // モデルの追加
-    ModelObject& GetModelObject(UID handle);       // モデルオブジェクトの取得
+    ModelObject* GetModelObject(UID handle);       // モデルオブジェクトの取得
     bool RemoveModel(UID handle);                  // モデルの削除
 
     // 描画用のラインを追加

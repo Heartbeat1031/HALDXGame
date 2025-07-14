@@ -91,7 +91,7 @@ add_subdirectory(src/modules/GameKit)
 add_subdirectory(src/modules/DX DX)
 
 # テストディレクトリの追加
-#add_subdirectory(SchoolTest SchoolTest)
+add_subdirectory(SchoolTest SchoolTest)
 
 file(GLOB_RECURSE BASE_CPP_FILES src/base/*.cpp)
 file(GLOB_RECURSE BASE_HEADER_FILES src/base/*.h)

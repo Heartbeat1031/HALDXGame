@@ -88,7 +88,6 @@ void TransformC::SetLocalRotationEuler(const Vector3 &eulerRadians) {
     m_dirty = true;
 }
 
-
 void TransformC::SetLocalScale(const Vector3 &scale) {
     m_localScale = scale;
     m_dirty = true;
@@ -257,6 +256,12 @@ Vector3 TransformC::GetWorldScale() {
     Vector3 translation;
     m_worldMatrix.Decompose(scale, rotation, translation);
     return scale;
+}
+
+DirectX::SimpleMath::Vector3 TransformC::GetForward() {
+    UpdateTransform();
+    Quaternion rot = GetWorldRotation();
+    return Vector3::Transform(Vector3::UnitZ, rot);
 }
 
 void TransformC::SetParent(TransformC *newParent, bool keepWorld) {

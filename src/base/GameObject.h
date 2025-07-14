@@ -87,9 +87,8 @@ public:
 
     template<class T>
     T *GetComponent(std::string name) const;
-    const std::unordered_map<std::string, unsigned> &GetComponentMap() const {
-        return m_ComponentMap;
-    }
+
+    std::unordered_map<std::string, UID> GetComponentMap() const;
     // 新しい衝突点が検出された時に呼び出される。
     virtual void OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) {};
     // 前のフレームでも接触していた物体が、今フレームでも引き続き接触している場合に呼び出される。

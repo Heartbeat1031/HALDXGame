@@ -18,8 +18,8 @@ MixamorigBoneC::~MixamorigBoneC() {
 void MixamorigBoneC::Init() {
     Component::Init();
     ModelC &modelC = GetComponentRef<ModelC>();
-    ModelObject &modelObject = halgame->GetModelObject(modelC.GetHandle());
-    const Model *model = modelObject.GetModel();
+    ModelObject *modelObject = halgame->GetModelObject(modelC.GetHandle());
+    const Model *model = modelObject->GetModel();
     auto it = model->boneNameToIndex.find("mixamorig:Hips");
     if (it == model->boneNameToIndex.end()) {
         throw std::runtime_error(" 'mixamorig:Hips' 骨骼が見つかりません。");
@@ -77,7 +77,7 @@ void MixamorigBoneC::Init() {
 
 void MixamorigBoneC::Update(float dt) {
     Component::Update(dt);
-    const Model *model = halgame->GetModelObject(GetComponentRef<ModelC>().GetHandle()).GetModel();
+    const Model *model = halgame->GetModelObject(GetComponentRef<ModelC>().GetHandle())->GetModel();
     std::function<void (BoneObj *boneObj, DirectX::XMMATRIX parentMat)> updateBone = [&](BoneObj *boneObj, DirectX::XMMATRIX parentMat) {
         std::string boneName = boneObj->GetName();
         int boneIndex = model->boneNameToIndex.at(boneName);

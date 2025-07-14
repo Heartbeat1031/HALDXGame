@@ -40,7 +40,7 @@ void CShader::Create(std::string vs, std::string ps, std::string gs)
 			&m_pVertexShader,
 			&m_pVertexLayout);
 	if (!sts) {
-		MessageBox(nullptr, L"CreateVertexShader error", L"error", MB_OK);
+		MessageBox(nullptr, LPCWSTR("CreateVertexShader error"), LPCWSTR("error"), MB_OK);
 		return;
 	}
 
@@ -52,7 +52,7 @@ void CShader::Create(std::string vs, std::string ps, std::string gs)
 		"ps_5_0",
 		&m_pPixelShader);
 	if (!sts) {
-		MessageBox(nullptr, L"CreatePixelShader error", L"error", MB_OK);
+		MessageBox(nullptr, LPCWSTR("CreatePixelShader error"), LPCWSTR("error"), MB_OK);
 		return;
 	}
 
@@ -65,7 +65,7 @@ void CShader::Create(std::string vs, std::string ps, std::string gs)
 			"gs_5_0",
 			&m_pGeometryShader);
 		if (!sts) {
-			MessageBox(nullptr, L"CreateGeometryShader error", L"error", MB_OK);
+			MessageBox(nullptr, LPCWSTR("CreateGeometryShader error"), LPCWSTR("error"), MB_OK);
 			return;
 		}
 	}

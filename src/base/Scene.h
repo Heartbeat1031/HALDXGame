@@ -89,10 +89,10 @@ T &Scene::AddGameObject(Args &&... args) {
 template<typename T>
 T &Scene::GetGameObjectRef(UID handle) {
     static_assert(std::is_base_of_v<GameObject, T>, "T は GameObject を継承する必要があります。");
-    GameObject &base = m_GameObjectStorage.Get(handle);
+    GameObject *base = m_GameObjectStorage.Get(handle);
     // 这里使用的强制转换, 虽然有点费效率, 但是优化费劲,调用频率不高, 所以暂时放弃优化. 懒!!
     // ここでは強制キャストを使用しています。効率は少し低下しますが、最適化は面倒で、呼び出し頻度も高くないため、今のところ最適化は行いません。
-    return dynamic_cast<T &>(base);
+    return dynamic_cast<T &>(*base);
 }
 
 template<typename T>
@@ -101,8 +101,8 @@ T *Scene::GetGameObject(UID handle) {
     if (!m_GameObjectStorage.Has(handle)) {
         return nullptr;
     }
-    GameObject &base = m_GameObjectStorage.Get(handle);
-    return dynamic_cast<T *>(&base);
+    T *base = m_GameObjectStorage.Get(handle);
+    return dynamic_cast<T *>(base);
 }
 
 template<typename T, typename... Args>
@@ -123,8 +123,8 @@ T &Scene::AddComponent(GameObject *parent, Args &&... args) {
 template<typename T>
 T &Scene::GetComponentRef(UID handle) {
     static_assert(std::is_base_of_v<Component, T>, "T は Component を継承する必要があります。");
-    Component &base = m_ComponentStorage.Get(handle);
-    return dynamic_cast<T &>(base);
+    Component *base = m_ComponentStorage.Get(handle);
+    return dynamic_cast<T &>(*base);
 }
 
 template<typename T>
@@ -133,6 +133,6 @@ T *Scene::GetComponent(UID handle) {
     if (!m_ComponentStorage.Has(handle)) {
         return nullptr;
     }
-    Component &base = m_ComponentStorage.Get(handle);
-    return dynamic_cast<T *>(&base);
+    Component *base = m_ComponentStorage.Get(handle);
+    return dynamic_cast<T *>(base);
 }

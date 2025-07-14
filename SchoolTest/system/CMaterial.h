@@ -1,5 +1,6 @@
 #pragma once
 #include	<Windows.h>
+#include	<directxmath.h>
 #include	<d3d11.h>
 #include	<wrl/client.h>
 #include	"dx11helper.h"
@@ -58,7 +59,7 @@ public:
 			sizeof(ConstantBufferMaterial),		// サイズ
 			m_pConstantBufferMaterial.GetAddressOf());		// コンスタントバッファ４
 		if (!sts) {
-			MessageBox(NULL, L"CreateBuffer(constant buffer Material) error", L"Error", MB_OK);
+			MessageBox(NULL, LPCWSTR("CreateBuffer(constant buffer Material) error"), LPCWSTR("Error"), MB_OK);
 			return false;
 		}
 
