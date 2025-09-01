@@ -70,7 +70,7 @@ bool Game::Init() {
     animationManager.LoadAnimationClips("assets/animation/Dance.fbx", {"Dance"});
 
     // テストシーンを読み込む
-    SetScene<TestScene>();
+    SetScene<TitleScene>();
     return true;
 }
 
