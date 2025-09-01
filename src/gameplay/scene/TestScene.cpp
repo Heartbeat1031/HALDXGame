@@ -9,12 +9,16 @@
 #include "House.h"
 #include "Miku.h"
 #include "ModelC.h"
+#include "CapsuleCollisionC.h"
 #include "TransformC.h"
 #include <DirectXMath.h>
 
 #include "Bullet.h"
 
 void TestScene::Init() {
+    //発射位置初期化
+    BaseFirePosition = {0,4.0f,-10.0f};
+
     // 地面を追加するサンプル
     auto &ground = AddGameObject<GameObject>();
     // 地面のモデルコンポーネントを追加します
@@ -40,7 +44,17 @@ void TestScene::Init() {
     }
     auto &house = AddGameObject<House>();
     house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
+
+  
+
+   
 }
+void TestScene::FireBulletFromEnemy() {
+
+    Bullet& bullet = halgame->GetScene()->AddGameObject<Bullet>();
+    bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(BaseFirePosition);
+    bullet.Fire(Vector3{0.0f,0.0f, 1.0f}, 20.0f);
+};
 
 void TestScene::Update() {
     if (ImGui::Begin("メッシュ")) {
@@ -62,7 +76,6 @@ void TestScene::Update() {
     }
     halgame->m_pCamera->Approach(-io.MouseWheel * 1.0f);
 
-
     int drawSize = 10;
     // 地面に小さな立方体を描画します
     for (int x = -drawSize; x < drawSize; x++) {
@@ -77,6 +90,10 @@ void TestScene::Update() {
             DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f)
         );
     }
+    if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
+        FireBulletFromEnemy();
+    }
+    
 }
 
 void TestScene::Uninit() {

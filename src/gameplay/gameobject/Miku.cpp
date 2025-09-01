@@ -66,12 +66,12 @@ void Miku::Update(float dt) {
     if (ImGui::IsKeyDown(ImGuiKey_D)) {
         moveDir += cameraHorizontal;
     }
-    if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
-        Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>();
-        TransformC &myTransformC= GetComponentRef<TransformC>();
-        bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(myTransformC.GetWorldPosition() + myTransformC.GetForward() * - 2.0f + Vector3(0, 4.0f, 0));
-        bullet.Fire(myTransformC.GetForward() *-1, 20.0f);
-    }
+    //if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
+    //    Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>();
+    //    TransformC &myTransformC= GetComponentRef<TransformC>();
+    //    bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(myTransformC.GetWorldPosition() + myTransformC.GetForward() * - 2.0f + Vector3(0, 4.0f, 0));
+    //    bullet.Fire(myTransformC.GetForward() *-1, 20.0f);
+    //}
 
   
 
@@ -133,6 +133,7 @@ void Miku::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactM
     std::cout << "物理オブジェクト " << my.GetGameObject()->GetName() << " が "
               << other.GetGameObject()->GetName() << " と接触しました。" << std::endl;
 
-    //プレイヤーが弾を防ぐたびに、10ポイント加算
-    //if(){};
+
+    //プレイヤーが弾を防ぐたびに、10ポイント加算   
+
 }

@@ -7,7 +7,9 @@
 #include "CapsuleCollisionC.h"
 #include "ModelC.h"
 #include <DirectXMath.h>
+#include<iostream>
 
+using namespace std;
 Bullet::Bullet() {
 }
 
@@ -38,6 +40,7 @@ void Bullet::Update(float dt) {
 void Bullet::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
                             JPH::ContactSettings &ioSettings) {
     GameObject::OnContactAdded(my, other, inManifold, ioSettings);
+
 }
 
 void Bullet::Uninit() {

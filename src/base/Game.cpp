@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "TestScene.h"
+#include "TitleScene.h"
 #include "Jolt/RegisterTypes.h"
 
 // 游戏实例

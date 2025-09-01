@@ -12,10 +12,14 @@
 
 // サンプルのテストシーン
 class TestScene : public Scene{
+    //一時的な変数です
+    Vector3 BaseFirePosition;
 public:
     Miku *miku = nullptr;
 
     void Init() override;
     void Update() override;
     void Uninit() override;
+
+    void FireBulletFromEnemy();
 };
