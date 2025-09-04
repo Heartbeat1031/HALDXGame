@@ -91,10 +91,10 @@ public:
     DirectX::SimpleMath::Vector3 GetWorldScale();
 
     DirectX::SimpleMath::Vector3 GetForward();
-    // DirectX::SimpleMath::Vector3 GetRight();
-    // DirectX::SimpleMath::Vector3 GetLeft();
-    // DirectX::SimpleMath::Vector3 GetUp();
-    // DirectX::SimpleMath::Vector3 GetDown();
+     DirectX::SimpleMath::Vector3 GetRight();
+    DirectX::SimpleMath::Vector3 GetLeft();
+    DirectX::SimpleMath::Vector3 GetUp();
+    DirectX::SimpleMath::Vector3 GetDown();
 
     void OnInspectorGUI() override;
 private:

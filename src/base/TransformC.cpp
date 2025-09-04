@@ -43,7 +43,8 @@ void TransformC::Uninit() {
     // 子ノードをクリアする
     for (TransformC *child: m_Childs) {
         // 子TransformCの親子関係を解除
-        child->SetParent(nullptr);
+        //child->SetParent(nullptr, false);
+        child->m_parent = nullptr;
         UID childgameuid = child->m_gameObject->GetUID();
         halgame->GetScene()->RemoveGameObject(childgameuid);
     }
@@ -261,8 +262,33 @@ Vector3 TransformC::GetWorldScale() {
 DirectX::SimpleMath::Vector3 TransformC::GetForward() {
     UpdateTransform();
     Quaternion rot = GetWorldRotation();
-    return Vector3::Transform(Vector3::UnitZ, rot);
+    return Vector3::Transform(Vector3::UnitZ, rot); // Z+
 }
+
+DirectX::SimpleMath::Vector3 TransformC::GetRight() {
+    UpdateTransform();
+    Quaternion rot = GetWorldRotation();
+    return Vector3::Transform(Vector3::UnitX, rot); // X+
+}
+
+DirectX::SimpleMath::Vector3 TransformC::GetLeft() {
+    UpdateTransform();
+    Quaternion rot = GetWorldRotation();
+    return Vector3::Transform(-Vector3::UnitX, rot); // X-
+}
+
+DirectX::SimpleMath::Vector3 TransformC::GetUp() {
+    UpdateTransform();
+    Quaternion rot = GetWorldRotation();
+    return Vector3::Transform(Vector3::UnitY, rot); // Y+
+}
+
+DirectX::SimpleMath::Vector3 TransformC::GetDown() {
+    UpdateTransform();
+    Quaternion rot = GetWorldRotation();
+    return Vector3::Transform(-Vector3::UnitY, rot); // Y-
+}
+
 
 void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
     if (keepWorld) {
@@ -291,6 +317,10 @@ void TransformC::SetParent(TransformC *newParent, bool keepWorld) {
         SetLocalRotation(rotation);
         SetLocalScale(scale);
     } else {
+        if (m_parent != nullptr) {
+            // 既存の親ノードから自分自身を削除
+            m_parent ->RemoveChild(this);
+        }
         // ワールド座標を保持しない場合、親ノードを直接設定
         m_parent = newParent;
     }
