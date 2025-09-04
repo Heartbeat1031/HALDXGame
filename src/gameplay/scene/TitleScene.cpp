@@ -1,27 +1,30 @@
 #include "TitleScene.h"
 
 #include "BoxCollisionC.h"
-#include "Global.h"
-#include "ModelC.h"
-#include "TransformC.h"
-#include <DirectXMath.h>
 #include "GameObject.h"
+#include "ModelC.h"
 
 void TitleScene::Init() {
     auto& screen = AddGameObject<GameObject>();
-    screen.AddComponent<ModelC>("assets\\models\\title.obj");
+    screen.AddComponent<ModelC>("assets/models/bg.fbx");
     screen.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
-    screen.AddComponent<BoxCollisionC>(
-        JPH::EMotionType::Static, // 静的な物体
-        Vector3(10, 1, 10) // サイズを設定します
-    );
+    // screen.AddComponent<BoxCollisionC>(
+    //     JPH::EMotionType::Static, // 静的な物体
+    //     Vector3(10, 1, 10) // サイズを設定します
+    // );
+    // screen.GetComponentRef<BoxCollisionC>().SetOffsetTransform(
+    //     OffsetTransform{
+    //         Vector3(0, -2, 0), // 地面の位置オフセット
+    //         Vector3(0, -90, 0)   // 回転オフセット
+    //     }
+    // );
 }
 
 void TitleScene::Update() {
     // 三人称カメラの操作
     ImGuiIO& io = ImGui::GetIO();
     // カメラのターゲットをミクの位置に設定します
-    halgame->m_pCamera->SetTarget(Vector3(0, 0, 0));
+    halgame->m_pCamera->SetTarget(Vector3(0, 0, 1));
     // オブジェクトの周りを回転する
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
         halgame->m_pCamera->RotateX(io.MouseDelta.y * 0.01f);
