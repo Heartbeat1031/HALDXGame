@@ -22,7 +22,7 @@ void TestScene::Init() {
     // 地面を追加するサンプル
     auto &ground = AddGameObject<GameObject>();
     // 地面のモデルコンポーネントを追加します
-    ground.AddComponent<ModelC>("assets/models/bg.fbx");
+    ground.AddComponent<ModelC>("assets/models/ground_19.obj");
     // 地面の座標を設定します
     ground.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
     ground.AddComponent<BoxCollisionC>(

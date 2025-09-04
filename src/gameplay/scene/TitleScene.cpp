@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "ModelC.h"
+#include "TestScene.h"
 
 void TitleScene::Init() {
     auto& screen = AddGameObject<GameObject>();
@@ -15,6 +16,9 @@ void TitleScene::Init() {
 }
 
 void TitleScene::Update() {
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
+        halgame->SetScene<TestScene>();
+    }
 }
 
 void TitleScene::Uninit() {
