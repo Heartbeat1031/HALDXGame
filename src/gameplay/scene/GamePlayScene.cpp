@@ -2,7 +2,7 @@
 // Created by lclcl on 25-5-22.
 //
 
-#include "TestScene.h"
+#include "GamePlayScene.h"
 
 #include "BoxCollisionC.h"
 #include "Global.h"
@@ -14,8 +14,9 @@
 #include <DirectXMath.h>
 
 #include "Bullet.h"
+#include "GameoverScene.h"
 
-void TestScene::Init() {
+void GamePlayScene::Init() {
     //発射位置初期化
     BaseFirePosition = {0,4.0f,-10.0f};
 
@@ -42,21 +43,17 @@ void TestScene::Init() {
     if (miku->HasComponent<BoxCollisionC>()) {
         miku->GetComponentRef<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
     }
-    auto &house = AddGameObject<Idol>();
-    house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
+    idol = &AddGameObject<Idol>();
+    idol->GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 
-  
-
-   
 }
-void TestScene::FireBulletFromEnemy() {
-
+void GamePlayScene::FireBullet() {
     Bullet& bullet = halgame->GetScene()->AddGameObject<Bullet>();
     bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(BaseFirePosition);
     bullet.Fire(Vector3{0.0f,0.0f, 1.0f}, 20.0f);
 };
 
-void TestScene::Update() {
+void GamePlayScene::Update() {
     if (ImGui::Begin("メッシュ")) {
         ImGui::Text("三人称モード");
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");
@@ -90,11 +87,13 @@ void TestScene::Update() {
             DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f)
         );
     }
-    if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
-        FireBulletFromEnemy();
+    if (idol != nullptr && idol->HP <= 0) {
+        halgame->SetScene<GameoverScene>();
     }
-    
+    if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
+        FireBullet();
+    }
 }
 
-void TestScene::Uninit() {
+void GamePlayScene::Uninit() {
 }

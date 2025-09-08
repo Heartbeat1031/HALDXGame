@@ -9,8 +9,6 @@
 //----------------------------------------------------------------//
 
 class Idol:public GameObject {
-private:
-    int HP = 10;
 public:
     Idol();
     ~Idol() override;
@@ -19,5 +17,6 @@ public:
 
     void Uninit() override;
 public:
+    int HP = 1;
     void BeAttacked(int damage);
 };

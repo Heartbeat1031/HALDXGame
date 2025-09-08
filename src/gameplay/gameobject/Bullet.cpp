@@ -12,6 +12,7 @@
 #include "Idol.h"
 
 using namespace std;
+
 Bullet::Bullet() {
 }
 
@@ -34,7 +35,8 @@ void Bullet::Update(float dt) {
     GameObject::Update(dt);
     timeAlive += dt;
     // 弾丸の生存時間が一定時間を超えたら、弾丸を削除します
-    if (timeAlive > 10.0f) { // 5秒後に弾丸を削除
+    if (timeAlive > 10.0f) {
+        // 5秒後に弾丸を削除
         Destroy();
     }
 }
@@ -45,6 +47,7 @@ void Bullet::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::Contac
 
     Idol *idol = dynamic_cast<Idol *>(other.GetGameObject());
     if (!idol) {
+        hasContactIdol = true;
         return;
     }
     if (hasContactIdol) {
@@ -79,7 +82,7 @@ void Bullet::Fire(DirectX::SimpleMath::Vector3 direction, float speed) {
 
     DirectX::SimpleMath::Matrix m;
     m.Right(right);
-    m.Up(forward);     // Y+ 朝向 direction
+    m.Up(forward); // Y+ 朝向 direction
     m.Forward(up);
     m.Translation(Vector3::Zero);
 

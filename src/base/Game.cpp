@@ -3,7 +3,7 @@
 //
 
 #include "Game.h"
-#include "TestScene.h"
+#include "GamePlayScene.h"
 #include "TitleScene.h"
 #include "Jolt/RegisterTypes.h"
 
@@ -48,7 +48,7 @@ bool Game::Init() {
     JPH::RegisterTypes();
     mTempAllocator = new JPH::TempAllocatorImpl(32 * 1024 * 1024);
     mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers,
-                                              std::thread::hardware_concurrency() - 1);
+                                              0);
     mPhysicsSystem = new PhysicsSystem();
     mPhysicsSystem->Init(10240, 0, 65536, 20480, mBroadPhaseLayerInterface, mObjectVsBroadPhaseLayerFilter,
                          mObjectVsObjectLayerFilter);

@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "ModelC.h"
-#include "TestScene.h"
+#include "GamePlayScene.h"
 
 void TitleScene::Init() {
     auto &screen = AddGameObject<GameObject>();
@@ -13,6 +13,7 @@ void TitleScene::Init() {
     halgame->m_pCamera->SetTarget(Vector3(0, 0, 0));
     halgame->m_pCamera->Approach(-10);
     halgame->m_pCamera->SetRotationX(-1);
+    halgame->m_pCamera->SetRotationY(0);
     startFlagIndex = 10;
     isStart = false;
 }
@@ -21,6 +22,12 @@ void TitleScene::Update() {
     if (ImGui::IsKeyReleased(ImGuiKey_Enter)) {
         isStart = true;
         startFlagIndex = 10;
+    }
+    if (isStart) {
+        startFlagIndex--;
+        if (startFlagIndex <= 0) {
+            halgame->SetScene<GamePlayScene>();
+        }
     }
 
     ImGui::Begin("TitleUI",
@@ -34,12 +41,6 @@ void TitleScene::Update() {
         ImGui::Text("ゲームを読み込み中 ...");
     }
     ImGui::End();
-    if (isStart) {
-        startFlagIndex--;
-        if (startFlagIndex <= 0) {
-            halgame->SetScene<TestScene>();
-        }
-    }
 }
 
 void TitleScene::Uninit() {

@@ -8,6 +8,7 @@
 
 #include "AnimatorC.h"
 #include "BoxCollisionC.h"
+#include "GamePlayScene.h"
 #include "MixamorigBoneC.h"
 #include "ModelC.h"
 #include "TransformC.h"
@@ -40,9 +41,6 @@ void Idol::Uninit() {
 void Idol::BeAttacked(int damage) {
     HP -= damage;
     std::cout << "Idolは" << damage << "のダメージを受けました。残りHP: " << HP << std::endl;
-    if (HP <= 0) {
-        std::cout << "Idolは倒れました！" << std::endl;
-    }
 }
 
 void Idol::Update(float dt) {

@@ -13,6 +13,7 @@ void WinScene::Init() {
     halgame->m_pCamera->SetTarget(Vector3(0, 0, 0));
     halgame->m_pCamera->Approach(-10);
     halgame->m_pCamera->SetRotationX(-1);
+    halgame->m_pCamera->SetRotationY(0);
 }
 
 void WinScene::Update() {

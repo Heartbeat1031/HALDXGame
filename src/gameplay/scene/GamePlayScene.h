@@ -10,10 +10,14 @@
 // このクラスは、SceneクラスとGameObjectクラスの使用方法を示すためのテストシーンです。
 //----------------------------------------------------------------//
 
+class Idol;
+
 // サンプルのテストシーン
-class TestScene : public Scene{
+class GamePlayScene : public Scene{
     //一時的な変数です
     Vector3 BaseFirePosition;
+private:
+    Idol *idol = nullptr;
 public:
     Player *miku = nullptr;
 
@@ -21,5 +25,5 @@ public:
     void Update() override;
     void Uninit() override;
 
-    void FireBulletFromEnemy();
+    void FireBullet();
 };
