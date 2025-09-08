@@ -47,7 +47,7 @@ void GamePlayScene::Init() {
     idol->GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 }
 
-void GamePlayScene::FireBullet(Vector3 StartPosition, Vector3 Direction, float Speed) {
+void GamePlayScene::FireBullet(const Vector3 StartPosition, const Vector3 Direction, const float Speed) {
     Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>();
     bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(StartPosition);
     bullet.Fire(Direction, Speed);
