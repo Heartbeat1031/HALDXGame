@@ -2,7 +2,7 @@
 // Created by lclcl on 25-5-22.
 //
 
-#include "House.h"
+#include "Idol.h"
 
 #include <iostream>
 
@@ -12,13 +12,13 @@
 #include "ModelC.h"
 #include "TransformC.h"
 
-House::House() {
+Idol::Idol() {
 }
 
-House::~House() {
+Idol::~Idol() {
 }
 
-void House::Init() {
+void Idol::Init() {
     GameObject::Init();
     // ModelC コンポーネントを追加し、モデルをロードします
     AddComponent<ModelC>("assets/models/player/Idol.fbx");
@@ -33,20 +33,21 @@ void House::Init() {
     });
 }
 
-void House::Uninit() {
+void Idol::Uninit() {
     GameObject::Uninit();
 }
 
-void House::Update(float dt) {
+void Idol::BeAttacked(int damage) {
+    HP -= damage;
+    std::cout << "Idolは" << damage << "のダメージを受けました。残りHP: " << HP << std::endl;
+    if (HP <= 0) {
+        std::cout << "Idolは倒れました！" << std::endl;
+    }
+}
+
+void Idol::Update(float dt) {
     GameObject::Update(dt);
     if (GetComponentRef<TransformC>().GetWorldPosition().y < -10.0f) {
         GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
     }
-}
-void House::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
-    JPH::ContactSettings &ioSettings) {
-    GameObject::OnContactAdded(my, other, inManifold, ioSettings);
-
-    std::cout << "物理オブジェクト " << my.GetGameObject()->GetName() << " が "
-              << other.GetGameObject()->GetName() << " と接触しました。" << std::endl;
 }

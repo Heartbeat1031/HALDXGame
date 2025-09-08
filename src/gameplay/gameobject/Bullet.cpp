@@ -9,6 +9,8 @@
 #include <DirectXMath.h>
 #include<iostream>
 
+#include "Idol.h"
+
 using namespace std;
 Bullet::Bullet() {
 }
@@ -41,6 +43,15 @@ void Bullet::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::Contac
                             JPH::ContactSettings &ioSettings) {
     GameObject::OnContactAdded(my, other, inManifold, ioSettings);
 
+    Idol *idol = dynamic_cast<Idol *>(other.GetGameObject());
+    if (!idol) {
+        return;
+    }
+    if (hasContactIdol) {
+        return;
+    }
+    hasContactIdol = true;
+    idol->BeAttacked(1);
 }
 
 void Bullet::Uninit() {
@@ -49,7 +60,7 @@ void Bullet::Uninit() {
 
 void Bullet::Fire(DirectX::SimpleMath::Vector3 direction, float speed) {
     CapsuleCollisionC &boxC = GetComponentRef<CapsuleCollisionC>();
-
+    hasContactIdol = false;
     // 归一化方向
     direction.Normalize();
 

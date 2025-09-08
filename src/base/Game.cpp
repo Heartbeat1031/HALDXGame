@@ -82,8 +82,8 @@ void Game::Update(float dt) {
     // 物理システムの更新
     mPhysicsSystem->Update(dt, 1, mTempAllocator, mJobSystem);
 
-    // mPhysicsSystem->DrawBodies(
-    //     mBodyDrawSettings,
-    //     gHalDebugRenderer
-    // );
+    mPhysicsSystem->DrawBodies(
+        mBodyDrawSettings,
+        gHalDebugRenderer
+    );
 }

@@ -2,7 +2,7 @@
 // Created by lclcl on 25-5-30.
 //
 
-#include "Miku.h"
+#include "Player.h"
 
 #include <iostream>
 
@@ -14,13 +14,13 @@
 #include "ModelC.h"
 #include "TransformC.h"
 
-Miku::Miku() {
+Player::Player() {
 }
 
-Miku::~Miku() {
+Player::~Player() {
 }
 
-void Miku::Init() {
+void Player::Init() {
     GameObject::Init();
     // モデルコンポーネントを追加し、モデルをロードします
     AddComponent<ModelC>("assets/models/player/man.fbx");
@@ -37,7 +37,7 @@ void Miku::Init() {
     //AddComponent<MixamoRagdollC>();
 }
 
-void Miku::Update(float dt) {
+void Player::Update(float dt) {
     GameObject::Update(dt);
 
     // カメラの前方と右方向を取得
@@ -122,11 +122,11 @@ void Miku::Update(float dt) {
     }
 }
 
-void Miku::Uninit() {
+void Player::Uninit() {
     GameObject::Uninit();
 }
 
-void Miku::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
+void Player::OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
     JPH::ContactSettings &ioSettings) {
     GameObject::OnContactAdded(my, other, inManifold, ioSettings);
 

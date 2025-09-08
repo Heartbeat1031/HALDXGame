@@ -8,15 +8,16 @@
 // Houseクラスは、ゲームオブジェクトの一例であり、家を表します
 //----------------------------------------------------------------//
 
-class House:public GameObject {
+class Idol:public GameObject {
+private:
+    int HP = 10;
 public:
-    House();
-    ~House() override;
+    Idol();
+    ~Idol() override;
     void Init() override;
     void Update(float dt) override;
 
-    void OnContactAdded(CollisionC &my, CollisionC &other, const JPH::ContactManifold &inManifold,
-                        JPH::ContactSettings &ioSettings) override;
-
     void Uninit() override;
+public:
+    void BeAttacked(int damage);
 };

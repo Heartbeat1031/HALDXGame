@@ -7,6 +7,7 @@
 
 class Bullet : public GameObject {
 private:
+    bool hasContactIdol = false;
     float timeAlive = 0.0f; // 弾丸の生存時間
 public:
     Bullet();
