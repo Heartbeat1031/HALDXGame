@@ -5,7 +5,7 @@
 #include "TestScene.h"
 
 void TitleScene::Init() {
-    auto& screen = AddGameObject<GameObject>();
+    auto &screen = AddGameObject<GameObject>();
     screen.AddComponent<ModelC>("assets/models/bg.fbx");
     screen.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
     screen.GetComponentRef<TransformC>().SetLocalScale(Vector3(3.8f, 3.8f, 1));
@@ -13,14 +13,34 @@ void TitleScene::Init() {
     halgame->m_pCamera->SetTarget(Vector3(0, 0, 0));
     halgame->m_pCamera->Approach(-10);
     halgame->m_pCamera->SetRotationX(-1);
+    startFlagIndex = 10;
+    isStart = false;
 }
 
 void TitleScene::Update() {
-    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
-        halgame->SetScene<TestScene>();
+    if (ImGui::IsKeyReleased(ImGuiKey_Enter)) {
+        isStart = true;
+        startFlagIndex = 10;
+    }
+
+    ImGui::Begin("TitleUI",
+                 nullptr,
+                 ImGuiWindowFlags_NoTitleBar |
+                 ImGuiWindowFlags_NoBackground);
+
+    if (!isStart) {
+        ImGui::Text("Enterキーを押してゲームを開始");
+    } else {
+        ImGui::Text("ゲームを読み込み中 ...");
+    }
+    ImGui::End();
+    if (isStart) {
+        startFlagIndex--;
+        if (startFlagIndex <= 0) {
+            halgame->SetScene<TestScene>();
+        }
     }
 }
 
 void TitleScene::Uninit() {
-
 }

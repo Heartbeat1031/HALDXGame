@@ -6,12 +6,12 @@
 #include "GameObject.h"
 
 
-class Miku:public GameObject {
+class Player:public GameObject {
 private:
     int m_score = 0;
 public:
-    Miku();
-    ~Miku() override;
+    Player();
+    ~Player() override;
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;

@@ -6,8 +6,8 @@
 
 #include "BoxCollisionC.h"
 #include "Global.h"
-#include "House.h"
-#include "Miku.h"
+#include "Idol.h"
+#include "Player.h"
 #include "ModelC.h"
 #include "CapsuleCollisionC.h"
 #include "TransformC.h"
@@ -38,11 +38,11 @@ void TestScene::Init() {
     ground.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, -1, 0));
 
     // ゲームオブジェクトを追加します
-    miku = &AddGameObject<Miku>();
+    miku = &AddGameObject<Player>();
     if (miku->HasComponent<BoxCollisionC>()) {
         miku->GetComponentRef<BoxCollisionC>().SetPosition(Vector3(-5, 8, 0));
     }
-    auto &house = AddGameObject<House>();
+    auto &house = AddGameObject<Idol>();
     house.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
 
   
