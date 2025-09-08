@@ -25,5 +25,5 @@ public:
     void Update() override;
     void Uninit() override;
 
-    void FireBullet();
+    void FireBullet(Vector3 StartPosition, Vector3 Direction, float Speed);
 };

@@ -18,7 +18,7 @@
 
 void GamePlayScene::Init() {
     //発射位置初期化
-    BaseFirePosition = {0,4.0f,-10.0f};
+    BaseFirePosition = {0, 4.0f, -10.0f};
 
     // 地面を追加するサンプル
     auto &ground = AddGameObject<GameObject>();
@@ -33,7 +33,7 @@ void GamePlayScene::Init() {
     ground.GetComponentRef<BoxCollisionC>().SetOffsetTransform(
         OffsetTransform{
             Vector3(0, -2, 0), // 地面の位置オフセット
-            Vector3(0, 0, 0)   // 回転オフセットはなし
+            Vector3(0, 0, 0) // 回転オフセットはなし
         }
     );
     ground.GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, -1, 0));
@@ -45,12 +45,12 @@ void GamePlayScene::Init() {
     }
     idol = &AddGameObject<Idol>();
     idol->GetComponentRef<BoxCollisionC>().SetPosition(Vector3(5, 10, 0));
-
 }
-void GamePlayScene::FireBullet() {
-    Bullet& bullet = halgame->GetScene()->AddGameObject<Bullet>();
-    bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(BaseFirePosition);
-    bullet.Fire(Vector3{0.0f,0.0f, 1.0f}, 20.0f);
+
+void GamePlayScene::FireBullet(Vector3 StartPosition, Vector3 Direction, float Speed) {
+    Bullet &bullet = halgame->GetScene()->AddGameObject<Bullet>();
+    bullet.GetComponentRef<CapsuleCollisionC>().SetPosition(StartPosition);
+    bullet.Fire(Direction, Speed);
 };
 
 void GamePlayScene::Update() {
@@ -80,7 +80,7 @@ void GamePlayScene::Update() {
             Vector3(x, 0.01f, -drawSize),
             Vector3(x, 0.01f, drawSize),
             DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f)
-            );
+        );
         halgame->DrawLine(
             Vector3(-drawSize, 0.01f, x),
             Vector3(drawSize, 0.01f, x),
@@ -91,7 +91,10 @@ void GamePlayScene::Update() {
         halgame->SetScene<GameoverScene>();
     }
     if (ImGui::IsKeyPressed(ImGuiKey_F, false)) {
-        FireBullet();
+        FireBullet(Vector3(0, 4.0f, -10.0f), Vector3{0.0f,0.0f, 1.0f}, 20.0f);
+        FireBullet(Vector3(0, 4.0f, 10.0f), Vector3{0.0f,0.0f, -1.0f}, 20.0f);
+        FireBullet(Vector3(-10, 4.0f, 0), Vector3{1.0,0.0f, 0.0f}, 20.0f);
+        FireBullet(Vector3(10, 4.0f, 0), Vector3{-1.0f,0.0f, 0.0f}, 20.0f);
     }
 }
 
