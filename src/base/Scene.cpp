@@ -44,7 +44,7 @@ void Scene::UpdateBase(float dt) {
     m_GameObjectStorage.ForEachActive([this, dt](UID id, GameObject *game_object) {
         game_object->UpdateBase(dt);
     });
-    Update();
+    Update(dt);
     m_SceneHierarchy.Draw();
 }
 

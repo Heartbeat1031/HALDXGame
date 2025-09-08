@@ -18,7 +18,7 @@ void TitleScene::Init() {
     isStart = false;
 }
 
-void TitleScene::Update() {
+void TitleScene::Update(float dt) {
     if (ImGui::IsKeyReleased(ImGuiKey_Enter)) {
         isStart = true;
         startFlagIndex = 10;

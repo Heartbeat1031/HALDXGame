@@ -53,7 +53,7 @@ void GamePlayScene::FireBullet(Vector3 StartPosition, Vector3 Direction, float S
     bullet.Fire(Direction, Speed);
 };
 
-void GamePlayScene::Update() {
+void GamePlayScene::Update(float dt) {
     if (ImGui::Begin("メッシュ")) {
         ImGui::Text("三人称モード");
         ImGui::Text("マウスの右ボタンを押したままビューをドラッグします");

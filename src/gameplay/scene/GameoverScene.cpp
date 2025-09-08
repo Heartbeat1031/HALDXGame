@@ -15,7 +15,7 @@ void GameoverScene::Init() {
     halgame->m_pCamera->SetRotationY(0);
 }
 
-void GameoverScene::Update() {
+void GameoverScene::Update(float dt) {
     if (ImGui::IsKeyReleased(ImGuiKey_Enter)) {
         halgame->SetScene<TitleScene>();
     }

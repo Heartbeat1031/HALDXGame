@@ -16,7 +16,7 @@ void WinScene::Init() {
     halgame->m_pCamera->SetRotationY(0);
 }
 
-void WinScene::Update() {
+void WinScene::Update(float dt) {
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
         halgame->SetScene<TitleScene>();
     }

@@ -22,7 +22,7 @@ public:
     Player *miku = nullptr;
 
     void Init() override;
-    void Update() override;
+    void Update(float dt) override;
     void Uninit() override;
 
     void FireBullet(Vector3 StartPosition, Vector3 Direction, float Speed);
