@@ -11,6 +11,9 @@ aux_source_directory(. COMMON_SRCS)
 file(GLOB COMMON_HEADERS ./*.h)
 add_library(Common STATIC ${COMMON_SRCS} ${COMMON_HEADERS})
 
+target_link_libraries(Common DirectXTK)
+target_include_directories(Common PUBLIC ${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc)
+
 # ImGui
 target_link_libraries(Common ImGui)
 

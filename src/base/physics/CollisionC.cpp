@@ -10,13 +10,17 @@
 
 using namespace DirectX::SimpleMath;
 
-CollisionC::CollisionC(JPH::EMotionType motionType): m_bodyInterface(halgame->GetPhysicsSystem()->GetBodyInterface()),
-                                                     m_MotionType(motionType) {
+CollisionC::CollisionC(JPH::EMotionType motionType, bool IsSensor): m_bodyInterface(
+                                                                        halgame->GetPhysicsSystem()->
+                                                                        GetBodyInterface()),
+                                                                    m_MotionType(motionType),
+                                                                    m_IsSensor(IsSensor) {
 }
 
 void CollisionC::Init() {
     Component::Init();
     JPH::BodyCreationSettings settings = GetBodyCreationSettings();
+    settings.mIsSensor = m_IsSensor;
     m_bodyID = m_bodyInterface.CreateBody(settings)->GetID();
     m_bodyInterface.AddBody(m_bodyID, JPH::EActivation::Activate);
     halgame->GetContactListener().AddBodyToUIDMap(m_bodyID, GetUID());
@@ -74,6 +78,9 @@ void CollisionC::SetLinearVelocity(const DirectX::SimpleMath::Vector3 &inLinearV
 void CollisionC::SetPosition(Vector3 position) {
     m_bodyInterface.SetPosition(
         m_bodyID, JPH::RVec3(position.x, position.y, position.z), JPH::EActivation::Activate);
+    if (TransformC *transform = GetComponent<TransformC>()) {
+        transform->SetWorldPosition(position);
+    }
 }
 
 void CollisionC::SetRotation(Quaternion rotation) {

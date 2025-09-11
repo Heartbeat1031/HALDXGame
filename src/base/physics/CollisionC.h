@@ -30,10 +30,11 @@ protected:
     JPH::BodyID m_bodyID;
     JPH::BodyInterface& m_bodyInterface; // ボディロックインターフェース
     JPH::EMotionType m_MotionType; // デフォルトは動的
+    bool m_IsSensor = false;
     OffsetTransform m_offsetTransform = OffsetTransform(); // 位置と回転のオフセット
     virtual JPH::BodyCreationSettings GetBodyCreationSettings() = 0; // 子クラスで実装する必要があります
 public:
-    explicit CollisionC(JPH::EMotionType motionType = JPH::EMotionType::Dynamic);
+    explicit CollisionC(JPH::EMotionType motionType = JPH::EMotionType::Dynamic, bool IsSensor = false);
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;

@@ -6,6 +6,7 @@
 #include <Camera.h>
 #include <RenderStates.h>
 #include <ModelObject.h>
+#include <ImageObject.h>
 #include <Texture2D.h>
 #include <Buffer.h>
 #include <ModelManager.h>
@@ -17,6 +18,7 @@
 
 #include "SoAStorage.h"
 
+
 class GameApp : public D3DApp
 {
 private:
@@ -25,6 +27,8 @@ private:
     BaseEffect m_BaseEffect;                           // オブジェクト描画用エフェクト管理
     std::unique_ptr<Depth2D> m_pDepthTexture;            // デプスバッファ
     SoAStorage<ModelObject> m_ModelObjectStorage;        // モデルオブジェクトのストレージ
+    SoAStorage<ImageObject> m_ImageObjectStorage;        // 画像オブジェクトのストレージ
+    std::unique_ptr<DirectX::SpriteBatch> m_SpriteBatch; // スプライト描画用
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_PrimitiveBatch; // プリミティブ描画用
     std::unique_ptr<DirectX::BasicEffect> m_PrimitiveEffect; // ライン描画用エフェクト
     Microsoft::WRL::ComPtr<ID3D11InputLayout> m_PrimitiveInputLayout; // 入力レイアウト
@@ -63,6 +67,10 @@ public:
     UID AddModel(std::string_view filename);       // モデルの追加
     ModelObject* GetModelObject(UID handle);       // モデルオブジェクトの取得
     bool RemoveModel(UID handle);                  // モデルの削除
+
+    UID AddImage(std::string_view filename);       // 画像の追加
+    ImageObject* GetImageObject(UID handle);       // 画像オブジェクトの取得
+    bool RemoveImage(UID handle);                  // 画像の削除
 
     // 描画用のラインを追加
     void DrawLine(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const DirectX::XMFLOAT4& color);

@@ -45,7 +45,9 @@ void Idol::BeAttacked(int damage) {
 
 void Idol::Update(float dt) {
     GameObject::Update(dt);
-    if (GetComponentRef<TransformC>().GetWorldPosition().y < -10.0f) {
+    float y = GetComponentRef<BoxCollisionC>().GetPosition().y;
+    if (GetComponentRef<BoxCollisionC>().GetPosition().y < -10.0f) {
+        //IsDead =  true;
         GetComponentRef<BoxCollisionC>().SetPosition(Vector3(0, 5, 0));
     }
 }

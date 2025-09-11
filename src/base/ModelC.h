@@ -35,4 +35,5 @@ public:
     // モデルの可視性を設定します
     void SetVisible(bool v) { visible = v; }
 
+    
 };

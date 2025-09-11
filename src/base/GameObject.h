@@ -30,10 +30,12 @@ private:
     // ゲームオブジェクトの一意の識別子
     UID uid = -1;
     std::unordered_map<std::string, UID> m_ComponentMap;
+    GameObject(const GameObject&) = delete;
+    GameObject& operator=(const GameObject&) = delete;
 
 protected:
     // GameObjectの初期化
-    virtual void Init() {
+    virtual void    Init() {
     };
     // GameObjectの解放
     virtual void Uninit() {
@@ -138,7 +140,8 @@ T &GameObject::GetComponentRef() const {
 
 template<typename T>
 T *GameObject::GetComponent() const {
-    auto it = m_ComponentMap.find(static_cast<std::string>(typeid(T).name()).substr(6));
+    std::string typeName = static_cast<std::string>(typeid(T).name()).substr(6);
+    auto it = m_ComponentMap.find(typeName);
     if (it == m_ComponentMap.end()) {
         return nullptr; // コンポーネントが見つからない場合はnullptrを返す
     }

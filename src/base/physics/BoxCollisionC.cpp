@@ -5,8 +5,8 @@
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
 
-BoxCollisionC::BoxCollisionC(JPH::EMotionType motionType, const DirectX::SimpleMath::Vector3 &size)
-    : CollisionC(motionType),
+BoxCollisionC::BoxCollisionC(JPH::EMotionType motionType, const DirectX::SimpleMath::Vector3 &size, bool IsSensor)
+    : CollisionC(motionType, IsSensor),
       m_size(size) {
 }
 

@@ -15,6 +15,8 @@ class Component
 private:
 	// コンポーネントの一意の識別子
 	UID uid = -1;
+	Component(const Component&) = delete;
+	Component& operator=(const Component&) = delete;
 protected:
 	std::string m_Name = "Component"; // コンポーネントの名前
 	// 所属するGameObject
@@ -42,6 +44,9 @@ public:
 	std::string GetName() const { return m_Name; }
 
 	template<class T>
+	T *GetComponent();
+
+	template<class T>
 	T &GetComponentRef();
 
 	template<class T>
@@ -50,6 +55,15 @@ public:
 	// インスペクターGUIを描画する
 	virtual void OnInspectorGUI();
 };
+
+
+template<typename T>
+T *Component::GetComponent() {
+	if (m_gameObject == nullptr) {
+		return nullptr; // GameObjectが設定されていない場合はnullptrを返す
+	}
+	return m_gameObject->GetComponent<T>();
+}
 
 template<typename T>
 T &Component::GetComponentRef() {

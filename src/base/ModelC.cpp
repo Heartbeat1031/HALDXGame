@@ -43,11 +43,14 @@ void ModelC::CheckTransform() {
     }
     ModelObject *modelObject = halgame->GetModelObject(handle);
     Transform &modelTransform = modelObject->GetTransform();
-    TransformC &transformComponent = GetComponentRef<TransformC>();
+    TransformC *transformComponent = GetComponent<TransformC>();
+    if (transformComponent == nullptr) {
+        return;
+    }
     if (HasComponent<MixamorigBoneC>()) {
         auto &ragdollC = GetComponentRef<MixamorigBoneC>();
         modelObject->SetBoneMatrices(&ragdollC.GetFinalBoneMatrices());
     }
-    modelTransform.SetWorldMatrix(transformComponent.GetWorldMatrix());
+    modelTransform.SetWorldMatrix(transformComponent->GetWorldMatrix());
     modelObject->SetVisible(visible);
 }

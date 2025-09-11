@@ -17,6 +17,8 @@ public:
 
     void Uninit() override;
 public:
-    int HP = 100;
+    int MAXHP = 20;
+    int HP = 20;
+    bool IsDead = false;
     void BeAttacked(int damage);
 };

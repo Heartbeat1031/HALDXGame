@@ -1,6 +1,7 @@
 #include "GameApp.h"
 #include <XUtil.h>
 #include <DXTrace.h>
+#include <SpriteBatch.h>
 
 using namespace DirectX;
 
@@ -44,6 +45,8 @@ bool GameApp::Init() {
             DirectX::VertexPositionColor::InputElementCount,
             shaderCode, codeLength,
             m_PrimitiveInputLayout.ReleaseAndGetAddressOf()));
+
+    m_SpriteBatch = std::make_unique<DirectX::SpriteBatch>(m_pd3dImmediateContext.Get());
 
     // ******************
     // カメラの初期化
@@ -160,6 +163,14 @@ void GameApp::Draw() {
         m_TriangleQueue.clear();
     }
 
+    if (m_SpriteBatch) {
+        m_SpriteBatch->Begin();
+        m_ImageObjectStorage.ForEachActive([this](UID, ImageObject* img){
+            img->Draw(m_SpriteBatch.get());
+        });
+        m_SpriteBatch->End();
+    }
+
     // ImGuiの描画
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -202,6 +213,25 @@ ModelObject *GameApp::GetModelObject(UID handle) {
 // モデルの削除
 bool GameApp::RemoveModel(UID handle) {
     m_ModelObjectStorage.Remove(handle);
+    return true;
+}
+
+UID GameApp::AddImage(std::string_view filename) {
+    ID3D11ShaderResourceView* tex = m_TextureManager.GetTexture(filename);
+    if (tex == nullptr) {
+        tex = m_TextureManager.CreateFromFile(filename);
+    }
+    auto img = std::make_unique<ImageObject>();
+    img->SetTexture(tex);
+    return m_ImageObjectStorage.Add(std::move(img));
+}
+
+ImageObject* GameApp::GetImageObject(UID handle) {
+    return m_ImageObjectStorage.Get(handle);
+}
+
+bool GameApp::RemoveImage(UID handle) {
+    m_ImageObjectStorage.Remove(handle);
     return true;
 }
 
