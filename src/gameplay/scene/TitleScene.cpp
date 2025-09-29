@@ -1,8 +1,8 @@
 #include "TitleScene.h"
-
 #include "GameObject.h"
 #include "GamePlayScene.h"
 #include "ImageC.h"
+#include "ServerC.h"
 
 void TitleScene::Init() {
     GameObject &bg = AddGameObject<GameObject>();
@@ -12,11 +12,11 @@ void TitleScene::Init() {
     startFlagIndex = 10;
     isStart = false;
 
-    // GameObject &server = AddGameObject<GameObject>();
-    // server.SetName("Server");
-    // ServerC &server_c = server.AddComponent<ServerC>();
-    // server_c.Port = 12345;
-    //server_c.Init();
+     GameObject &server = AddGameObject<GameObject>();
+     server.SetName("Server");
+     ServerC &server_c = server.AddComponent<ServerC>();
+     server_c.Port = 8123;
+    server_c.Init();
 
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "NetC.h"
+#include "Component.h"
 
 class ClientC : public Component {
 

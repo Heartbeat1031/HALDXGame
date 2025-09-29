@@ -7,7 +7,6 @@
 #include "CapsuleCollisionC.h"
 #include "ModelC.h"
 #include <DirectXMath.h>
-#include<iostream>
 
 #include "Idol.h"
 

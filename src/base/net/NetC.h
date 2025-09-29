@@ -1,7 +1,8 @@
 #pragma once
-#include <enet/enet.h>      // ENet 头
 
-#include "Component.h"      // 你的基类
+#include <enet/enet.h>      // ENet 头
+#include <cstdint>
+#include <functional>
 
 // 发送可靠性选项
 enum class NetReliability : uint8_t {

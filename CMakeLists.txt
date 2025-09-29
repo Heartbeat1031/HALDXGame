@@ -1,5 +1,7 @@
 ﻿# HALDXGame の CMake プロジェクト
 cmake_minimum_required(VERSION 3.20)
+# MSBuild で UTF-8 出力を有効にする
+set(CMAKE_VS_GLOBALS "${CMAKE_VS_GLOBALS};Utf8Output=true")
 project(HALDXGame)
 
 if (WIN32)
@@ -112,6 +114,26 @@ target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 target_link_libraries(HALDXGame PRIVATE DirectXTK)
 target_link_libraries(HALDXGame PRIVATE Jolt)
 target_link_libraries(HALDXGame PRIVATE assimp)
+
+############## enet の設定 ##############
+# 强制预包含 winsock_first.h —— 统一 winsock2 包含顺序
+set(WINSOCK_FORCE_INCLUDE "${CMAKE_SOURCE_DIR}/src/base/net/winsock_first.h")
+
+# 建一个可复用的接口库，把“先包含 winsock2”的规则挂上去
+add_library(winsock_first_iface INTERFACE)
+# 这些宏重复定义也没事（有 include guard），但能保证第三方没定义时仍生效
+target_compile_definitions(winsock_first_iface INTERFACE WIN32_LEAN_AND_MEAN NOMINMAX)
+
+# MSVC 用 /FI，其它编译器用 -include（为以后做兼容）
+target_compile_options(winsock_first_iface INTERFACE
+        $<$<CXX_COMPILER_ID:MSVC>:/FI${WINSOCK_FORCE_INCLUDE}>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-include ${WINSOCK_FORCE_INCLUDE}>
+)
+
+# 链接 WinSock2（INTERFACE：谁连它，谁最终链接 Ws2_32）
+target_link_libraries(winsock_first_iface INTERFACE Ws2_32)
+
+############### enet End ###############
 
 # HALDXGame のenet ライブラリ
 target_link_libraries(HALDXGame
