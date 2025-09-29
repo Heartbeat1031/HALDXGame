@@ -3,13 +3,22 @@
 #include "GameObject.h"
 #include "GamePlayScene.h"
 #include "ImageC.h"
+#include "ServerC.h"
 
 void TitleScene::Init() {
-    auto &bg = AddGameObject<GameObject>();
+    GameObject &bg = AddGameObject<GameObject>();
+    bg.SetName("Background");
     ImageC &bgImage = bg.AddComponent<ImageC>("assets/Texture/title.png");
     bgImage.SetSize({1280, 720});
     startFlagIndex = 10;
     isStart = false;
+
+    // GameObject &server = AddGameObject<GameObject>();
+    // server.SetName("Server");
+    // ServerC &server_c = server.AddComponent<ServerC>();
+    // server_c.Port = 12345;
+    //server_c.Init();
+
 }
 
 void TitleScene::Update(float dt) {

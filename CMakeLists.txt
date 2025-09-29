@@ -84,14 +84,11 @@ add_subdirectory(third_party/JoltPhysics/Build JoltBuild)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Build Assimp tests" FORCE)
 add_subdirectory(third_party/assimp assimp)
 add_subdirectory(third_party/ImGui ImGui)
-
+add_subdirectory(third_party/enet enet)
 
 #モジュールの追加
 add_subdirectory(src/modules/GameKit)
 add_subdirectory(src/modules/DX DX)
-
-# テストディレクトリの追加
-add_subdirectory(SchoolTest SchoolTest)
 
 file(GLOB_RECURSE BASE_CPP_FILES src/base/*.cpp)
 file(GLOB_RECURSE BASE_HEADER_FILES src/base/*.h)
@@ -115,12 +112,25 @@ target_compile_options(HALDXGame PRIVATE "$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 target_link_libraries(HALDXGame PRIVATE DirectXTK)
 target_link_libraries(HALDXGame PRIVATE Jolt)
 target_link_libraries(HALDXGame PRIVATE assimp)
+
+# HALDXGame のenet ライブラリ
+target_link_libraries(HALDXGame
+        PRIVATE
+        enet           # ENet ライブラリ
+        ws2_32         # ENet のソケット関連（winsock2.h）
+        winmm          # ENet の時間関連（timeGetTime()）
+)
+
+# 消除弃用 API 警告
+target_compile_definitions(enet PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
+
 target_link_libraries(HALDXGame PRIVATE GameKit)
 target_link_libraries(HALDXGame PRIVATE DX)
 
 target_include_directories(HALDXGame PRIVATE
         ${CMAKE_SOURCE_DIR}/third_party/DirectXTK/Inc
         ${CMAKE_SOURCE_DIR}/third_party/JoltPhysics
+        ${CMAKE_SOURCE_DIR}/third_party/enet/include
 )
 
 file(GLOB_RECURSE ALL_INCLUDE_DIRS LIST_DIRECTORIES true "${PROJECT_SOURCE_DIR}/src/*")
