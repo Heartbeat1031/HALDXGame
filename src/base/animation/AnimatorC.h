@@ -7,7 +7,7 @@
 #include <string>
 
 #include "Component.h"
-#include "ModelManager.h"
+#include "../../modules/DX/ModelManager.h"
 #include "ModelObject.h"
 
 

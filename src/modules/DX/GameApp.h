@@ -1,22 +1,19 @@
 #pragma once
 
-#include <WinMin.h>
 #include "d3dApp.h"
-#include "Common/Effects.h"
-#include <Camera.h>
-#include <RenderStates.h>
-#include <ModelObject.h>
-#include <ImageObject.h>
-#include <Texture2D.h>
-#include <Buffer.h>
-#include <ModelManager.h>
-#include <TextureManager.h>
+#include "Effects.h"
 #include <PrimitiveBatch.h>
 #include <VertexTypes.h>
 #include <Effects.h>
 #include <vector>
 
+#include "Camera.h"
+#include "ImageObject.h"
+#include "ModelManager.h"
+#include "ModelObject.h"
 #include "SoAStorage.h"
+#include "Texture2D.h"
+#include "TextureManager.h"
 
 
 class GameApp : public D3DApp

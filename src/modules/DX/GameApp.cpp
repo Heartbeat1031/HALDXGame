@@ -1,7 +1,8 @@
 #include "GameApp.h"
-#include <XUtil.h>
-#include <DXTrace.h>
 #include <SpriteBatch.h>
+
+#include "DXTrace.h"
+#include "RenderStates.h"
 
 using namespace DirectX;
 

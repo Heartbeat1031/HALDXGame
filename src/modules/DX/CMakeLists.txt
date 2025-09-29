@@ -24,10 +24,6 @@ file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(DX assimp)
 set_target_properties(DX PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 
-# Common
-add_subdirectory(Common)
-target_link_libraries(DX Common)
-
 # GameKit
 target_link_libraries(DX GameKit)
 

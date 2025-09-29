@@ -1,13 +1,15 @@
 #include "Effects.h"
-#include <XUtil.h>
-#include <RenderStates.h>
-#include <EffectHelper.h>
-#include <DXTrace.h>
 #include <filesystem>
 #include <algorithm>
-#include <Vertex.h>
-#include <TextureManager.h>
+
+#include "DXTrace.h"
+#include "EffectHelper.h"
 #include "LightHelper.h"
+#include "Material.h"
+#include "MeshData.h"
+#include "RenderStates.h"
+#include "TextureManager.h"
+#include "Vertex.h"
 
 using namespace DirectX;
 

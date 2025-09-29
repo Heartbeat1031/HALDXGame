@@ -6,7 +6,7 @@
 #include <set>
 #include "Global.h"
 #include "ModelC.h"
-#include "ModelManager.h"
+#include "../../modules/DX/ModelManager.h"
 #include "TransformC.h"
 
 MixamorigBoneC::MixamorigBoneC() {

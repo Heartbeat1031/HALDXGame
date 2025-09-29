@@ -6,7 +6,7 @@
 #include <Jolt/Jolt.h>
 #include <wrl/client.h>
 
-#include "Buffer.h"
+#include "../../modules/DX/Buffer.h"
 #include "Jolt/Renderer/DebugRendererSimple.h"
 
 

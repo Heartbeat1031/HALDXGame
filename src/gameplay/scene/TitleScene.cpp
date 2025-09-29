@@ -3,7 +3,6 @@
 #include "GameObject.h"
 #include "GamePlayScene.h"
 #include "ImageC.h"
-#include "ServerC.h"
 
 void TitleScene::Init() {
     GameObject &bg = AddGameObject<GameObject>();

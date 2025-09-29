@@ -4,8 +4,9 @@
 #include "XUtil.h"
 #include "DXTrace.h"
 #include "ImGuiLog.h"
-#include <DDSTextureLoader11.h>
 #include <filesystem>
+
+#include "DDSTextureLoader11.h"
 
 using namespace Microsoft::WRL;
 

@@ -5,14 +5,13 @@
 
 #pragma once
 
-#include <IEffect.h>
-#include <Material.h>
-#include <MeshData.h>
-#include <LightHelper.h>
 #include <vector>
 
+#include "IEffect.h"
+#include "LightHelper.h"
+
 class BaseEffect : public IEffect, public IEffectTransform,
-    public IEffectMaterial, public IEffectMeshData
+                   public IEffectMaterial, public IEffectMeshData
 {
 public:
     BaseEffect();

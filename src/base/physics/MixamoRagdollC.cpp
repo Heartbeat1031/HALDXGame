@@ -10,7 +10,7 @@
 
 #include "Global.h"
 #include "MixamorigBoneC.h"
-#include "ModelManager.h"
+#include "../../modules/DX/ModelManager.h"
 #include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
 #include "Jolt/Physics/Constraints/SwingTwistConstraint.h"
 
