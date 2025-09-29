@@ -1,19 +1,13 @@
 #include "TitleScene.h"
 
 #include "GameObject.h"
-#include "ModelC.h"
 #include "GamePlayScene.h"
+#include "ImageC.h"
 
 void TitleScene::Init() {
-    auto &screen = AddGameObject<GameObject>();
-    screen.AddComponent<ModelC>("assets/models/bg.fbx");
-    screen.GetComponentRef<TransformC>().SetWorldPosition(Vector3(0, 0, 0));
-    screen.GetComponentRef<TransformC>().SetLocalScale(Vector3(3.8f, 3.8f, 1));
-
-    halgame->m_pCamera->SetTarget(Vector3(0, 0, 0));
-    halgame->m_pCamera->Approach(-10);
-    halgame->m_pCamera->SetRotationX(-1);
-    halgame->m_pCamera->SetRotationY(0);
+    auto &bg = AddGameObject<GameObject>();
+    ImageC &bgImage = bg.AddComponent<ImageC>("assets/Texture/title.png");
+    bgImage.SetSize({1280, 720});
     startFlagIndex = 10;
     isStart = false;
 }

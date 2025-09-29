@@ -32,9 +32,7 @@ void CollisionC::Uninit() {
     halgame->GetContactListener().RemoveBodyFromUIDMap(m_bodyID);
 }
 
-void CollisionC::Update(float dt) {
-    Component::Update(dt);
-
+void CollisionC::RefeshTramsform() {
     JPH::RVec3 pos = m_bodyInterface.GetCenterOfMassPosition(m_bodyID);
     JPH::Quat rot = m_bodyInterface.GetRotation(m_bodyID);
     Quaternion dxRot(rot.GetX(), rot.GetY(), rot.GetZ(), rot.GetW());
@@ -55,6 +53,11 @@ void CollisionC::Update(float dt) {
     auto &myTransform = m_gameObject->GetComponentRef<TransformC>();
     myTransform.SetWorldPosition(Vector3(pos.GetX(), pos.GetY(), pos.GetZ()) - worldOffset);
     myTransform.SetWorldRotation(finalRot);
+}
+
+void CollisionC::Update(float dt) {
+    Component::Update(dt);
+    RefeshTramsform();
 }
 
 
@@ -78,9 +81,7 @@ void CollisionC::SetLinearVelocity(const DirectX::SimpleMath::Vector3 &inLinearV
 void CollisionC::SetPosition(Vector3 position) {
     m_bodyInterface.SetPosition(
         m_bodyID, JPH::RVec3(position.x, position.y, position.z), JPH::EActivation::Activate);
-    if (TransformC *transform = GetComponent<TransformC>()) {
-        transform->SetWorldPosition(position);
-    }
+    RefeshTramsform();
 }
 
 void CollisionC::SetRotation(Quaternion rotation) {

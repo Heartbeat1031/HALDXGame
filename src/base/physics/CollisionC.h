@@ -38,6 +38,8 @@ public:
     void Init() override;
     void Update(float dt) override;
     void Uninit() override;
+    // 更新Tramsformのオフセット
+    void RefeshTramsform();
     void SetOffsetTransform(const OffsetTransform& offset) { m_offsetTransform = offset; }
     OffsetTransform GetOffsetTransform() const { return m_offsetTransform; }
     void SetOffsetPosition(const DirectX::SimpleMath::Vector3& position);

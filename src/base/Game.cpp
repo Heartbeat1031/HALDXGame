@@ -3,7 +3,6 @@
 //
 
 #include "Game.h"
-#include "GamePlayScene.h"
 #include "TitleScene.h"
 #include "Jolt/RegisterTypes.h"
 
@@ -48,7 +47,7 @@ bool Game::Init() {
     JPH::RegisterTypes();
     mTempAllocator = new JPH::TempAllocatorImpl(32 * 1024 * 1024);
     mJobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers,
-                                              0);
+                                              std::thread::hardware_concurrency() - 1);
     mPhysicsSystem = new PhysicsSystem();
     mPhysicsSystem->Init(10240, 0, 65536, 20480, mBroadPhaseLayerInterface, mObjectVsBroadPhaseLayerFilter,
                          mObjectVsObjectLayerFilter);
@@ -71,12 +70,17 @@ bool Game::Init() {
 
     // テストシーンを読み込む
     SetScene<TitleScene>();
+
     return true;
 }
 
 // ゲームの実行
 void Game::Update(float dt) {
     GameApp::Update(dt);
+    if (mIsFirstFrame) {
+        mIsFirstFrame = false;
+        dt = 0;
+    }
     // シーンの更新
     m_Scene->UpdateBase(dt);
     // 物理システムの更新

@@ -49,7 +49,8 @@ private:
     BodyManager::DrawSettings mBodyDrawSettings;
 public:
     AnimationManager animationManager;
-
+private:
+    bool mIsFirstFrame = true;
 public:
     Game(HINSTANCE hInstance, const std::wstring &windowName, int initWidth, int initHeight);
     ~Game() override;
@@ -82,6 +83,7 @@ void Game::SetScene() {
         m_Scene->UninitBase();
         delete m_Scene;
     }
+    mIsFirstFrame = true;
     // 新しいシーンを作成
     m_Scene = new T();
     // シーンを初期化
