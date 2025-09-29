@@ -3,8 +3,10 @@
 //
 #include "Scene.h"
 
+#include "ClientManagerC.h"
 #include "Component.h"
 #include "GameObject.h"
+#include "ServerManagerC.h"
 #include "TransformC.h"
 
 Scene::Scene() = default;
@@ -36,6 +38,17 @@ void Scene::UninitBase() {
 }
 
 void Scene::UpdateBase(float dt) {
+    ClientManagerC *client = root->GetComponent<ClientManagerC>();
+    if (client != nullptr) {
+        // 如果进行联机的话, 则等待连接成功后再更新场景
+        // オンライン接続を行う場合、接続が成功するまでシ
+        if (client->GetClient() !=nullptr && client->IsConnected() == false) {
+            client->Update(dt);
+            root->GetComponent<ServerManagerC>()->Update(dt);
+            // 等待服务器链接成功后再更新场景
+            return;
+        }
+    }
     // 先更新所有的Component, 再更新所有GameObject
     // すべてのComponentを先に更新し、その後にすべてのGameObjectを更新します。
     m_ComponentStorage.ForEachActive([this, dt](UID id, Component *component) {

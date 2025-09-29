@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
 
+class ClientManagerC;
+
 class TitleScene : public Scene {
 private:
 	bool isStart = false;

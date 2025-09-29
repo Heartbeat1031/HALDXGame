@@ -1,3 +1,6 @@
+//
+// Created by clcc777 on 25-9-30.
+//
 #pragma once
 
 #include <enet/enet.h>      // ENet 头
@@ -10,7 +13,7 @@ enum class NetReliability : uint8_t {
     Reliable   = 1,
 };
 
-// 简单的事件回调接口（可选）
+// 简单的事件回调接口
 struct NetEvents {
     std::function<void(ENetPeer*)>              OnConnect;
     std::function<void(ENetPeer*, ENetPacket*)> OnReceive;
@@ -22,3 +25,6 @@ inline ENetPacket* MakePacket(const void* data, size_t size, NetReliability r) {
     const enet_uint32 flags = (r == NetReliability::Reliable) ? ENET_PACKET_FLAG_RELIABLE : 0;
     return enet_packet_create(data, size, flags);
 }
+
+// 最大每帧处理事件数，防止卡死
+constexpr int MAX_EVENTS_PER_FRAME = 64;

@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "TitleScene.h"
+#include "enet/enet.h"
 #include "Jolt/RegisterTypes.h"
 
 // 游戏实例
@@ -67,6 +68,14 @@ bool Game::Init() {
     animationManager.LoadAnimationClips("assets/animation/Idle.fbx", {"Idle"});
     animationManager.LoadAnimationClips("assets/animation/Walking.fbx", {"Walking"});
     animationManager.LoadAnimationClips("assets/animation/Dance.fbx", {"Dance"});
+
+    // ネットワークを初期化
+    if (enet_initialize() != 0) {
+        std::fprintf(stderr, "[Net] An error occurred while initializing ENet.\n");
+        return false;
+    } else {
+        atexit(enet_deinitialize);
+    }
 
     // テストシーンを読み込む
     SetScene<TitleScene>();

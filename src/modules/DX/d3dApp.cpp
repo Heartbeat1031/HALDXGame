@@ -118,10 +118,10 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
         case WM_ACTIVATE:
             if (LOWORD(wParam) == WA_INACTIVE) {
-                m_AppPaused = true;
+                //m_AppPaused = true;
                 m_Timer.Stop();
             } else {
-                m_AppPaused = false;
+                //m_AppPaused = false;
                 m_Timer.Start();
             }
             return 0;
@@ -131,21 +131,21 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             m_ClientHeight = HIWORD(lParam);
             if (m_pd3dDevice) {
                 if (wParam == SIZE_MINIMIZED) {
-                    m_AppPaused = true;
+                    //m_AppPaused = true;
                     m_Minimized = true;
                     m_Maximized = false;
                 } else if (wParam == SIZE_MAXIMIZED) {
-                    m_AppPaused = false;
+                    //m_AppPaused = false;
                     m_Minimized = false;
                     m_Maximized = true;
                     OnResize();
                 } else if (wParam == SIZE_RESTORED) {
                     if (m_Minimized) {
-                        m_AppPaused = false;
+                        //m_AppPaused = false;
                         m_Minimized = false;
                         OnResize();
                     } else if (m_Maximized) {
-                        m_AppPaused = false;
+                        //m_AppPaused = false;
                         m_Maximized = false;
                         OnResize();
                     } else if (!m_Resizing) {
@@ -156,13 +156,13 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
 
         case WM_ENTERSIZEMOVE:
-            m_AppPaused = true;
+            //m_AppPaused = true;
             m_Resizing = true;
             m_Timer.Stop();
             return 0;
 
         case WM_EXITSIZEMOVE:
-            m_AppPaused = false;
+            //m_AppPaused = false;
             m_Resizing = false;
             m_Timer.Start();
             OnResize();

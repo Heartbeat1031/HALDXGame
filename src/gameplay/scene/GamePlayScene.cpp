@@ -15,7 +15,7 @@
 #include "GameoverScene.h"
 #include "WinScene.h"
 
-#include <cmath> // std::sin, std::cos, std::sqrt
+#include <cmath>
 
 void GamePlayScene::Init() {
     // 発射位置初期化（旧变量保留，不再直接使用）

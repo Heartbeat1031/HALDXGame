@@ -1,8 +1,11 @@
 #include "TitleScene.h"
+
+#include "ClientManagerC.h"
 #include "GameObject.h"
 #include "GamePlayScene.h"
 #include "ImageC.h"
-#include "ServerC.h"
+#include "PacketIO.h"
+#include "ServerManagerC.h"
 
 void TitleScene::Init() {
     GameObject &bg = AddGameObject<GameObject>();
@@ -12,12 +15,19 @@ void TitleScene::Init() {
     startFlagIndex = 10;
     isStart = false;
 
-     GameObject &server = AddGameObject<GameObject>();
-     server.SetName("Server");
-     ServerC &server_c = server.AddComponent<ServerC>();
+     ServerManagerC &server_c = root->AddComponent<ServerManagerC>();
      server_c.Port = 8123;
-    server_c.Init();
+    server_c.Start();
 
+    ClientManagerC &client_c = root->AddComponent<ClientManagerC>();
+    client_c.Hostname = "127.0.0.1";
+    client_c.Port = 8123;
+    client_c.Start();
+
+
+    PacketWriter pw;
+    pw.writeString("Hello, Server!");
+    root->GetComponent<ClientManagerC>()->Send(pw);
 }
 
 void TitleScene::Update(float dt) {
